@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Modeva Progress</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Prompt:wght@500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{color-scheme:light}body{margin:0;font-size:14px}[hidden]{display:none!important}img{max-width:100%}
+/* Layout: sticky dark site bar, tab strip per work type, then dashboard cards / room grids that scroll sideways inside their own frame. */
+:root{
+  --bg:#edf0ed; --surface:#ffffff; --surface2:#f5f7f5; --ink:#15222a; --muted:#5b6a72; --line:#d6dcd8;
+  --accent:#0b5d7a; --accent-ink:#ffffff; --bar:#13232c; --bar-ink:#eef3f4; --track:#dfe5e1;
+  --done:#e3a82b; --cm:#2f7fb8; --qc2:#25936a; --warn:#c2571a;
+  --shadow:0 1px 2px rgba(15,30,40,.06),0 4px 14px rgba(15,30,40,.05);
+  --f-display:'Prompt','IBM Plex Sans Thai',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e171c; --surface:#16232a; --surface2:#1b2b33; --ink:#e7eef0; --muted:#9db0b8; --line:#2a3d46;
+  --accent:#4cb4d6; --accent-ink:#06222c; --bar:#0a1115; --bar-ink:#e7eef0; --track:#263941;
+  --done:#e8b445; --cm:#5aa6dc; --qc2:#3fb88a; --warn:#e0803f; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e171c; --surface:#16232a; --surface2:#1b2b33; --ink:#e7eef0; --muted:#9db0b8; --line:#2a3d46;
+  --accent:#4cb4d6; --accent-ink:#06222c; --bar:#0a1115; --bar-ink:#e7eef0; --track:#263941;
+  --done:#e8b445; --cm:#5aa6dc; --qc2:#3fb88a; --warn:#e0803f; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;padding-inline:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px}
+header.top{background:var(--bar);color:var(--bar-ink);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.01em;margin-right:auto}
+.brand small{display:block;font-family:var(--f-body);font-weight:400;font-size:11px;opacity:.7;letter-spacing:.04em}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px;max-width:100%;scrollbar-width:thin}
+.tab{background:transparent;border:0;color:var(--bar-ink);opacity:.72;padding:8px 14px;border-radius:8px;white-space:nowrap;font-weight:500}
+.tab:hover{opacity:1;background:rgba(255,255,255,.08)}
+.tab[aria-selected=true]{opacity:1;background:var(--accent);color:var(--accent-ink)}
+.tab.add{border:1px dashed rgba(255,255,255,.35)}
+main{padding-block:18px 60px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.25;text-wrap:balance}
+h2{font-size:17px;font-weight:600}
+.sub{color:var(--muted);font-size:12.5px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;min-width:0}
+.sec{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.sec>.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sec>.head .sub{margin-left:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);padding:5px 12px;border-radius:999px;font-size:13px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--warn);border-color:var(--warn)}
+.btn.sm{padding:3px 9px;font-size:12.5px}
+.banner{background:var(--surface2);border:1px solid var(--line);border-left:4px solid var(--warn);padding:8px 12px;border-radius:8px;margin-bottom:14px;font-size:13px}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);gap:16px;align-items:stretch}
+.hero h1{font-size:26px;font-weight:700}
+.rings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ring{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.ring svg{width:100%;max-width:150px;height:auto}
+.ring .t{font-weight:600;font-size:13px}
+.ring .n{font-size:11.5px;color:var(--muted)}
+.big{font-family:var(--f-display);font-weight:700;font-size:30px;font-variant-numeric:tabular-nums}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero h1{font-size:22px}.big{font-size:26px}}
+/* work cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.wc{text-align:left;display:flex;flex-direction:column;gap:10px;cursor:pointer}
+.wc:hover{border-color:var(--accent)}
+.wc h3{font-size:16px;font-weight:600}
+.m{display:grid;grid-template-columns:78px 1fr 44px;gap:8px;align-items:center;font-size:12.5px}
+.m .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.bar{height:8px;border-radius:99px;background:var(--track);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px}
+.stack{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--track)}
+.stack>i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}
+.legend b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* heat */
+.heat{display:grid;gap:6px;align-items:stretch}
+.hc{border:0;border-radius:8px;padding:10px 4px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums;font-size:15px}
+.hl{display:flex;align-items:center;font-weight:500;font-size:13px;padding-right:6px}
+.hh{text-align:center;font-size:12px;color:var(--muted);font-weight:600}
+/* table */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+thead th{font-size:12px;color:var(--muted);font-weight:600;background:var(--surface2)}
+tr.wk td{background:var(--surface2);font-weight:600}
+tr.it td:first-child{padding-left:28px}
+tbody tr:last-child td{border-bottom:0}
+.pc{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.pc .bar{width:56px;flex:none}
+.na{color:var(--muted)}
+/* grids */
+.item{display:flex;flex-direction:column;gap:10px}
+.item .hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.item .hd h3{font-size:15px;font-weight:600;margin-right:auto}
+.gw{overflow-x:auto;padding-bottom:6px}
+.g{display:grid;gap:3px;width:max-content;align-items:center}
+.gh,.gf{font-size:11px;color:var(--muted);text-align:center;border:0;background:transparent;padding:0;height:24px;font-variant-numeric:tabular-nums}
+.gf{position:sticky;left:0;background:var(--surface);z-index:1;font-weight:600;color:var(--ink);min-width:34px}
+.gh:hover,.gf:hover{color:var(--accent);text-decoration:underline}
+.c{width:32px;height:32px;border:0;border-radius:6px;font-size:11px;font-weight:600;padding:0;line-height:1}
+.c.none{background:transparent;border:1px dashed var(--line);cursor:default}
+.brush{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:10;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;box-shadow:var(--shadow)}
+.brush .lbl{font-size:12px;color:var(--muted)}
+.bchip{border:2px solid transparent;border-radius:8px;padding:4px 10px;font-size:12.5px;font-weight:600}
+.bchip[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface) inset}
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(5,12,16,.55);z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:0}
+#modal[hidden]{display:none}
+.sheet{background:var(--surface);color:var(--ink);width:100%;max-width:520px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+@media(min-width:640px){#modal{align-items:center}.sheet{border-radius:16px}}
+.sheet h2{font-size:18px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;font-weight:500}
+.opt:hover{border-color:var(--accent)}
+.opt .sw{width:18px;height:18px;border-radius:5px;margin:0}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12.5px;color:var(--muted);font-weight:500}
+input[type=text],input[type=number],select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface)}
+.srow{display:grid;grid-template-columns:38px 1fr auto auto auto;gap:6px;align-items:center}
+.srow input[type=text]{padding:6px 8px}
+.chk{display:flex;gap:6px;align-items:center;font-size:13px}
+.empty{padding:30px 16px;text-align:center;color:var(--muted)}
+.expscope{position:fixed;left:-100000px;top:0;padding:20px;
+  --bg:#edf0ed;--surface:#ffffff;--surface2:#f5f7f5;--ink:#15222a;--muted:#5b6a72;--line:#d6dcd8;--accent:#0b5d7a;--accent-ink:#fff;--track:#dfe5e1;--done:#e3a82b;--cm:#2f7fb8;--qc2:#25936a;--warn:#c2571a;--shadow:none;
+  background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;color-scheme:light}
+.expscope .wrap{max-width:none;padding-inline:0}
+.expscope main{padding-block:0}
+.expscope .gw,.expscope .tw{overflow:visible}
+.expscope .gf{position:static}
+.expscope table{min-width:0}
+.expscope .exphead{font-size:13px;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.expscope .exphead b{color:var(--ink);font-family:var(--f-display);font-size:15px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;z-index:60;font-size:13px}
+</style>
+
+</head><body>
+<header class="top"><div class="wrap">
+  <div class="brand">Modeva Progress<small>ติดตามงานก่อสร้างรายตึก · ตึก D–G</small></div>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <span id="ghstat" class="sub" style="color:var(--bar-ink);opacity:.7"></span><button class="tab" id="ghbtn" data-a="gh">เชื่อม GitHub</button>
+</div></header>
+<main class="wrap" id="app"><div class="empty">กำลังโหลดข้อมูล…</div></main>
+<div id="modal" hidden></div>
+
+<script>
+(function(){
+'use strict';
+const S={works:{},grids:{},meta:{buildings:['D','E','F','G']},view:'overview',bld:'ALL',obld:'ALL',hm:'done',brush:null,canWrite:true,ready:false,db:null,dl:null};
+const MS=[['done','เสร็จ'],['cm','CM CLOSE'],['qc2','QC2 CLOSE']];
+const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)'};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=(s,r=document)=>r.querySelector(s);
+const has=v=>v!=null&&v!=='-';
+const cvar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function hex3(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');const n=parseInt(h,16);return [n>>16,(n>>8)&255,n&255]}
+function mixc(k,p){try{const a=hex3(cvar('--'+k)),b=hex3(cvar('--surface')),t=(8+p*82)/100;return 'rgb('+a.map((x,i)=>Math.round(x*t+b[i]*(1-t))).join(',')+')'}catch(e){return 'var(--surface2)'}}
+function lum(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');const n=parseInt(h,16);const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};return .2126*f(n>>16)+.7152*f((n>>8)&255)+.0722*f(n&255)}
+const fg=h=>/^#[0-9a-f]{3,6}$/i.test(h)?(lum(h)>.32?'#14212a':'#ffffff'):'#14212a';
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
+const worksSorted=()=>Object.entries(S.works).map(([id,w])=>({id,...w})).sort((a,b)=>(a.order||0)-(b.order||0));
+const gridsOf=(wid,b)=>Object.entries(S.grids).map(([id,g])=>({id,...g})).filter(g=>g.work===wid&&(!b||b==='ALL'||g.building===b)).sort((a,b)=>(a.order||0)-(b.order||0)||a.id.localeCompare(b.id));
+function sIdx(w,name){const i=(w.statuses||[]).findIndex(s=>s.name===name);return i<0?0:i}
+function msIdx(w,k){const id=(w.milestones||{})[k];if(!id)return null;const i=(w.statuses||[]).findIndex(s=>s.id===id);return i<0?null:i}
+function tally(w,grids){const n=(w.statuses||[]).length;const c=new Array(n).fill(0);let t=0;
+  for(const g of grids)for(const v of Object.values(g.cells||{})){if(!has(v))continue;c[sIdx(w,v)]++;t++}
+  return {c,t}}
+function pcts(w,tl){const o={};for(const [k] of MS){const m=msIdx(w,k);o[k]=(m==null||!tl.t)?null:tl.c.slice(m).reduce((a,b)=>a+b,0)/tl.t}return o}
+const fmt=p=>p==null?'–':(p*100>=99.95||p===0?Math.round(p*100):(p*100).toFixed(1))+'%';
+function pbar(p,col){return `<div class="pc"><div class="bar"><i style="width:${p==null?0:p*100}%;background:${col}"></i></div><span class="${p==null?'na':''}">${fmt(p)}</span></div>`}
+function ring(p,col,label,sub){const r=52,C=2*Math.PI*r,v=p==null?0:Math.max(0,Math.min(1,p));
+  return `<div class="ring"><svg viewBox="0 0 130 130" role="img" aria-label="${esc(label)} ${fmt(p)}"><circle cx="65" cy="65" r="${r}" fill="none" stroke="var(--track)" stroke-width="13"/><circle cx="65" cy="65" r="${r}" fill="none" stroke="${col}" stroke-width="13" ${v>0?'stroke-linecap="round"':'stroke-opacity="0"'} stroke-dasharray="${v*C} ${C}" transform="rotate(-90 65 65)"/><text x="65" y="72" text-anchor="middle" font-family="Prompt,sans-serif" font-weight="700" font-size="26" fill="var(--ink)">${p==null?'–':Math.round(p*100)+'%'}</text></svg><div class="t">${esc(label)}</div><div class="n">${esc(sub)}</div></div>`}
+function stackBar(w,tl){return `<div class="stack">${(w.statuses||[]).map((s,i)=>tl.c[i]?`<i title="${esc(s.name)} ${tl.c[i]}" style="width:${tl.c[i]/tl.t*100}%;background:${s.color}"></i>`:'').join('')}</div>
+ <div class="legend">${(w.statuses||[]).map((s,i)=>`<span><span class="sw" style="background:${s.color}"></span>${esc(s.name)} <b>${tl.c[i]}</b></span>`).join('')}</div>`}
+
+/* ---------- aggregate ---------- */
+function overall(b){const agg={done:[0,0],cm:[0,0],qc2:[0,0]};let units=0;
+  for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs);units+=tl.t;
+    for(const [k] of MS){const m=msIdx(w,k);if(m==null)continue;agg[k][0]+=tl.c.slice(m).reduce((a,x)=>a+x,0);agg[k][1]+=tl.t}}
+  const o={units};for(const [k] of MS)o[k]=agg[k][1]?agg[k][0]/agg[k][1]:null;o.n=agg;return o}
+
+/* ---------- views ---------- */
+function bldChips(cur,attr){return `<div class="chips">${['ALL',...S.meta.buildings].map(b=>`<button class="chip" data-a="${attr}" data-b="${b}" aria-pressed="${cur===b}">${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</button>`).join('')}${S.canWrite&&attr==='obld'?'<button class="chip noexp" data-a="addb" aria-label="เพิ่มตึก">+ ตึก</button>':''}</div>`}
+function addBuilding(){modal(`<h2>เพิ่มตึก</h2><div class="field"><label for="nb">ชื่อตึก (เช่น H)</label><input id="nb" type="text" maxlength="6"></div><div class="row"><button class="btn pri" data-ok>เพิ่ม</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();const n=$('#nb').value.trim().toUpperCase().replace(/[^A-Z0-9ก-๙]/g,'');if(!n||S.meta.buildings.includes(n))return toast('ชื่อว่างหรือซ้ำ');closeM();try{await setDoc('meta/app',{buildings:[...S.meta.buildings,n]});toast('เพิ่มตึก '+n+' แล้ว กด “+ เพิ่มรายการ” ในแต่ละงานเพื่อสร้างตาราง')}catch(e){}}})}
+function vOverview(){
+  const ws=worksSorted(),b=S.obld,o=overall(b);
+  if(!ws.length)return `<div class="card empty">ยังไม่มีงานในระบบ กดปุ่ม “+ เพิ่มงาน” ด้านบนเพื่อเริ่มต้น</div>`;
+  const today=new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  let h=`<div class="row" style="justify-content:space-between"><div class="sub">ข้อมูล ณ ${today}</div><div class="row"><button class="btn sm noexp" data-a="exp">ส่งออก PDF / ภาพ</button>${bldChips(b,'obld')}</div></div>
+  <section class="hero sec" style="margin-top:12px">
+   <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:8px"><h1>ภาพรวมโครงการ</h1>
+     <div class="sub">${b==='ALL'?'ตึก '+S.meta.buildings.join(' · '):'ตึก '+esc(b)} · ${ws.length} งาน · ${o.units.toLocaleString('th-TH')} จุดตรวจ (ชั้น × ห้อง × รายการ)</div>
+     <div class="sub">แต่ละวงแสดง % ของจุดตรวจที่ไปถึงขั้นนั้นแล้ว ขั้นหลังนับรวมขั้นก่อนหน้า</div></div>
+   <div class="card rings">${MS.map(([k,l])=>ring(o[k],MSCOL[k],l,o.n[k][1]?`${o.n[k][0].toLocaleString('th-TH')} / ${o.n[k][1].toLocaleString('th-TH')} จุด`:'ไม่มีงานที่ใช้ขั้นนี้')).join('')}</div>
+  </section>`;
+  h+=`<section class="sec"><div class="head"><h2>งานแต่ละประเภท</h2><span class="sub">กดการ์ดเพื่อเข้าไปอัปเดต</span></div><div class="cards">`;
+  for(const w of ws){const gs=gridsOf(w.id,b),tl=tally(w,gs),p=pcts(w,tl);
+    h+=`<button class="card wc" data-a="open" data-w="${w.id}"><h3>${esc(w.name)}</h3><div class="sub">${tl.t.toLocaleString('th-TH')} จุดตรวจ · ${new Set(gs.map(g=>g.item)).size} รายการ</div>
+    ${MS.map(([k,l])=>`<div class="m"><span>${l}</span><div class="bar"><i style="width:${p[k]==null?0:p[k]*100}%;background:${MSCOL[k]}"></i></div><span class="v ${p[k]==null?'na':''}">${fmt(p[k])}</span></div>`).join('')}
+    ${tl.t?stackBar(w,tl):'<div class="sub">ยังไม่มีรายการ</div>'}</button>`}
+  h+=`</div></section>`;
+  // heatmap
+  const hm=S.hm,cols=S.meta.buildings;
+  h+=`<section class="sec"><div class="head"><h2>ความคืบหน้ารายตึก</h2><div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="hm" data-k="${k}" aria-pressed="${hm===k}">${l}</button>`).join('')}</div></div>
+  <div class="card"><div class="heat" style="grid-template-columns:minmax(80px,1.4fr) repeat(${cols.length},minmax(0,1fr))"><span></span>${cols.map(c=>`<span class="hh">ตึก ${esc(c)}</span>`).join('')}`;
+  for(const w of ws){h+=`<span class="hl">${esc(w.name)}</span>`;
+    for(const c of cols){const tl=tally(w,gridsOf(w.id,c)),p=pcts(w,tl)[hm];
+      const st=p==null?`background:var(--surface2);color:var(--muted)`:`background:${mixc(hm,p)};color:${p>.6?'#fff':'var(--ink)'}`;
+      h+=`<button class="hc" style="${st}" data-a="open" data-w="${w.id}" data-b="${esc(c)}" title="${esc(w.name)} ตึก ${esc(c)}">${tl.t?fmt(p):'–'}</button>`}}
+  h+=`</div></div></section>`;
+  // table
+  h+=`<section class="sec"><div class="head"><h2>ตารางสรุป % แยกตามขั้น</h2><button class="btn sm noexp" data-a="csv">ดาวน์โหลด CSV</button></div><div class="tw"><table><thead><tr><th>งาน / รายการ</th><th>จุดตรวจ</th><th>% เสร็จ</th><th>% CM CLOSE</th><th>% QC2 CLOSE</th></tr></thead><tbody>${tableRows(b).map(r=>r.html).join('')}</tbody></table></div>
+  <div class="sub">“–” คือประเภทงานนั้นไม่ได้ตั้งขั้นดังกล่าว (เช่น ฝ้าใช้ QC1) ตั้งค่าได้ในหน้าของแต่ละงาน</div></section>`;
+  return h}
+function tableRows(b){const out=[];
+  for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs),p=pcts(w,tl);
+    const cell=(k,pp)=>`<td>${pbar(pp[k],MSCOL[k])}</td>`;
+    out.push({w:w.name,item:'',t:tl.t,p,html:`<tr class="wk"><td>${esc(w.name)}</td><td>${tl.t.toLocaleString('th-TH')}</td>${MS.map(([k])=>cell(k,p)).join('')}</tr>`});
+    const names=[...new Set(gs.map(g=>g.item))];
+    for(const n of names){const ig=gs.filter(g=>g.item===n),it=tally(w,ig),ip=pcts(w,it);
+      out.push({w:w.name,item:n,t:it.t,p:ip,html:`<tr class="it"><td>${esc(n)}</td><td>${it.t.toLocaleString('th-TH')}</td>${MS.map(([k])=>cell(k,ip)).join('')}</tr>`})}}
+  return out}
+
+function vWork(w){
+  const b=S.bld,gs=gridsOf(w.id,b);
+  let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">${esc(w.name)}</h1><div class="sub">${(w.statuses||[]).length} สถานะ · กดช่องเพื่อเปลี่ยนสถานะ</div></div>
+   <div class="row noexp"><button class="btn" data-a="exp">ส่งออก PDF / ภาพ</button>${S.canWrite?`<button class="btn" data-a="wset">ตั้งค่างาน</button><button class="btn pri" data-a="additem">+ เพิ่มรายการ</button>`:''}</div></div>
+   <div style="margin-top:12px">${bldChips(b,'bld')}</div>`;
+  const tl=tally(w,gs),p=pcts(w,tl);
+  h+=`<section class="sec"><div class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
+   <div style="display:flex;flex-direction:column;gap:10px"><h2>สรุป ${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</h2>${MS.map(([k,l])=>`<div class="m"><span>${l}</span><div class="bar"><i style="width:${p[k]==null?0:p[k]*100}%;background:${MSCOL[k]}"></i></div><span class="v ${p[k]==null?'na':''}">${fmt(p[k])}</span></div>`).join('')}</div>
+   <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">${tl.t?stackBar(w,tl):'<div class="sub">ยังไม่มีรายการในตึกนี้</div>'}</div></div>`;
+  if(tl.t){h+=`<div class="tw"><table><thead><tr><th>รายการ</th><th>จุดตรวจ</th><th>% เสร็จ</th><th>% CM CLOSE</th><th>% QC2 CLOSE</th></tr></thead><tbody>${tableRows(b).filter(r=>r.w===w.name&&r.item).map(r=>r.html).join('')}</tbody></table></div>`}
+  h+=`</section>`;
+  if(S.canWrite&&gs.length){h+=`<div class="sec noexp"><div class="brush"><span class="lbl">แปรงสถานะ</span>${(w.statuses||[]).map(s=>`<button class="bchip" data-a="brush" data-s="${esc(s.name)}" aria-pressed="${S.brush===s.name}" style="background:${s.color};color:${fg(s.color)}">${esc(s.name)}</button>`).join('')}<button class="bchip" data-a="brush" data-s="" aria-pressed="${S.brush==null}" style="background:var(--surface2)">เลือกทีละช่อง</button></div></div>`}
+  if(!gs.length)h+=`<div class="card empty" style="margin-top:16px">ยังไม่มีรายการ${b==='ALL'?'':'ในตึก '+esc(b)} ${S.canWrite?'กด “+ เพิ่มรายการ” เพื่อสร้างตารางชั้น × ห้อง':''}</div>`;
+  for(const g of gs)h+=gridCard(w,g,b==='ALL');
+  return h}
+function gridCard(w,g,showB){
+  const tl=tally(w,[g]),p=pcts(w,tl),cols=g.cols||[],fl=g.floors||[];
+  let h=`<section class="card item sec" style="margin-top:16px"><div class="hd"><h3>${showB?`<span class="sub" style="margin-right:6px">ตึก ${esc(g.building)}</span>`:''}${esc(g.item)}</h3>
+   <span class="sub">${MS.map(([k,l])=>p[k]==null?'':`${l} <b style="color:var(--ink)">${fmt(p[k])}</b>`).filter(Boolean).join(' · ')}</span>
+   <span class="row noexp" style="gap:6px"><button class="btn sm" data-a="exp" data-g="${g.id}">ส่งออก</button>${S.canWrite?`<button class="btn sm" data-a="gmenu" data-g="${g.id}">จัดการ</button>`:''}</span></div>
+   <div class="gw" data-gw="${g.id}"><div class="g" style="grid-template-columns:34px repeat(${cols.length},32px)"><span></span>${cols.map(c=>`<button class="gh" data-a="colset" data-g="${g.id}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}`;
+  for(const f of fl){h+=`<button class="gf" data-a="floorset" data-g="${g.id}" data-f="${f}">ชั้น ${f}</button>`;
+    for(const c of cols){const k=f+'-'+c,v=(g.cells||{})[k];
+      if(!has(v))h+=`<button class="c none" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" aria-label="ไม่มีห้อง ${esc(c)} ชั้น ${f}"></button>`;
+      else{const i=sIdx(w,v),s=(w.statuses||[])[i]||{color:'#ccc',name:v};
+        h+=`<button class="c" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" title="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" aria-label="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" style="background:${s.color};color:${fg(s.color)}">${esc(s.short||s.name.slice(0,2))}</button>`}}}
+  return h+`</div></div></section>`}
+
+/* ---------- render ---------- */
+function renderTabs(){const t=$('#tabs');
+  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
+let raf=0;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
+function doRender(){
+  const app=$('#app');if(!S.ready)return;
+  const sc={};app.querySelectorAll('[data-gw]').forEach(e=>sc[e.dataset.gw]=e.scrollLeft);
+  renderTabs();
+  let h='';
+  if(S.loadErr)h+=`<div class="banner">โหลดข้อมูลไม่สำเร็จ: ${esc(S.loadErr)}</div>`;
+  else if(!S.canWrite)h+=`<div class="banner">โหมดดูอย่างเดียว กด “เชื่อม GitHub” ที่มุมขวาบนแล้วใส่ token เพื่อแก้ไขและบันทึกข้อมูล</div>`;
+  const w=S.works[S.view];
+  if(S.view!=='overview'&&w)h+=vWork({id:S.view,...w});else{S.view='overview';h+=vOverview()}
+  app.innerHTML=h;
+  app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]})}
+
+/* ---------- writes ---------- */
+const queue={};
+function patchCells(gid,patch){const g=S.grids[gid];if(!g)return;
+  patch={...patch};for(const k in patch)if(patch[k]==null)patch[k]='-';
+  S.grids[gid]={...g,cells:{...(g.cells||{}),...patch}};
+  const q=queue[gid]||(queue[gid]={p:{},run:false});Object.assign(q.p,patch);
+  render();flush(gid)}
+async function flush(gid){const q=queue[gid];if(q.run)return;q.run=true;
+  try{while(Object.keys(q.p).length){const p=q.p;q.p={};
+    await S.db.doc('grids/'+gid).update({cells:p})}}
+  catch(e){toast('บันทึกไม่สำเร็จ: '+(e&&e.code||'error'));console.error(e)}
+  q.run=false}
+const setDoc=(path,data)=>S.db.doc(path).set(data).catch(e=>{toast('บันทึกไม่สำเร็จ: '+(e&&e.code||'error'));throw e});
+
+/* ---------- modal ---------- */
+function modal(html,bind){const m=$('#modal');m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;m.hidden=false;
+  m.onclick=e=>{if(e.target===m)closeM()};bind&&bind(m.firstChild)}
+function closeM(){const m=$('#modal');m.hidden=true;m.innerHTML=''}
+function pick(title,sub,w,onPick,allowNone){
+  modal(`<h2>${esc(title)}</h2><div class="sub">${esc(sub||'')}</div>${(w.statuses||[]).map((s,i)=>`<button class="opt" data-i="${i}"><span class="sw" style="background:${s.color}"></span>${esc(s.name)}</button>`).join('')}${allowNone?`<button class="opt" data-i="-1"><span class="sw" style="background:transparent;border:1px dashed var(--muted)"></span>ไม่มีห้อง/ไม่นับ</button>`:''}<button class="btn" data-x>ยกเลิก</button>`,
+   el=>{el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     const i=+b.dataset.i;closeM();onPick(i<0?null:w.statuses[i].name)}})}
+function confirmM(text,ok){modal(`<h2>ยืนยัน</h2><div>${esc(text)}</div><div class="row"><button class="btn danger" data-ok>ยืนยัน</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{el.onclick=e=>{const b=e.target.closest('button');if(!b)return;closeM();if(b.hasAttribute('data-ok'))ok()}})}
+
+function addItemForm(w){
+  const bs=S.meta.buildings;
+  modal(`<h2>เพิ่มรายการใน “${esc(w.name)}”</h2>
+   <div class="field"><label for="f_n">ชื่อรายการ</label><input id="f_n" type="text" placeholder="เช่น กระเบื้องพื้นห้องน้ำ"></div>
+   <div class="field"><label for="f_fl">จำนวนชั้น</label><input id="f_fl" type="number" min="1" max="60" value="7"></div>
+   <div class="field"><label for="f_c">ห้อง/จุดต่อชั้น (ใส่จำนวน หรือพิมพ์รหัสคั่นด้วยจุลภาค เช่น 01,02,03)</label><input id="f_c" type="text" value="16"></div>
+   <div class="field"><label>ตึก</label><div class="chips">${bs.map(b=>`<label class="chk"><input type="checkbox" class="f_b" value="${esc(b)}" ${S.bld==='ALL'||S.bld===b?'checked':''}> ตึก ${esc(b)}</label>`).join('')}</div></div>
+   <div class="row"><button class="btn pri" data-ok>สร้าง</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+    const name=$('#f_n').value.trim(),nf=Math.max(1,Math.min(60,+$('#f_fl').value||1)),cv=$('#f_c').value.trim();
+    const bl=[...el.querySelectorAll('.f_b:checked')].map(x=>x.value);
+    if(!name||!bl.length)return toast('กรอกชื่อรายการและเลือกอย่างน้อย 1 ตึก');
+    let cols=/^\d+$/.test(cv)?Array.from({length:Math.min(80,+cv)},(_,i)=>String(i+1).padStart(2,'0')):cv.split(',').map(x=>x.trim()).filter(Boolean);
+    if(!cols.length)return toast('ระบุจำนวนหรือรหัสห้อง');
+    const floors=Array.from({length:nf},(_,i)=>nf-i);const st=w.statuses[0].name;
+    const cells={};for(const f of floors)for(const c of cols)cells[f+'-'+c]=st;
+    const ord=Math.max(0,...gridsOf(w.id).filter(g=>g.item!==name).map(g=>g.order||0))+1;
+    closeM();
+    try{for(const bb of bl)await setDoc('grids/'+w.id+'__'+bb+'__'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),{work:w.id,building:bb,item:name,order:ord,floors,cols,cells});toast('เพิ่มรายการแล้ว')}catch(e){}}})}
+
+function gridMenu(g,w){
+  modal(`<h2>${esc(g.item)} · ตึก ${esc(g.building)}</h2>
+   <button class="opt" data-a2="all">ตั้งทุกช่องเป็นสถานะเดียวกัน</button>
+   <button class="opt" data-a2="ren">เปลี่ยนชื่อรายการ (ทุกตึก)</button>
+   <button class="opt" data-a2="del">ลบรายการนี้ (ตึก ${esc(g.building)})</button><button class="btn" data-x>ปิด</button>`,el=>{
+   el.onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a2;if(b.hasAttribute('data-x'))return closeM();
+    if(a==='all'){closeM();pick('ตั้งทุกช่อง','ช่องที่ไม่มีห้องจะไม่ถูกเปลี่ยน',w,v=>{const p={};for(const [k,x] of Object.entries(g.cells||{}))if(has(x))p[k]=v;patchCells(g.id,p)})}
+    if(a==='ren'){modal(`<h2>เปลี่ยนชื่อรายการ</h2><div class="field"><label for="rn">ชื่อใหม่</label><input id="rn" type="text" value="${esc(g.item)}"></div><div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn" data-x>ยกเลิก</button></div>`,el2=>{
+       el2.onclick=async e2=>{const b2=e2.target.closest('button');if(!b2)return;if(b2.hasAttribute('data-x'))return closeM();const n=$('#rn').value.trim();if(!n)return;closeM();
+         for(const x of gridsOf(w.id).filter(x=>x.item===g.item))await S.db.doc('grids/'+x.id).update({item:n})}})}
+    if(a==='del'){closeM();confirmM(`ลบ “${g.item}” ของตึก ${g.building} ใช่ไหม ข้อมูลสถานะของรายการนี้จะหายไป`,()=>S.db.doc('grids/'+g.id).delete().then(()=>toast('ลบแล้ว')))}}})}
+
+const PRESETS={
+ six:{label:'6 ขั้น: ยังไม่เสร็จ → เสร็จแล้ว → CM OPEN/CLOSE → QC2 OPEN/CLOSE',st:[['ยังไม่เสร็จ','#c4c9c4','·'],['เสร็จแล้ว','#e3a82b','✓'],['CM OPEN','#e07b39','C○'],['CM CLOSE','#2f7fb8','C●'],['QC2 OPEN','#8a6fc4','Q○'],['QC2 CLOSE','#25936a','Q●']],ms:{done:1,cm:3,qc2:5}},
+ qc1:{label:'QC1: ยังไม่ส่ง → QC1 OPEN → QC1 PASS',st:[['ยังไม่ส่ง QC1','#c4c9c4','·'],['QC1 OPEN','#e07b39','Q1○'],['QC1 PASS','#25936a','Q1✓']],ms:{done:1}},
+ simple:{label:'ง่าย: ยังไม่เสร็จ → เสร็จแล้ว',st:[['ยังไม่เสร็จ','#c4c9c4','·'],['เสร็จแล้ว','#25936a','✓']],ms:{done:1}}};
+function addWorkForm(){
+  modal(`<h2>เพิ่มงานใหม่</h2><div class="field"><label for="aw_n">ชื่องาน</label><input id="aw_n" type="text" placeholder="เช่น งานทาสี"></div>
+   <div class="field"><label for="aw_p">ชุดสถานะเริ่มต้น (แก้ได้ภายหลัง)</label><select id="aw_p">${Object.entries(PRESETS).map(([k,v])=>`<option value="${k}">${esc(v.label)}</option>`).join('')}</select></div>
+   <div class="row"><button class="btn pri" data-ok>สร้างงาน</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+    const n=$('#aw_n').value.trim();if(!n)return toast('กรอกชื่องาน');const P=PRESETS[$('#aw_p').value];
+    const statuses=P.st.map((s,i)=>({id:'s'+i,name:s[0],color:s[1],short:s[2]}));
+    const ms={done:null,cm:null,qc2:null};for(const k in P.ms)ms[k]='s'+P.ms[k];
+    const id='w_'+Date.now().toString(36);closeM();
+    try{await setDoc('works/'+id,{name:n,order:Math.max(0,...worksSorted().map(w=>w.order||0))+1,statuses,milestones:ms});S.view=id;S.bld='ALL';toast('สร้างงานแล้ว กด “+ เพิ่มรายการ” เพื่อเริ่มกรอก')}catch(e){}}})}
+
+function workSettings(w0){
+  const w=JSON.parse(JSON.stringify(w0));const old=JSON.parse(JSON.stringify(w0.statuses||[]));
+  const used=new Set();for(const g of gridsOf(w.id))for(const v of Object.values(g.cells||{}))if(has(v))used.add(v);
+  function draw(){
+   modal(`<h2>ตั้งค่างาน</h2><div class="field"><label for="ws_n">ชื่องาน</label><input id="ws_n" type="text" value="${esc(w.name)}"></div>
+   <div class="field"><label>สถานะ เรียงจากเริ่มต้นไปจนเสร็จสมบูรณ์</label>${w.statuses.map((s,i)=>`<div class="srow"><input type="color" data-i="${i}" data-f="color" value="${/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#999999'}" aria-label="สี"><input type="text" data-i="${i}" data-f="name" value="${esc(s.name)}" aria-label="ชื่อสถานะ"><button class="btn sm" data-up="${i}" ${i?'':'disabled'} aria-label="เลื่อนขึ้น">↑</button><button class="btn sm" data-dn="${i}" ${i<w.statuses.length-1?'':'disabled'} aria-label="เลื่อนลง">↓</button><button class="btn sm danger" data-rm="${i}" ${used.has(old.find(o=>o.id===s.id)?.name)||w.statuses.length<2?'disabled title="มีช่องที่ใช้สถานะนี้อยู่"':''} aria-label="ลบ">ลบ</button></div>`).join('')}<button class="btn sm" data-add style="align-self:flex-start">+ เพิ่มสถานะ</button></div>
+   <div class="field"><label>เกณฑ์สำหรับตารางสรุป (นับ “ถึงขั้นนี้ขึ้นไป”)</label>${MS.map(([k,l])=>`<div class="row" style="flex-wrap:nowrap"><span style="width:92px;flex:none">% ${l}</span><select data-ms="${k}"><option value="">ไม่ใช้</option>${w.statuses.map(s=>`<option value="${s.id}" ${w.milestones&&w.milestones[k]===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>`).join('')}</div>
+   <div class="row"><button class="btn pri" data-save>บันทึก</button><button class="btn" data-x>ยกเลิก</button><button class="btn danger" data-del style="margin-left:auto">ลบงานนี้</button></div>`,el=>{
+    const sync=()=>{w.name=$('#ws_n').value;el.querySelectorAll('[data-f]').forEach(i=>{w.statuses[+i.dataset.i][i.dataset.f]=i.value});el.querySelectorAll('[data-ms]').forEach(s=>{w.milestones=w.milestones||{};w.milestones[s.dataset.ms]=s.value||null})};
+    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+     if(b.hasAttribute('data-x'))return closeM();
+     if('up' in b.dataset){sync();const i=+b.dataset.up;[w.statuses[i-1],w.statuses[i]]=[w.statuses[i],w.statuses[i-1]];return draw()}
+     if('dn' in b.dataset){sync();const i=+b.dataset.dn;[w.statuses[i+1],w.statuses[i]]=[w.statuses[i],w.statuses[i+1]];return draw()}
+     if('rm' in b.dataset){sync();const s=w.statuses.splice(+b.dataset.rm,1)[0];for(const k in w.milestones)if(w.milestones[k]===s.id)w.milestones[k]=null;return draw()}
+     if('add' in b.dataset){sync();let n=0;while(w.statuses.some(s=>s.id==='s'+n))n++;w.statuses.push({id:'s'+n,name:'สถานะใหม่',color:'#7a8fa6',short:''});return draw()}
+     if('del' in b.dataset){closeM();return confirmM(`ลบงาน “${w0.name}” พร้อมข้อมูลทุกรายการและทุกตึก ใช่ไหม ย้อนกลับไม่ได้`,async()=>{for(const g of gridsOf(w0.id))await S.db.doc('grids/'+g.id).delete();await S.db.doc('works/'+w0.id).delete();S.view='overview';toast('ลบงานแล้ว')})}
+     if('save' in b.dataset){sync();const names=w.statuses.map(s=>s.name.trim());
+       if(!w.name.trim()||names.some(n=>!n)||new Set(names).size!==names.length)return toast('ชื่องานและชื่อสถานะต้องไม่ว่างและไม่ซ้ำกัน');
+       w.statuses=w.statuses.map(s=>({...s,name:s.name.trim()}));
+       const ren={};for(const s of w.statuses){const o=old.find(x=>x.id===s.id);if(o&&o.name!==s.name)ren[o.name]=s.name}
+       closeM();
+       try{
+        if(Object.keys(ren).length)for(const g of gridsOf(w.id)){const c={...(g.cells||{})};let ch=false;for(const k in c)if(ren[c[k]]){c[k]=ren[c[k]];ch=true}if(ch)await S.db.doc('grids/'+g.id).update({cells:c})}
+        await S.db.doc('works/'+w.id).update({name:w.name.trim(),statuses:w.statuses,milestones:{done:w.milestones?.done||null,cm:w.milestones?.cm||null,qc2:w.milestones?.qc2||null}});toast('บันทึกแล้ว')}catch(e){console.error(e)}}}})}
+  draw()}
+
+function csv(){const rows=[['งาน','รายการ','จุดตรวจ','% เสร็จ','% CM CLOSE','% QC2 CLOSE']];
+  for(const r of tableRows(S.obld)){rows.push([r.w,r.item,r.t,...MS.map(([k])=>r.p[k]==null?'':(r.p[k]*100).toFixed(1))])}
+  return '﻿'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n')}
+
+/* ---------- export ---------- */
+const EXP={fmt:'pdf',orient:'landscape',size:'A4'};
+try{Object.assign(EXP,JSON.parse(localStorage.getItem('mp_exp')||'{}'))}catch(e){}
+function exportDialog(t,title){
+  modal(`<h2>ส่งออก “${esc(title)}”</h2>
+   <div class="field"><label for="x_f">รูปแบบไฟล์</label><select id="x_f"><option value="pdf">PDF</option><option value="png">ภาพ PNG</option></select></div>
+   <div class="field" data-pdf><label for="x_o">การวางหน้า</label><select id="x_o"><option value="landscape">แนวนอน</option><option value="portrait">แนวตั้ง</option></select></div>
+   <div class="field" data-pdf><label for="x_s">ขนาดกระดาษ</label><select id="x_s"><option value="A4">A4</option><option value="A3">A3</option></select></div>
+   <div class="sub" data-pdf>ถ้าเนื้อหายาวกว่า 1 หน้า จะแบ่งเป็นหลายหน้าอัตโนมัติ</div>
+   <div class="row"><button class="btn pri" data-ok>ส่งออก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   $('#x_f').value=EXP.fmt;$('#x_o').value=EXP.orient;$('#x_s').value=EXP.size;
+   const sync=()=>el.querySelectorAll('[data-pdf]').forEach(e=>e.hidden=$('#x_f').value!=='pdf');sync();
+   el.onchange=sync;
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     EXP.fmt=$('#x_f').value;EXP.orient=$('#x_o').value;EXP.size=$('#x_s').value;
+     try{localStorage.setItem('mp_exp',JSON.stringify(EXP))}catch(err){}
+     closeM();runExport(t,title,{...EXP})}})}
+function buildClone(t,title){
+  const scope=document.createElement('div');scope.className='expscope';
+  const src=t.g?document.querySelector(`[data-gw="${CSS.escape(t.g)}"]`).closest('section'):$('#app');
+  const c=src.cloneNode(true);c.removeAttribute('id');
+  c.querySelectorAll('.noexp,.banner').forEach(e=>e.remove());
+  const date=new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  const hd=document.createElement('div');hd.className='exphead';hd.innerHTML=`<b>Modeva Progress</b> · ${esc(title)} · ข้อมูล ณ ${date}`;
+  scope.append(hd,c);document.body.appendChild(scope);
+  const wide=Math.max(0,...[...scope.querySelectorAll('.g')].map(g=>g.scrollWidth));
+  scope.style.width=Math.max(t.g?640:1100,wide+80)+'px';
+  return scope}
+async function runExport(t,title,o){
+  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF))return toast('โหลดตัวช่วยส่งออกไม่สำเร็จ ลองรีเฟรชหน้า');
+  if(!S.dl)return toast('ส่งออกไฟล์ไม่ได้ในมุมมองนี้');
+  toast('กำลังสร้างไฟล์…');
+  const scope=buildClone(t,title);
+  try{
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    const cssW=scope.offsetWidth,cssH=scope.offsetHeight,sc=Math.max(.5,Math.min(2,14000/cssW,14000/cssH));
+    const cv=await html2canvas(scope,{scale:sc,backgroundColor:'#edf0ed',useCORS:true,logging:false});
+    const day=new Date().toISOString().slice(0,10),slug=title.replace(/[^\w฀-๿-]+/g,'_');
+    if(o.fmt==='png'){
+      const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+      await S.dl.save({filename:`modeva-${slug}-${day}.png`,data:blob})
+    }else{
+      const pdf=new window.jspdf.jsPDF({orientation:o.orient,unit:'mm',format:o.size.toLowerCase()});
+      const W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),m=8,aw=W-2*m,ah=H-2*m;
+      const mmPerCss=Math.min(aw/cssW,.2646*1.5),mmPerPx=mmPerCss/sc,slice=Math.floor(ah/mmPerPx);
+      for(let y=0,pg=0;y<cv.height;y+=slice,pg++){
+        const h=Math.min(slice,cv.height-y),pc=document.createElement('canvas');pc.width=cv.width;pc.height=h;
+        const cx=pc.getContext('2d');cx.fillStyle='#edf0ed';cx.fillRect(0,0,pc.width,h);cx.drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);
+        if(pg)pdf.addPage();
+        pdf.addImage(pc.toDataURL('image/jpeg',.92),'JPEG',m,m,cv.width*mmPerPx,h*mmPerPx)}
+      await S.dl.save({filename:`modeva-${slug}-${day}.pdf`,data:pdf.output('blob')})}
+    toast('ส่งออกแล้ว')
+  }catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}
+  finally{scope.remove()}}
+
+/* ---------- events ---------- */
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-a]');if(!el||el.closest('#modal'))return;const a=el.dataset.a,d=el.dataset;
+  const W=S.works[S.view]&&{id:S.view,...S.works[S.view]};
+  if(a==='go'){S.view=d.v;S.brush=null;window.scrollTo(0,0);render()}
+  else if(a==='open'){S.view=d.w;S.bld=d.b||'ALL';S.brush=null;window.scrollTo(0,0);render()}
+  else if(a==='obld'){S.obld=d.b;render()}
+  else if(a==='bld'){S.bld=d.b;render()}
+  else if(a==='hm'){S.hm=d.k;render()}
+  else if(a==='brush'){S.brush=d.s||null;render()}
+  else if(a==='addwork')addWorkForm();
+  else if(a==='additem'&&W)addItemForm(W);
+  else if(a==='wset'&&W)workSettings(W);
+  else if(a==='gmenu'&&W)gridMenu({id:d.g,...S.grids[d.g]},W);
+  else if(a==='csv'){if(S.dl){try{await S.dl.save({filename:'modeva-progress-summary.csv',data:csv()})}catch(err){if(!err||err.code!=='declined')toast('ดาวน์โหลดไม่สำเร็จ')}}else toast('ดาวน์โหลดไม่ได้ในมุมมองนี้')}
+  else if(a==='cell'&&W){if(!S.canWrite)return toast('โหมดดูอย่างเดียว');const g=S.grids[d.g];
+    if(S.brush)patchCells(d.g,{[d.k]:S.brush});
+    else{const [f,c]=d.k.split('-');pick(`${g.item}`,`ตึก ${g.building} · ชั้น ${f} · ห้อง ${c}`,W,v=>patchCells(d.g,{[d.k]:v}),true)}}
+  else if(a==='floorset'&&W&&S.canWrite){const g=S.grids[d.g];pick(`ชั้น ${d.f} ทั้งชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const c of g.cols){const k=d.f+'-'+c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
+  else if(a==='colset'&&W&&S.canWrite){const g=S.grids[d.g];pick(`ห้อง ${d.c} ทุกชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const f of g.floors){const k=f+'-'+d.c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
+  else if(a==='addb')addBuilding();
+  else if(a==='gh')ghDialog();
+  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+
+/* ---------- boot ---------- */
+
+/* ---------- GitHub data layer: data.json in the repo ---------- */
+const GH={cfg:{owner:'',repo:'',branch:'main',token:'',path:'data.json'},data:{works:{},grids:{},meta:{}},sha:null,ops:[],ls:[],timer:null,busy:false};
+const clone=x=>JSON.parse(JSON.stringify(x));
+function ghLoadCfg(){try{Object.assign(GH.cfg,JSON.parse(localStorage.getItem('mp_gh')||'{}'))}catch(e){}
+  if(!GH.cfg.owner){const m=location.hostname.match(/^([^.]+)\.github\.io$/);if(m){GH.cfg.owner=m[1];const p=location.pathname.split('/').filter(Boolean)[0];if(p&&!/\.html?$/.test(p))GH.cfg.repo=p}}}
+const ghReady=()=>!!(GH.cfg.token&&GH.cfg.owner&&GH.cfg.repo);
+const apiUrl=()=>`https://api.github.com/repos/${GH.cfg.owner}/${GH.cfg.repo}/contents/${GH.cfg.path}`;
+const hdr=(raw)=>({Authorization:'Bearer '+GH.cfg.token,Accept:raw?'application/vnd.github.raw+json':'application/vnd.github+json'});
+function b64enc(str){const b=new TextEncoder().encode(str);let s='';b.forEach(x=>s+=String.fromCharCode(x));return btoa(s)}
+async function ghRead(){
+  if(ghReady()){
+    const r=await fetch(apiUrl()+'?ref='+encodeURIComponent(GH.cfg.branch)+'&t='+Date.now(),{headers:hdr(false),cache:'no-store'});
+    if(!r.ok)throw new Error('GitHub '+r.status+(r.status===404?' (ไม่พบไฟล์ data.json หรือ repo/branch ไม่ถูกต้อง)':r.status===401?' (token ไม่ถูกต้อง)':''));
+    const j=await r.json();GH.sha=j.sha;
+    if(j.content){const bin=atob(j.content.replace(/\s/g,''));return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))))}
+    const r2=await fetch(apiUrl()+'?ref='+encodeURIComponent(GH.cfg.branch),{headers:hdr(true),cache:'no-store'});return r2.json()}
+  const r=await fetch('data.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('อ่าน data.json ไม่ได้ ('+r.status+')');return r.json()}
+function merge(a,b){const o={...a};for(const k in b){const v=b[k];o[k]=(v&&typeof v==='object'&&!Array.isArray(v)&&a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k]))?merge(a[k],v):clone(v)}return o}
+function applyOp(d,op){const [col,id]=op.path.split('/');d[col]=d[col]||{};
+  if(op.t==='set')d[col][id]=clone(op.data);
+  else if(op.t==='update'){if(d[col][id])d[col][id]=merge(d[col][id],op.data)}
+  else if(op.t==='delete')delete d[col][id]}
+function emit(l){const d=GH.data;
+  if(l.id){const x=(d[l.c]||{})[l.id];l.cb({exists:!!x,data:()=>x})}
+  else l.cb({docs:Object.entries(d[l.c]||{}).map(([id,x])=>({id,data:()=>x}))})}
+const emitAll=()=>GH.ls.forEach(emit);
+function stat(t){const e=$('#ghstat');if(e)e.textContent=t}
+function schedule(){clearTimeout(GH.timer);stat('กำลังบันทึก…');GH.timer=setTimeout(ghFlush,900)}
+function queueOp(op){if(!ghReady())return Promise.reject({code:'not_granted'});applyOp(GH.data,op);GH.ops.push(op);emitAll();schedule();return Promise.resolve()}
+async function ghFlush(){
+  if(GH.busy||!GH.ops.length)return;GH.busy=true;const batch=GH.ops.splice(0);
+  try{let ok=false;
+    for(let i=0;i<3&&!ok;i++){
+      const remote=await ghRead();batch.forEach(o=>applyOp(remote,o));
+      const r=await fetch(apiUrl(),{method:'PUT',headers:{...hdr(false),'Content-Type':'application/json'},body:JSON.stringify({message:'update progress data',content:b64enc(JSON.stringify(remote)),sha:GH.sha,branch:GH.cfg.branch})});
+      if(r.ok){const j=await r.json();GH.sha=j.content.sha;GH.data=remote;GH.ops.forEach(o=>applyOp(GH.data,o));emitAll();ok=true}
+      else if(r.status!==409&&r.status!==422)throw new Error('GitHub '+r.status+(r.status===403||r.status===404?' (token ต้องมีสิทธิ์ Contents: Read and write)':''))}
+    if(!ok)throw new Error('ข้อมูลถูกแก้พร้อมกัน ลองอีกครั้ง');
+    stat(GH.ops.length?'กำลังบันทึก…':'บันทึกแล้ว')
+  }catch(e){GH.ops.unshift(...batch);stat('บันทึกไม่สำเร็จ');toast('บันทึกไม่สำเร็จ: '+e.message)}
+  GH.busy=false;if(GH.ops.length)schedule()}
+const dbAdapter={
+  collection:c=>({onSnapshot(cb){const l={c,cb};GH.ls.push(l);emit(l);return()=>{GH.ls=GH.ls.filter(x=>x!==l)}}}),
+  doc:p=>{const [c,id]=p.split('/');return{onSnapshot(cb){const l={c,id,cb};GH.ls.push(l);emit(l);return()=>{GH.ls=GH.ls.filter(x=>x!==l)}},
+    set:d=>queueOp({t:'set',path:p,data:d}),update:d=>queueOp({t:'update',path:p,data:d}),delete:()=>queueOp({t:'delete',path:p})}}};
+async function poll(){if(GH.busy||GH.ops.length||document.hidden)return;
+  try{const d=await ghRead();if(JSON.stringify(d)!==JSON.stringify(GH.data)){GH.data=d;emitAll()}}catch(e){}}
+function ghDialog(){const c=GH.cfg;
+  modal(`<h2>เชื่อม GitHub</h2><div class="sub">ข้อมูลทั้งหมดเก็บในไฟล์ data.json ของ repo นี้ ทุกครั้งที่แก้ จะมี commit ใหม่</div>
+   <div class="field"><label for="g_o">GitHub username หรือ organization</label><input id="g_o" type="text" value="${esc(c.owner)}"></div>
+   <div class="field"><label for="g_r">ชื่อ repo</label><input id="g_r" type="text" value="${esc(c.repo)}"></div>
+   <div class="field"><label for="g_b">branch</label><input id="g_b" type="text" value="${esc(c.branch)}"></div>
+   <div class="field"><label for="g_t">Personal access token (สิทธิ์ Contents: Read and write เฉพาะ repo นี้)</label><input id="g_t" type="text" autocomplete="off" value="${esc(c.token)}" placeholder="github_pat_…"></div>
+   <div class="sub">token เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ถูกส่งไปที่อื่นนอกจาก api.github.com</div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn" data-x>ยกเลิก</button><button class="btn danger" data-clr style="margin-left:auto">ล้าง token</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+    if(b.hasAttribute('data-clr')){GH.cfg.token='';try{localStorage.setItem('mp_gh',JSON.stringify(GH.cfg))}catch(x){}closeM();return load()}
+    Object.assign(GH.cfg,{owner:$('#g_o').value.trim(),repo:$('#g_r').value.trim(),branch:$('#g_b').value.trim()||'main',token:$('#g_t').value.trim()});
+    try{localStorage.setItem('mp_gh',JSON.stringify(GH.cfg))}catch(x){}
+    closeM();load()}})}
+async function load(){
+  S.canWrite=ghReady();S.loadErr='';
+  try{GH.data=await ghRead();GH.data.works=GH.data.works||{};GH.data.grids=GH.data.grids||{};GH.data.meta=GH.data.meta||{};GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()}catch(e){S.loadErr=e.message}
+  const b=$('#ghbtn');if(b)b.textContent=S.canWrite?'GitHub: เชื่อมแล้ว':'เชื่อม GitHub';
+  stat('');render()}
+async function boot(){
+  ghLoadCfg();
+  S.dl={save:async({filename,data})=>{const u=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return{status:'saved'}}};
+  S.db=dbAdapter;S.ready=true;
+  try{const l=location.hash.slice(1);if(l)S.view=decodeURIComponent(l)}catch(e){}
+  const onErr=()=>{};
+  S.db.collection('works').onSnapshot(s=>{S.works={};s.docs.forEach(d=>S.works[d.id]=JSON.parse(JSON.stringify(d.data())));render()},onErr);
+  S.db.collection('grids').onSnapshot(s=>{const old=S.grids;S.grids={};s.docs.forEach(d=>{const q=queue[d.id];S.grids[d.id]=(q&&(q.run||Object.keys(q.p).length)&&old[d.id])?old[d.id]:JSON.parse(JSON.stringify(d.data()))});render()},onErr);
+  S.db.doc('meta/app').onSnapshot(s=>{if(s.exists){const m=s.data();if(m.buildings)S.meta.buildings=m.buildings.slice()}render()},onErr);
+  await load();setInterval(poll,45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()})}
+render();boot();
+})();
+</script>
+
+</body></html>
