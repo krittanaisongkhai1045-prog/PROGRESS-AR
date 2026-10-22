@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Prompt:wght@500;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{color-scheme:light}body{margin:0;font-size:14px}[hidden]{display:none!important}img{max-width:100%}
 /* Layout: sticky dark site bar, tab strip per work type, then dashboard cards / room grids that scroll sideways inside their own frame. */
@@ -93,6 +95,11 @@ thead th{font-size:12px;color:var(--muted);font-weight:600;background:var(--surf
 tr.wk td{background:var(--surface2);font-weight:600}
 tr.it td:first-child{padding-left:28px}
 tbody tr:last-child td{border-bottom:0}
+.ft{min-width:0}.ft th{white-space:normal;min-width:88px;vertical-align:bottom}.ft td:first-child,.ft th:first-child{white-space:nowrap;min-width:0}.ft .pc .bar{width:34px}
+.qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.qs .card{display:flex;flex-direction:column;gap:4px}
+.qs .lb{font-size:12.5px;color:var(--muted);font-weight:500}
+.qleg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
 .pc{display:flex;align-items:center;gap:8px;justify-content:flex-end}
 .pc .bar{width:56px;flex:none}
 .na{color:var(--muted)}
@@ -102,10 +109,10 @@ tbody tr:last-child td{border-bottom:0}
 .item .hd h3{font-size:15px;font-weight:600;margin-right:auto}
 .gw{overflow-x:auto;padding-bottom:6px}
 .g{display:grid;gap:3px;width:max-content;align-items:center}
-.gh,.gf{font-size:11px;color:var(--muted);text-align:center;border:0;background:transparent;padding:0;height:24px;font-variant-numeric:tabular-nums}
+.gh,.gf{font-size:11px;color:var(--muted);text-align:center;border:0;background:transparent;padding:0;min-height:24px;line-height:1.2;font-variant-numeric:tabular-nums}
 .gf{position:sticky;left:0;background:var(--surface);z-index:1;font-weight:600;color:var(--ink);min-width:34px}
 .gh:hover,.gf:hover{color:var(--accent);text-decoration:underline}
-.c{width:32px;height:32px;border:0;border-radius:6px;font-size:11px;font-weight:600;padding:0;line-height:1}
+.c{width:100%;min-width:0;height:32px;border:0;border-radius:6px;font-size:11px;font-weight:600;padding:0;line-height:1}
 .c.none{background:transparent;border:1px dashed var(--line);cursor:default}
 .brush{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:10;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;box-shadow:var(--shadow)}
 .brush .lbl{font-size:12px;color:var(--muted)}
@@ -145,7 +152,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 <header class="top"><div class="wrap">
   <div class="brand">Modeva Progress<small>ติดตามงานก่อสร้างรายตึก · ตึก D–G</small></div>
   <nav class="tabs" id="tabs" role="tablist"></nav>
-  <span id="ghstat" class="sub" style="color:var(--bar-ink);opacity:.7"></span><button class="tab" id="ghbtn" data-a="gh">เชื่อม GitHub</button>
+  <span id="ghstat" class="sub" style="color:var(--bar-ink);opacity:.7"></span><button class="tab" id="ghbtn" data-a="gh">เข้าสู่ระบบ / ตั้งค่า</button>
 </div></header>
 <main class="wrap" id="app"><div class="empty">กำลังโหลดข้อมูล…</div></main>
 <div id="modal" hidden></div>
@@ -153,7 +160,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 <script>
 (function(){
 'use strict';
-const S={works:{},grids:{},meta:{buildings:['D','E','F','G']},view:'overview',bld:'ALL',obld:'ALL',hm:'done',brush:null,canWrite:true,ready:false,db:null,dl:null};
+const S={works:{},grids:{},meta:{buildings:['D','E','F','G']},view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',brush:null,canWrite:true,ready:false,db:null,dl:null};
 const MS=[['done','เสร็จ'],['cm','CM CLOSE'],['qc2','QC2 CLOSE']];
 const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -169,26 +176,92 @@ const worksSorted=()=>Object.entries(S.works).map(([id,w])=>({id,...w})).sort((a
 const gridsOf=(wid,b)=>Object.entries(S.grids).map(([id,g])=>({id,...g})).filter(g=>g.work===wid&&(!b||b==='ALL'||g.building===b)).sort((a,b)=>(a.order||0)-(b.order||0)||a.id.localeCompare(b.id));
 function sIdx(w,name){const i=(w.statuses||[]).findIndex(s=>s.name===name);return i<0?0:i}
 function msIdx(w,k){const id=(w.milestones||{})[k];if(!id)return null;const i=(w.statuses||[]).findIndex(s=>s.id===id);return i<0?null:i}
-function tally(w,grids){const n=(w.statuses||[]).length;const c=new Array(n).fill(0);let t=0;
-  for(const g of grids)for(const v of Object.values(g.cells||{})){if(!has(v))continue;c[sIdx(w,v)]++;t++}
-  return {c,t}}
-function pcts(w,tl){const o={};for(const [k] of MS){const m=msIdx(w,k);o[k]=(m==null||!tl.t)?null:tl.c.slice(m).reduce((a,b)=>a+b,0)/tl.t}return o}
+function tally(w,grids){const n=(w.statuses||[]).length;const c=new Array(n).fill(0);let t=0,pt=0,pd=0;
+  for(const g of grids)for(const v of Object.values(g.cells||{})){if(!has(v))continue;
+    if(g.kind==='percent'){pt++;pd+=Math.max(0,Math.min(100,+v||0))/100}else{c[sIdx(w,v)]++;t++}}
+  return {c,t,pt,pd,n:t+pt}}
+function pcts(w,tl){const o={};for(const [k] of MS){const m=msIdx(w,k);const den=k==='done'?tl.n:tl.t;o[k]=(m==null||!den)?null:(tl.c.slice(m).reduce((a,b)=>a+b,0)+(k==='done'?tl.pd:0))/den}return o}
 const fmt=p=>p==null?'–':(p*100>=99.95||p===0?Math.round(p*100):(p*100).toFixed(1))+'%';
 function pbar(p,col){return `<div class="pc"><div class="bar"><i style="width:${p==null?0:p*100}%;background:${col}"></i></div><span class="${p==null?'na':''}">${fmt(p)}</span></div>`}
 function ring(p,col,label,sub){const r=52,C=2*Math.PI*r,v=p==null?0:Math.max(0,Math.min(1,p));
   return `<div class="ring"><svg viewBox="0 0 130 130" role="img" aria-label="${esc(label)} ${fmt(p)}"><circle cx="65" cy="65" r="${r}" fill="none" stroke="var(--track)" stroke-width="13"/><circle cx="65" cy="65" r="${r}" fill="none" stroke="${col}" stroke-width="13" ${v>0?'stroke-linecap="round"':'stroke-opacity="0"'} stroke-dasharray="${v*C} ${C}" transform="rotate(-90 65 65)"/><text x="65" y="72" text-anchor="middle" font-family="Prompt,sans-serif" font-weight="700" font-size="26" fill="var(--ink)">${p==null?'–':Math.round(p*100)+'%'}</text></svg><div class="t">${esc(label)}</div><div class="n">${esc(sub)}</div></div>`}
-function stackBar(w,tl){return `<div class="stack">${(w.statuses||[]).map((s,i)=>tl.c[i]?`<i title="${esc(s.name)} ${tl.c[i]}" style="width:${tl.c[i]/tl.t*100}%;background:${s.color}"></i>`:'').join('')}</div>
- <div class="legend">${(w.statuses||[]).map((s,i)=>`<span><span class="sw" style="background:${s.color}"></span>${esc(s.name)} <b>${tl.c[i]}</b></span>`).join('')}</div>`}
+function stackBar(w,tl){const pv=tl.pt?`<div class="legend"><span>รายการแบบ % เฉลี่ย <b>${fmt(tl.pd/tl.pt)}</b> (${tl.pt} ช่อง)</span></div>`:'';if(!tl.t)return pv;return `<div class="stack">${(w.statuses||[]).map((s,i)=>tl.c[i]?`<i title="${esc(s.name)} ${tl.c[i]}" style="width:${tl.c[i]/tl.t*100}%;background:${s.color}"></i>`:'').join('')}</div>
+ <div class="legend">${(w.statuses||[]).map((s,i)=>`<span><span class="sw" style="background:${s.color}"></span>${esc(s.name)} <b>${tl.c[i]}</b></span>`).join('')}</div>`+pv}
 
 /* ---------- aggregate ---------- */
 function overall(b){const agg={done:[0,0],cm:[0,0],qc2:[0,0]};let units=0;
-  for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs);units+=tl.t;
-    for(const [k] of MS){const m=msIdx(w,k);if(m==null)continue;agg[k][0]+=tl.c.slice(m).reduce((a,x)=>a+x,0);agg[k][1]+=tl.t}}
+  for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs);units+=tl.n;
+    for(const [k] of MS){const m=msIdx(w,k);if(m==null)continue;agg[k][0]+=tl.c.slice(m).reduce((a,x)=>a+x,0)+(k==='done'?tl.pd:0);agg[k][1]+=(k==='done'?tl.n:tl.t)}}
   const o={units};for(const [k] of MS)o[k]=agg[k][1]?agg[k][0]/agg[k][1]:null;o.n=agg;return o}
 
 /* ---------- views ---------- */
 function bldChips(cur,attr){return `<div class="chips">${['ALL',...S.meta.buildings].map(b=>`<button class="chip" data-a="${attr}" data-b="${b}" aria-pressed="${cur===b}">${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</button>`).join('')}${S.canWrite&&attr==='obld'?'<button class="chip noexp" data-a="addb" aria-label="เพิ่มตึก">+ ตึก</button>':''}</div>`}
 function addBuilding(){modal(`<h2>เพิ่มตึก</h2><div class="field"><label for="nb">ชื่อตึก (เช่น H)</label><input id="nb" type="text" maxlength="6"></div><div class="row"><button class="btn pri" data-ok>เพิ่ม</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();const n=$('#nb').value.trim().toUpperCase().replace(/[^A-Z0-9ก-๙]/g,'');if(!n||S.meta.buildings.includes(n))return toast('ชื่อว่างหรือซ้ำ');closeM();try{await setDoc('meta/app',{buildings:[...S.meta.buildings,n]});toast('เพิ่มตึก '+n+' แล้ว กด “+ เพิ่มรายการ” ในแต่ละงานเพื่อสร้างตาราง')}catch(e){}}})}
+function floorSub(g,f){const cells={};for(const [k,v] of Object.entries(g.cells||{})){if(g.rowLabel||k.split('-')[0]===String(f))cells[k]=v}return {kind:g.kind,cells}}
+function floorKeys(gs){const fs=new Set(),ls=[];gs.forEach(g=>{if(g.rowLabel){if(!ls.includes(g.rowLabel))ls.push(g.rowLabel)}else(g.floors||[]).forEach(f=>fs.add(f))});return [...[...fs].sort((a,b)=>b-a),...ls]}
+function gridsAtRow(gs,r){return gs.filter(g=>typeof r==='number'?(!g.rowLabel&&(g.floors||[]).includes(r)):g.rowLabel===r).map(g=>typeof r==='number'?floorSub(g,r):{kind:g.kind,cells:g.cells})}
+const rowName=r=>typeof r==='number'?'ชั้น '+r:esc(r);
+const fmChips=()=>`<div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="fm" data-k="${k}" aria-pressed="${S.fm===k}">${l}</button>`).join('')}</div>`;
+function floorTable(w,gs){const m=S.fm,rows=floorKeys(gs);if(!rows.length)return '';
+  const names=[...new Set(gs.map(g=>g.item))];
+  const cell=tl=>`<td>${tl.n?pbar(pcts(w,tl)[m],MSCOL[m]):'<span class="na">–</span>'}</td>`;
+  const body=rows.map(r=>`<tr><td>${rowName(r)}</td>${names.map(n=>cell(tally(w,gridsAtRow(gs.filter(g=>g.item===n),r)))).join('')}${cell(tally(w,gridsAtRow(gs,r)))}</tr>`).join('');
+  return `<section class="sec"><div class="head"><h2>% แยกตามชั้น</h2>${fmChips()}</div><div class="tw"><table class="ft"><thead><tr><th>ชั้น</th>${names.map(n=>`<th>${esc(n)}</th>`).join('')}<th>รวมทุกรายการ</th></tr></thead><tbody>${body}</tbody></table></div></section>`}
+function floorOverview(b){const ws=worksSorted(),m=S.fm,per=ws.map(w=>({w,gs:gridsOf(w.id,b)})),rows=floorKeys(per.flatMap(x=>x.gs));if(!rows.length)return '';
+  const body=rows.map(r=>{let num=0,den=0;
+    const tds=per.map(({w,gs})=>{const tl=tally(w,gridsAtRow(gs,r)),mi=msIdx(w,m);
+      if(mi!=null){num+=tl.c.slice(mi).reduce((a,x)=>a+x,0)+(m==='done'?tl.pd:0);den+=(m==='done'?tl.n:tl.t)}
+      return `<td>${tl.n?pbar(pcts(w,tl)[m],MSCOL[m]):'<span class="na">–</span>'}</td>`}).join('');
+    return `<tr><td>${rowName(r)}</td>${tds}<td>${den?pbar(num/den,MSCOL[m]):'<span class="na">–</span>'}</td></tr>`}).join('');
+  return `<section class="sec"><div class="head"><h2>% แยกตามชั้น</h2>${fmChips()}<span class="sub">แต่ละงาน ตามชั้นของตึกที่เลือก</span></div><div class="tw"><table class="ft"><thead><tr><th>ชั้น</th>${ws.map(w=>`<th>${esc(w.name)}</th>`).join('')}<th>รวมทุกงาน</th></tr></thead><tbody>${body}</tbody></table></div></section>`}
+/* ---------- QC2 page: a room is ready for QC2 only when every item in it has passed CM ---------- */
+const QCS={no:['#c4c9c4','·','ยังไม่ผ่าน'],wait:['#2f7fb8','✓','ผ่าน CM ครบ รอ QC2'],open:['#8a6fc4','Q○','QC2 OPEN'],close:['#25936a','Q●','QC2 CLOSE']};
+const qcWorks=()=>worksSorted().filter(w=>msIdx(w,'cm')!=null);
+function qcRooms(w,b){const ci=msIdx(w,'cm'),qi=msIdx(w,'qc2'),rooms=new Map();
+  for(const g of gridsOf(w.id,b)){if(g.kind==='percent'||g.rowLabel)continue;
+    for(const [k,v] of Object.entries(g.cells||{})){if(!has(v))continue;const j=k.indexOf('-'),f=+k.slice(0,j),c=k.slice(j+1),key=g.building+'|'+k;
+      let r=rooms.get(key);if(!r){r={b:g.building,f,c,k,items:[]};rooms.set(key,r)}
+      r.items.push({n:g.item,o:g.order||0,i:sIdx(w,v),s:v})}}
+  for(const r of rooms.values()){r.items.sort((a,b)=>a.o-b.o);r.miss=r.items.filter(x=>x.i<ci);
+    r.st=r.miss.length?'no':(qi!=null&&r.items.every(x=>x.i>=qi))?'close':r.items.some(x=>x.i>ci)?'open':'wait'}
+  return rooms}
+const qcCount=rs=>{const o={t:rs.length,no:0,wait:0,open:0,close:0};rs.forEach(r=>o[r.st]++);o.pass=o.t-o.no;return o};
+function qcMap(w,bl,rooms){const rs=rooms.filter(r=>r.b===bl);if(!rs.length)return '';
+  const cols=[];gridsOf(w.id,bl).forEach(g=>{if(g.kind==='percent'||g.rowLabel)return;(g.cols||[]).forEach(c=>{if(!cols.includes(c))cols.push(c)})});
+  const floors=[...new Set(rs.map(r=>r.f))].sort((a,b)=>b-a),map=new Map(rs.map(r=>[r.f+'-'+r.c,r])),n=qcCount(rs);
+  let h=`<section class="card item sec" style="margin-top:16px"><div class="hd"><h3>ตึก ${esc(bl)}</h3><span class="sub">ผ่าน CM ครบ <b style="color:var(--ink)">${n.pass}</b> / ${n.t} ห้อง · QC2 CLOSE ${n.close}</span></div>
+   <div class="gw"><div class="g" style="grid-template-columns:34px repeat(${cols.length},32px)"><span></span>${cols.map(c=>`<span class="gh">${esc(c)}</span>`).join('')}`;
+  for(const f of floors){h+=`<span class="gf">ชั้น ${f}</span>`;
+    for(const c of cols){const r=map.get(f+'-'+c);
+      if(!r)h+=`<span class="c none"></span>`;
+      else{const q=QCS[r.st];h+=`<button class="c" data-a="qroom" data-b="${esc(bl)}" data-k="${esc(r.k)}" title="ห้อง ${esc(c)} ชั้น ${f}: ${q[2]}" aria-label="ห้อง ${esc(c)} ชั้น ${f}: ${q[2]}" style="background:${q[0]};color:${fg(q[0])}">${q[1]}</button>`}}}
+  return h+`</div></div></section>`}
+function qroomSheet(w,r){const ci=msIdx(w,'cm'),q=QCS[r.st];
+  modal(`<h2>ตึก ${esc(r.b)} · ชั้น ${r.f} · ห้อง ${esc(r.c)}</h2>
+   <div class="chip" style="align-self:flex-start;background:${q[0]};color:${fg(q[0])};border-color:${q[0]};font-weight:600">${q[2]}</div>
+   ${r.miss.length?`<div class="sub">ยังไม่ผ่าน CM: ${r.miss.map(x=>esc(x.n)).join(', ')}</div>`:'<div class="sub">ทุกรายการผ่าน CM แล้ว</div>'}
+   ${r.items.map(x=>{const s=w.statuses[x.i]||{color:'#ccc'};return `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span>${esc(x.n)}</span><span class="chip" style="background:${s.color};color:${fg(s.color)};border-color:${s.color};white-space:nowrap">${esc(x.s)}</span></div>`}).join('')}
+   <button class="btn" data-x>ปิด</button>`,el=>{el.onclick=e=>{if(e.target.closest('[data-x]'))closeM()}})}
+function vQC2(){
+  const ws=qcWorks();if(!ws.length)return `<div class="card empty">ยังไม่มีงานที่ตั้งขั้น CM CLOSE ไว้ ตั้งค่าได้ที่ “ตั้งค่างาน” ของแต่ละงาน</div>`;
+  const w=ws.find(x=>x.id===S.qw)||ws[0];S.qw=w.id;const b=S.qb,all=[...qcRooms(w,b).values()],n=qcCount(all);
+  let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">QC2 ผ่านหรือยังไม่ผ่าน</h1><div class="sub">ห้องจะผ่านเมื่อทุกรายการของ${esc(w.name)}ในห้องนั้นเป็น CM CLOSE ขึ้นไป จึงพร้อมส่ง QC2 ได้</div></div>
+   <div class="row noexp"><button class="btn sm" data-a="exp">ส่งออก PDF / ภาพ</button></div></div>
+   <div class="row" style="margin-top:12px">${ws.length>1?`<div class="chips">${ws.map(x=>`<button class="chip" data-a="qw" data-w="${x.id}" aria-pressed="${x.id===w.id}">${esc(x.name)}</button>`).join('')}</div>`:''}${bldChips(b,'qb')}</div>`;
+  if(!n.t)return h+`<div class="card empty" style="margin-top:16px">ยังไม่มีข้อมูลห้องของ${esc(w.name)}${b==='ALL'?'':'ในตึกนี้'}</div>`;
+  const p=n.pass/n.t;
+  h+=`<section class="sec"><div class="qs">
+    <div class="card"><span class="lb">ห้องทั้งหมด</span><span class="big">${n.t.toLocaleString('th-TH')}</span></div>
+    <div class="card"><span class="lb">ผ่าน CM ครบ (พร้อม QC2)</span><span class="big" style="color:var(--cm)">${n.pass.toLocaleString('th-TH')} <span style="font-size:15px">· ${fmt(p)}</span></span></div>
+    <div class="card"><span class="lb">ยังไม่ผ่าน</span><span class="big" style="color:var(--warn)">${n.no.toLocaleString('th-TH')}</span></div>
+    <div class="card"><span class="lb">QC2 CLOSE</span><span class="big" style="color:var(--qc2)">${n.close.toLocaleString('th-TH')}</span></div></div>
+   <div class="card"><div class="stack">${['no','wait','open','close'].map(k=>n[k]?`<i title="${QCS[k][2]} ${n[k]}" style="width:${n[k]/n.t*100}%;background:${QCS[k][0]}"></i>`:'').join('')}</div>
+    <div class="qleg" style="margin-top:8px">${['no','wait','open','close'].map(k=>`<span><span class="sw" style="background:${QCS[k][0]}"></span>${QCS[k][2]} <b style="color:var(--ink)">${n[k]}</b></span>`).join('')}</div></div></section>`;
+  const groups=b==='ALL'?S.meta.buildings.filter(x=>all.some(r=>r.b===x)).map(x=>[ 'ตึก '+x,all.filter(r=>r.b===x)]):[...new Set(all.map(r=>r.f))].sort((a,c)=>c-a).map(f=>['ชั้น '+f,all.filter(r=>r.f===f)]);
+  h+=`<section class="sec"><div class="head"><h2>ตารางสรุป ${b==='ALL'?'รายตึก':'รายชั้น ตึก '+esc(b)}</h2></div><div class="tw"><table><thead><tr><th>${b==='ALL'?'ตึก':'ชั้น'}</th><th>ห้อง</th><th>ผ่าน CM ครบ</th><th>% ผ่าน</th><th>ยังไม่ผ่าน</th><th>QC2 OPEN</th><th>QC2 CLOSE</th></tr></thead><tbody>${groups.map(([l,rs])=>{const c=qcCount(rs);return `<tr><td>${esc(l)}</td><td>${c.t}</td><td>${c.pass}</td><td>${pbar(c.pass/c.t,'var(--cm)')}</td><td>${c.no}</td><td>${c.open}</td><td>${c.close}</td></tr>`}).join('')}</tbody></table></div></section>`;
+  h+=`<section class="sec"><div class="head"><h2>แผนผังห้อง</h2><span class="sub">กดห้องเพื่อดูว่ารายการไหนยังไม่ผ่าน</span></div></section>`;
+  h+=(b==='ALL'?S.meta.buildings:[b]).map(x=>qcMap(w,x,all)).join('');
+  return h}
 function vOverview(){
   const ws=worksSorted(),b=S.obld,o=overall(b);
   if(!ws.length)return `<div class="card empty">ยังไม่มีงานในระบบ กดปุ่ม “+ เพิ่มงาน” ด้านบนเพื่อเริ่มต้น</div>`;
@@ -202,9 +275,9 @@ function vOverview(){
   </section>`;
   h+=`<section class="sec"><div class="head"><h2>งานแต่ละประเภท</h2><span class="sub">กดการ์ดเพื่อเข้าไปอัปเดต</span></div><div class="cards">`;
   for(const w of ws){const gs=gridsOf(w.id,b),tl=tally(w,gs),p=pcts(w,tl);
-    h+=`<button class="card wc" data-a="open" data-w="${w.id}"><h3>${esc(w.name)}</h3><div class="sub">${tl.t.toLocaleString('th-TH')} จุดตรวจ · ${new Set(gs.map(g=>g.item)).size} รายการ</div>
+    h+=`<button class="card wc" data-a="open" data-w="${w.id}"><h3>${esc(w.name)}</h3><div class="sub">${tl.n.toLocaleString('th-TH')} จุดตรวจ · ${new Set(gs.map(g=>g.item)).size} รายการ</div>
     ${MS.map(([k,l])=>`<div class="m"><span>${l}</span><div class="bar"><i style="width:${p[k]==null?0:p[k]*100}%;background:${MSCOL[k]}"></i></div><span class="v ${p[k]==null?'na':''}">${fmt(p[k])}</span></div>`).join('')}
-    ${tl.t?stackBar(w,tl):'<div class="sub">ยังไม่มีรายการ</div>'}</button>`}
+    ${tl.n?stackBar(w,tl):'<div class="sub">ยังไม่มีรายการ</div>'}</button>`}
   h+=`</div></section>`;
   // heatmap
   const hm=S.hm,cols=S.meta.buildings;
@@ -213,8 +286,9 @@ function vOverview(){
   for(const w of ws){h+=`<span class="hl">${esc(w.name)}</span>`;
     for(const c of cols){const tl=tally(w,gridsOf(w.id,c)),p=pcts(w,tl)[hm];
       const st=p==null?`background:var(--surface2);color:var(--muted)`:`background:${mixc(hm,p)};color:${p>.6?'#fff':'var(--ink)'}`;
-      h+=`<button class="hc" style="${st}" data-a="open" data-w="${w.id}" data-b="${esc(c)}" title="${esc(w.name)} ตึก ${esc(c)}">${tl.t?fmt(p):'–'}</button>`}}
+      h+=`<button class="hc" ${p==null?'':`data-hp="${p}" data-hk="${hm}"`} style="${st}" data-a="open" data-w="${w.id}" data-b="${esc(c)}" title="${esc(w.name)} ตึก ${esc(c)}">${tl.n?fmt(p):'–'}</button>`}}
   h+=`</div></div></section>`;
+  h+=floorOverview(b);
   // table
   h+=`<section class="sec"><div class="head"><h2>ตารางสรุป % แยกตามขั้น</h2><button class="btn sm noexp" data-a="csv">ดาวน์โหลด CSV</button></div><div class="tw"><table><thead><tr><th>งาน / รายการ</th><th>จุดตรวจ</th><th>% เสร็จ</th><th>% CM CLOSE</th><th>% QC2 CLOSE</th></tr></thead><tbody>${tableRows(b).map(r=>r.html).join('')}</tbody></table></div>
   <div class="sub">“–” คือประเภทงานนั้นไม่ได้ตั้งขั้นดังกล่าว (เช่น ฝ้าใช้ QC1) ตั้งค่าได้ในหน้าของแต่ละงาน</div></section>`;
@@ -222,10 +296,10 @@ function vOverview(){
 function tableRows(b){const out=[];
   for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs),p=pcts(w,tl);
     const cell=(k,pp)=>`<td>${pbar(pp[k],MSCOL[k])}</td>`;
-    out.push({w:w.name,item:'',t:tl.t,p,html:`<tr class="wk"><td>${esc(w.name)}</td><td>${tl.t.toLocaleString('th-TH')}</td>${MS.map(([k])=>cell(k,p)).join('')}</tr>`});
+    out.push({w:w.name,item:'',t:tl.n,p,html:`<tr class="wk"><td>${esc(w.name)}</td><td>${tl.n.toLocaleString('th-TH')}</td>${MS.map(([k])=>cell(k,p)).join('')}</tr>`});
     const names=[...new Set(gs.map(g=>g.item))];
     for(const n of names){const ig=gs.filter(g=>g.item===n),it=tally(w,ig),ip=pcts(w,it);
-      out.push({w:w.name,item:n,t:it.t,p:ip,html:`<tr class="it"><td>${esc(n)}</td><td>${it.t.toLocaleString('th-TH')}</td>${MS.map(([k])=>cell(k,ip)).join('')}</tr>`})}}
+      out.push({w:w.name,item:n,t:it.n,p:ip,html:`<tr class="it"><td>${esc(n)}</td><td>${it.n.toLocaleString('th-TH')}</td>${MS.map(([k])=>cell(k,ip)).join('')}</tr>`})}}
   return out}
 
 function vWork(w){
@@ -236,29 +310,33 @@ function vWork(w){
   const tl=tally(w,gs),p=pcts(w,tl);
   h+=`<section class="sec"><div class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
    <div style="display:flex;flex-direction:column;gap:10px"><h2>สรุป ${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</h2>${MS.map(([k,l])=>`<div class="m"><span>${l}</span><div class="bar"><i style="width:${p[k]==null?0:p[k]*100}%;background:${MSCOL[k]}"></i></div><span class="v ${p[k]==null?'na':''}">${fmt(p[k])}</span></div>`).join('')}</div>
-   <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">${tl.t?stackBar(w,tl):'<div class="sub">ยังไม่มีรายการในตึกนี้</div>'}</div></div>`;
-  if(tl.t){h+=`<div class="tw"><table><thead><tr><th>รายการ</th><th>จุดตรวจ</th><th>% เสร็จ</th><th>% CM CLOSE</th><th>% QC2 CLOSE</th></tr></thead><tbody>${tableRows(b).filter(r=>r.w===w.name&&r.item).map(r=>r.html).join('')}</tbody></table></div>`}
+   <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">${tl.n?stackBar(w,tl):'<div class="sub">ยังไม่มีรายการในตึกนี้</div>'}</div></div>`;
+  if(tl.n){h+=`<div class="tw"><table><thead><tr><th>รายการ</th><th>จุดตรวจ</th><th>% เสร็จ</th><th>% CM CLOSE</th><th>% QC2 CLOSE</th></tr></thead><tbody>${tableRows(b).filter(r=>r.w===w.name&&r.item).map(r=>r.html).join('')}</tbody></table></div>`}
   h+=`</section>`;
-  if(S.canWrite&&gs.length){h+=`<div class="sec noexp"><div class="brush"><span class="lbl">แปรงสถานะ</span>${(w.statuses||[]).map(s=>`<button class="bchip" data-a="brush" data-s="${esc(s.name)}" aria-pressed="${S.brush===s.name}" style="background:${s.color};color:${fg(s.color)}">${esc(s.name)}</button>`).join('')}<button class="bchip" data-a="brush" data-s="" aria-pressed="${S.brush==null}" style="background:var(--surface2)">เลือกทีละช่อง</button></div></div>`}
+  h+=floorTable(w,gs);
+  if(S.canWrite&&gs.some(g=>g.kind!=='percent')){h+=`<div class="sec noexp"><div class="brush"><span class="lbl">แปรงสถานะ</span>${(w.statuses||[]).map(s=>`<button class="bchip" data-a="brush" data-s="${esc(s.name)}" aria-pressed="${S.brush===s.name}" style="background:${s.color};color:${fg(s.color)}">${esc(s.name)}</button>`).join('')}<button class="bchip" data-a="brush" data-s="" aria-pressed="${S.brush==null}" style="background:var(--surface2)">เลือกทีละช่อง</button></div></div>`}
   if(!gs.length)h+=`<div class="card empty" style="margin-top:16px">ยังไม่มีรายการ${b==='ALL'?'':'ในตึก '+esc(b)} ${S.canWrite?'กด “+ เพิ่มรายการ” เพื่อสร้างตารางชั้น × ห้อง':''}</div>`;
   for(const g of gs)h+=gridCard(w,g,b==='ALL');
   return h}
+function pctColor(v){const a=[196,201,196],b=[37,147,106],t=v/100;return '#'+a.map((x,i)=>Math.round(x+(b[i]-x)*t).toString(16).padStart(2,'0')).join('')}
 function gridCard(w,g,showB){
   const tl=tally(w,[g]),p=pcts(w,tl),cols=g.cols||[],fl=g.floors||[];
   let h=`<section class="card item sec" style="margin-top:16px"><div class="hd"><h3>${showB?`<span class="sub" style="margin-right:6px">ตึก ${esc(g.building)}</span>`:''}${esc(g.item)}</h3>
    <span class="sub">${MS.map(([k,l])=>p[k]==null?'':`${l} <b style="color:var(--ink)">${fmt(p[k])}</b>`).filter(Boolean).join(' · ')}</span>
    <span class="row noexp" style="gap:6px"><button class="btn sm" data-a="exp" data-g="${g.id}">ส่งออก</button>${S.canWrite?`<button class="btn sm" data-a="gmenu" data-g="${g.id}">จัดการ</button>`:''}</span></div>
-   <div class="gw" data-gw="${g.id}"><div class="g" style="grid-template-columns:34px repeat(${cols.length},32px)"><span></span>${cols.map(c=>`<button class="gh" data-a="colset" data-g="${g.id}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}`;
-  for(const f of fl){h+=`<button class="gf" data-a="floorset" data-g="${g.id}" data-f="${f}">ชั้น ${f}</button>`;
+   <div class="gw" data-gw="${g.id}"><div class="g" style="grid-template-columns:${g.rowLabel?'72px':'34px'} repeat(${cols.length},${g.cw||32}px)"><span></span>${cols.map(c=>`<button class="gh" data-a="colset" data-g="${g.id}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}`;
+  for(const f of fl){h+=`<button class="gf" data-a="floorset" data-g="${g.id}" data-f="${f}">${esc(g.rowLabel||'ชั้น '+f)}</button>`;
     for(const c of cols){const k=f+'-'+c,v=(g.cells||{})[k];
       if(!has(v))h+=`<button class="c none" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" aria-label="ไม่มีห้อง ${esc(c)} ชั้น ${f}"></button>`;
+      else if(g.kind==='percent'){const pv=Math.max(0,Math.min(100,+v||0)),col=pctColor(pv);
+        h+=`<button class="c" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" title="${esc(c)} ${esc(g.rowLabel||'ชั้น '+f)}: ${pv}%" aria-label="${esc(c)} ${esc(g.rowLabel||'ชั้น '+f)}: ${pv}%" style="background:${col};color:${fg(col)}">${Math.round(pv*10)/10}${(g.cw||32)>40?'%':''}</button>`}
       else{const i=sIdx(w,v),s=(w.statuses||[])[i]||{color:'#ccc',name:v};
         h+=`<button class="c" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" title="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" aria-label="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" style="background:${s.color};color:${fg(s.color)}">${esc(s.short||s.name.slice(0,2))}</button>`}}}
   return h+`</div></div></section>`}
 
 /* ---------- render ---------- */
 function renderTabs(){const t=$('#tabs');
-  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
+  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">QC2</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
 let raf=0;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
 function doRender(){
   const app=$('#app');if(!S.ready)return;
@@ -266,9 +344,10 @@ function doRender(){
   renderTabs();
   let h='';
   if(S.loadErr)h+=`<div class="banner">โหลดข้อมูลไม่สำเร็จ: ${esc(S.loadErr)}</div>`;
-  else if(!S.canWrite)h+=`<div class="banner">โหมดดูอย่างเดียว กด “เชื่อม GitHub” ที่มุมขวาบนแล้วใส่ token เพื่อแก้ไขและบันทึกข้อมูล</div>`;
+  else if(!S.canWrite)h+=`<div class="banner">โหมดดูอย่างเดียว กด “เข้าสู่ระบบ / ตั้งค่า” ที่มุมขวาบนเพื่อเข้าสู่ระบบและแก้ไขข้อมูล</div>`;
   const w=S.works[S.view];
-  if(S.view!=='overview'&&w)h+=vWork({id:S.view,...w});else{S.view='overview';h+=vOverview()}
+  if(S.view==='qc2')h+=vQC2();
+  else if(S.view!=='overview'&&w)h+=vWork({id:S.view,...w});else{S.view='overview';h+=vOverview()}
   app.innerHTML=h;
   app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]})}
 
@@ -294,6 +373,18 @@ function pick(title,sub,w,onPick,allowNone){
   modal(`<h2>${esc(title)}</h2><div class="sub">${esc(sub||'')}</div>${(w.statuses||[]).map((s,i)=>`<button class="opt" data-i="${i}"><span class="sw" style="background:${s.color}"></span>${esc(s.name)}</button>`).join('')}${allowNone?`<button class="opt" data-i="-1"><span class="sw" style="background:transparent;border:1px dashed var(--muted)"></span>ไม่มีห้อง/ไม่นับ</button>`:''}<button class="btn" data-x>ยกเลิก</button>`,
    el=>{el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
      const i=+b.dataset.i;closeM();onPick(i<0?null:w.statuses[i].name)}})}
+function pickPct(title,sub,onPick,allowNone){
+  modal(`<h2>${esc(title)}</h2><div class="sub">${esc(sub||'')}</div>
+   <div class="row">${[0,25,50,75,100].map(v=>`<button class="btn" data-v="${v}">${v}%</button>`).join('')}</div>
+   <div class="field"><label for="pp_v">ระบุเอง (0–100)</label><input id="pp_v" type="number" min="0" max="100" step="0.1" inputmode="decimal"></div>
+   <div class="row"><button class="btn pri" data-set>ตั้งค่า</button>${allowNone?'<button class="btn" data-none>ไม่มีช่องนี้</button>':''}<button class="btn" data-x>ยกเลิก</button></div>`,
+   el=>{const f=$('#pp_v');f.focus();
+     el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+       if(b.hasAttribute('data-none')){closeM();return onPick(null)}
+       let v=b.dataset.v!=null?+b.dataset.v:parseFloat(f.value);
+       if(!isFinite(v))return toast('ใส่ตัวเลข 0–100');
+       closeM();onPick(Math.max(0,Math.min(100,Math.round(v*10)/10)))}})}
+function pickFor(g,title,sub,w,cb,none){return g.kind==='percent'?pickPct(title,sub,cb,none):pick(title,sub,w,cb,none)}
 function confirmM(text,ok){modal(`<h2>ยืนยัน</h2><div>${esc(text)}</div><div class="row"><button class="btn danger" data-ok>ยืนยัน</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{el.onclick=e=>{const b=e.target.closest('button');if(!b)return;closeM();if(b.hasAttribute('data-ok'))ok()}})}
 
 function addItemForm(w){
@@ -302,6 +393,7 @@ function addItemForm(w){
    <div class="field"><label for="f_n">ชื่อรายการ</label><input id="f_n" type="text" placeholder="เช่น กระเบื้องพื้นห้องน้ำ"></div>
    <div class="field"><label for="f_fl">จำนวนชั้น</label><input id="f_fl" type="number" min="1" max="60" value="7"></div>
    <div class="field"><label for="f_c">ห้อง/จุดต่อชั้น (ใส่จำนวน หรือพิมพ์รหัสคั่นด้วยจุลภาค เช่น 01,02,03)</label><input id="f_c" type="text" value="16"></div>
+   <div class="field"><label for="f_k">ชนิดค่าของแต่ละช่อง</label><select id="f_k"><option value="status">สถานะ (เสร็จแล้ว / CM / QC2 …)</option><option value="percent">เปอร์เซ็นต์ 0–100</option></select></div>
    <div class="field"><label>ตึก</label><div class="chips">${bs.map(b=>`<label class="chk"><input type="checkbox" class="f_b" value="${esc(b)}" ${S.bld==='ALL'||S.bld===b?'checked':''}> ตึก ${esc(b)}</label>`).join('')}</div></div>
    <div class="row"><button class="btn pri" data-ok>สร้าง</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
@@ -310,19 +402,24 @@ function addItemForm(w){
     if(!name||!bl.length)return toast('กรอกชื่อรายการและเลือกอย่างน้อย 1 ตึก');
     let cols=/^\d+$/.test(cv)?Array.from({length:Math.min(80,+cv)},(_,i)=>String(i+1).padStart(2,'0')):cv.split(',').map(x=>x.trim()).filter(Boolean);
     if(!cols.length)return toast('ระบุจำนวนหรือรหัสห้อง');
-    const floors=Array.from({length:nf},(_,i)=>nf-i);const st=w.statuses[0].name;
-    const cells={};for(const f of floors)for(const c of cols)cells[f+'-'+c]=st;
+    const floors=Array.from({length:nf},(_,i)=>nf-i);const st=w.statuses[0].name,kind=$('#f_k').value;
+    const cells={};for(const f of floors)for(const c of cols)cells[f+'-'+c]=kind==='percent'?0:st;
     const ord=Math.max(0,...gridsOf(w.id).filter(g=>g.item!==name).map(g=>g.order||0))+1;
     closeM();
-    try{for(const bb of bl)await setDoc('grids/'+w.id+'__'+bb+'__'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),{work:w.id,building:bb,item:name,order:ord,floors,cols,cells});toast('เพิ่มรายการแล้ว')}catch(e){}}})}
+    try{for(const bb of bl)await setDoc('grids/'+w.id+'__'+bb+'__'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),{work:w.id,building:bb,item:name,order:ord,floors,cols,cells,...(kind==='percent'?{kind:'percent'}:{})});toast('เพิ่มรายการแล้ว')}catch(e){}}})}
 
 function gridMenu(g,w){
   modal(`<h2>${esc(g.item)} · ตึก ${esc(g.building)}</h2>
    <button class="opt" data-a2="all">ตั้งทุกช่องเป็นสถานะเดียวกัน</button>
+   <button class="opt" data-a2="kind">${g.kind==='percent'?'เปลี่ยนเป็นแบบสถานะ':'เปลี่ยนเป็นแบบ % (0–100)'}</button>
    <button class="opt" data-a2="ren">เปลี่ยนชื่อรายการ (ทุกตึก)</button>
    <button class="opt" data-a2="del">ลบรายการนี้ (ตึก ${esc(g.building)})</button><button class="btn" data-x>ปิด</button>`,el=>{
    el.onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a2;if(b.hasAttribute('data-x'))return closeM();
-    if(a==='all'){closeM();pick('ตั้งทุกช่อง','ช่องที่ไม่มีห้องจะไม่ถูกเปลี่ยน',w,v=>{const p={};for(const [k,x] of Object.entries(g.cells||{}))if(has(x))p[k]=v;patchCells(g.id,p)})}
+    if(a==='all'){closeM();pickFor(g,'ตั้งทุกช่อง','ช่องที่ไม่มีห้องจะไม่ถูกเปลี่ยน',w,v=>{const p={};for(const [k,x] of Object.entries(g.cells||{}))if(has(x))p[k]=v;patchCells(g.id,p)})}
+    if(a==='kind'){closeM();const toP=g.kind!=='percent',di=msIdx(w,'done')??1,cells={};
+      for(const [k,x] of Object.entries(g.cells||{})){if(!has(x)){cells[k]=x;continue}
+        cells[k]=toP?(sIdx(w,x)>=di?100:0):((+x>=100)?w.statuses[Math.min(di,w.statuses.length-1)].name:w.statuses[0].name)}
+      S.db.doc('grids/'+g.id).update({kind:toP?'percent':'status',cells}).then(()=>toast('เปลี่ยนแล้ว'))}
     if(a==='ren'){modal(`<h2>เปลี่ยนชื่อรายการ</h2><div class="field"><label for="rn">ชื่อใหม่</label><input id="rn" type="text" value="${esc(g.item)}"></div><div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn" data-x>ยกเลิก</button></div>`,el2=>{
        el2.onclick=async e2=>{const b2=e2.target.closest('button');if(!b2)return;if(b2.hasAttribute('data-x'))return closeM();const n=$('#rn').value.trim();if(!n)return;closeM();
          for(const x of gridsOf(w.id).filter(x=>x.item===g.item))await S.db.doc('grids/'+x.id).update({item:n})}})}
@@ -397,6 +494,8 @@ function buildClone(t,title){
   c.querySelectorAll('.noexp,.banner').forEach(e=>e.remove());
   const date=new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
   const hd=document.createElement('div');hd.className='exphead';hd.innerHTML=`<b>Modeva Progress</b> · ${esc(title)} · ข้อมูล ณ ${date}`;
+  const LT={done:[227,168,43],cm:[47,127,184],qc2:[37,147,106]};
+  c.querySelectorAll('.hc[data-hp]').forEach(e=>{const p=+e.dataset.hp,a=LT[e.dataset.hk],t=(8+p*82)/100;e.style.background='rgb('+a.map(x=>Math.round(x*t+255*(1-t))).join(',')+')';e.style.color=p>.6?'#fff':'#15222a'});
   scope.append(hd,c);document.body.appendChild(scope);
   const wide=Math.max(0,...[...scope.querySelectorAll('.g')].map(g=>g.scrollWidth));
   scope.style.width=Math.max(t.g?640:1100,wide+80)+'px';
@@ -408,6 +507,9 @@ async function runExport(t,title,o){
   const scope=buildClone(t,title);
   try{
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    const sr=scope.getBoundingClientRect();
+    const units=[...scope.querySelectorAll('tr,.hero,.wc,.heat,.ring,section.item,.sec>.card,.exphead')].map(e=>{const r=e.getBoundingClientRect();return [r.top-sr.top,r.bottom-sr.top]});
+    scope.querySelectorAll('h2,.sec>.head').forEach(e=>{const r=e.getBoundingClientRect();units.push([r.top-sr.top,r.bottom-sr.top+90])});
     const cssW=scope.offsetWidth,cssH=scope.offsetHeight,sc=Math.max(.5,Math.min(2,14000/cssW,14000/cssH));
     const cv=await html2canvas(scope,{scale:sc,backgroundColor:'#edf0ed',useCORS:true,logging:false});
     const day=new Date().toISOString().slice(0,10),slug=title.replace(/[^\w฀-๿-]+/g,'_');
@@ -417,12 +519,20 @@ async function runExport(t,title,o){
     }else{
       const pdf=new window.jspdf.jsPDF({orientation:o.orient,unit:'mm',format:o.size.toLowerCase()});
       const W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),m=8,aw=W-2*m,ah=H-2*m;
-      const mmPerCss=Math.min(aw/cssW,.2646*1.5),mmPerPx=mmPerCss/sc,slice=Math.floor(ah/mmPerPx);
-      for(let y=0,pg=0;y<cv.height;y+=slice,pg++){
-        const h=Math.min(slice,cv.height-y),pc=document.createElement('canvas');pc.width=cv.width;pc.height=h;
-        const cx=pc.getContext('2d');cx.fillStyle='#edf0ed';cx.fillRect(0,0,pc.width,h);cx.drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);
-        if(pg)pdf.addPage();
-        pdf.addImage(pc.toDataURL('image/jpeg',.92),'JPEG',m,m,cv.width*mmPerPx,h*mmPerPx)}
+      const mmPerCss=Math.min(aw/cssW,.2646*1.5),cap=ah/mmPerCss;
+      const cuts=[0];let y0=0;
+      while(cssH-y0>cap+1){let y=y0+cap;
+        for(let g=0;g<60;g++){const u=units.find(([t,bt])=>t+1<y&&y<bt-1);if(!u)break;y=u[0]}
+        if(y<y0+cap*.35)y=y0+cap;
+        cuts.push(y);y0=y}
+      cuts.push(cssH);
+      const N=cuts.length-1;
+      for(let i=0;i<N;i++){
+        const sy=Math.round(cuts[i]*sc),h=Math.max(1,Math.min(cv.height-sy,Math.round((cuts[i+1]-cuts[i])*sc))),pc=document.createElement('canvas');pc.width=cv.width;pc.height=h;
+        const cx=pc.getContext('2d');cx.fillStyle='#edf0ed';cx.fillRect(0,0,pc.width,h);cx.drawImage(cv,0,sy,cv.width,h,0,0,cv.width,h);
+        if(i)pdf.addPage();
+        pdf.addImage(pc.toDataURL('image/jpeg',.92),'JPEG',m,m,cv.width*mmPerCss/sc,h*mmPerCss/sc);
+        pdf.setFontSize(8);pdf.setTextColor(120);pdf.text('Modeva Progress  '+(i+1)+' / '+N,W-m,H-3.5,{align:'right'})}
       await S.dl.save({filename:`modeva-${slug}-${day}.pdf`,data:pdf.output('blob')})}
     toast('ส่งออกแล้ว')
   }catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}
@@ -437,6 +547,10 @@ document.addEventListener('click',async e=>{
   else if(a==='obld'){S.obld=d.b;render()}
   else if(a==='bld'){S.bld=d.b;render()}
   else if(a==='hm'){S.hm=d.k;render()}
+  else if(a==='fm'){S.fm=d.k;render()}
+  else if(a==='qb'){S.qb=d.b;render()}
+  else if(a==='qw'){S.qw=d.w;render()}
+  else if(a==='qroom'){const w=S.works[S.qw];if(w){const r=qcRooms({id:S.qw,...w},d.b).get(d.b+'|'+d.k);if(r)qroomSheet({id:S.qw,...w},r)}}
   else if(a==='brush'){S.brush=d.s||null;render()}
   else if(a==='addwork')addWorkForm();
   else if(a==='additem'&&W)addItemForm(W);
@@ -444,29 +558,52 @@ document.addEventListener('click',async e=>{
   else if(a==='gmenu'&&W)gridMenu({id:d.g,...S.grids[d.g]},W);
   else if(a==='csv'){if(S.dl){try{await S.dl.save({filename:'modeva-progress-summary.csv',data:csv()})}catch(err){if(!err||err.code!=='declined')toast('ดาวน์โหลดไม่สำเร็จ')}}else toast('ดาวน์โหลดไม่ได้ในมุมมองนี้')}
   else if(a==='cell'&&W){if(!S.canWrite)return toast('โหมดดูอย่างเดียว');const g=S.grids[d.g];
-    if(S.brush)patchCells(d.g,{[d.k]:S.brush});
-    else{const [f,c]=d.k.split('-');pick(`${g.item}`,`ตึก ${g.building} · ชั้น ${f} · ห้อง ${c}`,W,v=>patchCells(d.g,{[d.k]:v}),true)}}
-  else if(a==='floorset'&&W&&S.canWrite){const g=S.grids[d.g];pick(`ชั้น ${d.f} ทั้งชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const c of g.cols){const k=d.f+'-'+c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
-  else if(a==='colset'&&W&&S.canWrite){const g=S.grids[d.g];pick(`ห้อง ${d.c} ทุกชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const f of g.floors){const k=f+'-'+d.c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
+    if(S.brush&&g.kind!=='percent')patchCells(d.g,{[d.k]:S.brush});
+    else{const [f,c]=d.k.split('-');pickFor(g,`${g.item}`,`ตึก ${g.building} · ${g.rowLabel||'ชั้น '+f} · ${g.kind==='percent'&&g.cw>40?c:'ห้อง '+c}`,W,v=>patchCells(d.g,{[d.k]:v}),true)}}
+  else if(a==='floorset'&&W&&S.canWrite){const g=S.grids[d.g];pickFor(g,`ชั้น ${d.f} ทั้งชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const c of g.cols){const k=d.f+'-'+c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
+  else if(a==='colset'&&W&&S.canWrite){const g=S.grids[d.g];pickFor(g,`ห้อง ${d.c} ทุกชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const f of g.floors){const k=f+'-'+d.c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
   else if(a==='addb')addBuilding();
   else if(a==='gh')ghDialog();
-  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
+  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
 /* ---------- boot ---------- */
-
-/* ---------- GitHub data layer: data.json in the repo ---------- */
-const GH={cfg:{owner:'',repo:'',branch:'main',token:'',path:'data.json'},data:{works:{},grids:{},meta:{}},sha:null,ops:[],ls:[],timer:null,busy:false};
+/* ---------- data layer: Supabase table "docs" or data.json in a GitHub repo ---------- */
+const GH={cfg:{mode:'github',owner:'',repo:'',branch:'main',token:'',path:'data.json',sbUrl:'',sbKey:''},data:{works:{},grids:{},meta:{}},sha:null,ops:[],ls:[],timer:null,busy:false,emT:0};
+let SB=null,SBUSER=null,SBCH=null;
 const clone=x=>JSON.parse(JSON.stringify(x));
-function ghLoadCfg(){try{Object.assign(GH.cfg,JSON.parse(localStorage.getItem('mp_gh')||'{}'))}catch(e){}
+const isSb=()=>GH.cfg.mode==='supabase';
+function ghLoadCfg(){
+  try{Object.assign(GH.cfg,window.MP_CONFIG||{})}catch(e){}
+  try{Object.assign(GH.cfg,JSON.parse(localStorage.getItem('mp_gh')||'{}'))}catch(e){}
   if(!GH.cfg.owner){const m=location.hostname.match(/^([^.]+)\.github\.io$/);if(m){GH.cfg.owner=m[1];const p=location.pathname.split('/').filter(Boolean)[0];if(p&&!/\.html?$/.test(p))GH.cfg.repo=p}}}
-const ghReady=()=>!!(GH.cfg.token&&GH.cfg.owner&&GH.cfg.repo);
+const saveCfg=()=>{try{localStorage.setItem('mp_gh',JSON.stringify(GH.cfg))}catch(e){}};
+const ghReady=()=>isSb()?!!(SB&&SBUSER):!!(GH.cfg.token&&GH.cfg.owner&&GH.cfg.repo);
+function updBtn(){const b=$('#ghbtn');if(!b)return;b.textContent=ghReady()?(isSb()?'Supabase: '+((SBUSER&&SBUSER.email)||'เข้าสู่ระบบแล้ว'):'GitHub: เชื่อมแล้ว'):'เข้าสู่ระบบ / ตั้งค่า'}
+function sbInit(){
+  if(SB||!GH.cfg.sbUrl||!GH.cfg.sbKey||!window.supabase)return;
+  SB=window.supabase.createClient(GH.cfg.sbUrl,GH.cfg.sbKey,{auth:{persistSession:true,autoRefreshToken:true}});
+  SB.auth.onAuthStateChange((ev,sess)=>{SBUSER=sess?sess.user:null;S.canWrite=ghReady();updBtn();render()});
+  SB.auth.getSession().then(({data})=>{if(data&&data.session)SBUSER=data.session.user;S.canWrite=ghReady();updBtn();render()}).catch(()=>{});
+  sbRealtime()}
+function sbRealtime(){if(SBCH||!SB)return;
+  SBCH=SB.channel('docs-sync').on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
+    const r=p.eventType==='DELETE'?p.old:p.new;if(!r||!r.col)return;
+    const d=GH.data;d[r.col]=d[r.col]||{};
+    if(p.eventType==='DELETE')delete d[r.col][r.id];else d[r.col][r.id]=r.data;
+    clearTimeout(GH.emT);GH.emT=setTimeout(()=>{GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()},200)}).subscribe()}
 const apiUrl=()=>`https://api.github.com/repos/${GH.cfg.owner}/${GH.cfg.repo}/contents/${GH.cfg.path}`;
 const hdr=(raw)=>({Authorization:'Bearer '+GH.cfg.token,Accept:raw?'application/vnd.github.raw+json':'application/vnd.github+json'});
 function b64enc(str){const b=new TextEncoder().encode(str);let s='';b.forEach(x=>s+=String.fromCharCode(x));return btoa(s)}
+async function sbRead(){const out={works:{},grids:{},meta:{}};
+  for(let from=0;;from+=1000){const {data,error}=await SB.from('docs').select('col,id,data').range(from,from+999);
+    if(error)throw new Error('Supabase: '+error.message);
+    data.forEach(r=>{(out[r.col]=out[r.col]||{})[r.id]=r.data});if(data.length<1000)break}
+  return out}
 async function ghRead(){
-  if(ghReady()){
+  if(isSb()&&SB)return sbRead();
+  if(!isSb()&&ghReady()){
     const r=await fetch(apiUrl()+'?ref='+encodeURIComponent(GH.cfg.branch)+'&t='+Date.now(),{headers:hdr(false),cache:'no-store'});
     if(!r.ok)throw new Error('GitHub '+r.status+(r.status===404?' (ไม่พบไฟล์ data.json หรือ repo/branch ไม่ถูกต้อง)':r.status===401?' (token ไม่ถูกต้อง)':''));
     const j=await r.json();GH.sha=j.sha;
@@ -483,19 +620,30 @@ function emit(l){const d=GH.data;
   else l.cb({docs:Object.entries(d[l.c]||{}).map(([id,x])=>({id,data:()=>x}))})}
 const emitAll=()=>GH.ls.forEach(emit);
 function stat(t){const e=$('#ghstat');if(e)e.textContent=t}
-function schedule(){clearTimeout(GH.timer);stat('กำลังบันทึก…');GH.timer=setTimeout(ghFlush,900)}
+function schedule(){clearTimeout(GH.timer);stat('กำลังบันทึก…');GH.timer=setTimeout(ghFlush,isSb()?400:900)}
 function queueOp(op){if(!ghReady())return Promise.reject({code:'not_granted'});applyOp(GH.data,op);GH.ops.push(op);emitAll();schedule();return Promise.resolve()}
+async function sbFlush(batch){
+  let i=0;
+  while(i<batch.length){const o=batch[i];
+    if(o.t==='set'){const rows=new Map();
+      while(i<batch.length&&batch[i].t==='set'){const [c,id]=batch[i].path.split('/');rows.set(c+'/'+id,{col:c,id,data:batch[i].data});i++}
+      const {error}=await SB.from('docs').upsert([...rows.values()]);if(error)throw error}
+    else if(o.t==='update'){const [c,id]=o.path.split('/');
+      const {error}=await SB.rpc('patch_doc',{p_col:c,p_id:id,p_patch:o.data});if(error)throw error;i++}
+    else{const [c,id]=o.path.split('/');const {error}=await SB.from('docs').delete().eq('col',c).eq('id',id);if(error)throw error;i++}}}
 async function ghFlush(){
   if(GH.busy||!GH.ops.length)return;GH.busy=true;const batch=GH.ops.splice(0);
-  try{let ok=false;
-    for(let i=0;i<3&&!ok;i++){
-      const remote=await ghRead();batch.forEach(o=>applyOp(remote,o));
-      const r=await fetch(apiUrl(),{method:'PUT',headers:{...hdr(false),'Content-Type':'application/json'},body:JSON.stringify({message:'update progress data',content:b64enc(JSON.stringify(remote)),sha:GH.sha,branch:GH.cfg.branch})});
-      if(r.ok){const j=await r.json();GH.sha=j.content.sha;GH.data=remote;GH.ops.forEach(o=>applyOp(GH.data,o));emitAll();ok=true}
-      else if(r.status!==409&&r.status!==422)throw new Error('GitHub '+r.status+(r.status===403||r.status===404?' (token ต้องมีสิทธิ์ Contents: Read and write)':''))}
-    if(!ok)throw new Error('ข้อมูลถูกแก้พร้อมกัน ลองอีกครั้ง');
+  try{
+    if(isSb()){await sbFlush(batch)}
+    else{let ok=false;
+      for(let i=0;i<3&&!ok;i++){
+        const remote=await ghRead();batch.forEach(o=>applyOp(remote,o));
+        const r=await fetch(apiUrl(),{method:'PUT',headers:{...hdr(false),'Content-Type':'application/json'},body:JSON.stringify({message:'update progress data',content:b64enc(JSON.stringify(remote)),sha:GH.sha,branch:GH.cfg.branch})});
+        if(r.ok){const j=await r.json();GH.sha=j.content.sha;GH.data=remote;GH.ops.forEach(o=>applyOp(GH.data,o));emitAll();ok=true}
+        else if(r.status!==409&&r.status!==422)throw new Error('GitHub '+r.status+(r.status===403||r.status===404?' (token ต้องมีสิทธิ์ Contents: Read and write)':''))}
+      if(!ok)throw new Error('ข้อมูลถูกแก้พร้อมกัน ลองอีกครั้ง')}
     stat(GH.ops.length?'กำลังบันทึก…':'บันทึกแล้ว')
-  }catch(e){GH.ops.unshift(...batch);stat('บันทึกไม่สำเร็จ');toast('บันทึกไม่สำเร็จ: '+e.message)}
+  }catch(e){GH.ops.unshift(...batch);stat('บันทึกไม่สำเร็จ');toast('บันทึกไม่สำเร็จ: '+(e&&e.message||e&&e.code||'error'))}
   GH.busy=false;if(GH.ops.length)schedule()}
 const dbAdapter={
   collection:c=>({onSnapshot(cb){const l={c,cb};GH.ls.push(l);emit(l);return()=>{GH.ls=GH.ls.filter(x=>x!==l)}}}),
@@ -503,26 +651,56 @@ const dbAdapter={
     set:d=>queueOp({t:'set',path:p,data:d}),update:d=>queueOp({t:'update',path:p,data:d}),delete:()=>queueOp({t:'delete',path:p})}}};
 async function poll(){if(GH.busy||GH.ops.length||document.hidden)return;
   try{const d=await ghRead();if(JSON.stringify(d)!==JSON.stringify(GH.data)){GH.data=d;emitAll()}}catch(e){}}
-function ghDialog(){const c=GH.cfg;
-  modal(`<h2>เชื่อม GitHub</h2><div class="sub">ข้อมูลทั้งหมดเก็บในไฟล์ data.json ของ repo นี้ ทุกครั้งที่แก้ จะมี commit ใหม่</div>
-   <div class="field"><label for="g_o">GitHub username หรือ organization</label><input id="g_o" type="text" value="${esc(c.owner)}"></div>
-   <div class="field"><label for="g_r">ชื่อ repo</label><input id="g_r" type="text" value="${esc(c.repo)}"></div>
-   <div class="field"><label for="g_b">branch</label><input id="g_b" type="text" value="${esc(c.branch)}"></div>
-   <div class="field"><label for="g_t">Personal access token (สิทธิ์ Contents: Read and write เฉพาะ repo นี้)</label><input id="g_t" type="text" autocomplete="off" value="${esc(c.token)}" placeholder="github_pat_…"></div>
-   <div class="sub">token เก็บในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ถูกส่งไปที่อื่นนอกจาก api.github.com</div>
-   <div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn" data-x>ยกเลิก</button><button class="btn danger" data-clr style="margin-left:auto">ล้าง token</button></div>`,el=>{
-   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
-    if(b.hasAttribute('data-clr')){GH.cfg.token='';try{localStorage.setItem('mp_gh',JSON.stringify(GH.cfg))}catch(x){}closeM();return load()}
-    Object.assign(GH.cfg,{owner:$('#g_o').value.trim(),repo:$('#g_r').value.trim(),branch:$('#g_b').value.trim()||'main',token:$('#g_t').value.trim()});
-    try{localStorage.setItem('mp_gh',JSON.stringify(GH.cfg))}catch(x){}
-    closeM();load()}})}
+async function importSeed(){
+  if(!(isSb()&&ghReady()))return toast('เข้าสู่ระบบ Supabase ก่อน');
+  try{const seed=await (await fetch('data.json?t='+Date.now())).json();const rows=[];
+    for(const c of Object.keys(seed))for(const [id,data] of Object.entries(seed[c]))rows.push({col:c,id,data});
+    for(let i=0;i<rows.length;i+=50){const {error}=await SB.from('docs').upsert(rows.slice(i,i+50));if(error)throw error}
+    toast('นำเข้า '+rows.length+' รายการแล้ว');await load()}
+  catch(e){toast('นำเข้าไม่สำเร็จ: '+(e&&e.message||e))}}
+function connDialog(){const c=GH.cfg;
+  modal(`<h2>การเชื่อมต่อข้อมูล</h2>
+   <div class="field"><label for="c_m">เก็บข้อมูลที่</label><select id="c_m"><option value="supabase">Supabase (แนะนำ ซิงก์ทันทีหลายเครื่อง)</option><option value="github">GitHub (ไฟล์ data.json)</option></select></div>
+   <div data-m="supabase" style="display:flex;flex-direction:column;gap:12px">
+     <div class="field"><label for="c_su">Project URL</label><input id="c_su" type="text" value="${esc(c.sbUrl)}" placeholder="https://xxxx.supabase.co"></div>
+     <div class="field"><label for="c_sk">anon public key</label><input id="c_sk" type="text" value="${esc(c.sbKey)}" autocomplete="off"></div>
+     <div class="field"><label for="c_se">อีเมลผู้ใช้ (สร้างใน Supabase → Authentication → Users)</label><input id="c_se" type="text" value="${esc((SBUSER&&SBUSER.email)||'')}" autocomplete="username"></div>
+     <div class="field"><label for="c_sp">รหัสผ่าน</label><input id="c_sp" type="text" autocomplete="off" style="-webkit-text-security:disc" placeholder="${SBUSER?'เข้าสู่ระบบอยู่แล้ว':''}"></div>
+     <div class="row"><button class="btn pri" data-a2="login">เชื่อมต่อและเข้าสู่ระบบ</button>${SBUSER?'<button class="btn" data-a2="logout">ออกจากระบบ</button><button class="btn" data-a2="import">นำเข้า data.json</button>':''}</div>
+     <div class="sub">anon key เป็นกุญแจสาธารณะ ใส่ในหน้าเว็บได้ สิทธิ์เขียนถูกจำกัดด้วย RLS ให้เฉพาะผู้ใช้ที่เข้าสู่ระบบ</div>
+   </div>
+   <div data-m="github" style="display:flex;flex-direction:column;gap:12px">
+     <div class="field"><label for="g_o">GitHub username หรือ organization</label><input id="g_o" type="text" value="${esc(c.owner)}"></div>
+     <div class="field"><label for="g_r">ชื่อ repo</label><input id="g_r" type="text" value="${esc(c.repo)}"></div>
+     <div class="field"><label for="g_b">branch</label><input id="g_b" type="text" value="${esc(c.branch)}"></div>
+     <div class="field"><label for="g_t">Personal access token (Contents: Read and write เฉพาะ repo นี้)</label><input id="g_t" type="text" autocomplete="off" value="${esc(c.token)}" placeholder="github_pat_…"></div>
+     <div class="row"><button class="btn pri" data-a2="ghsave">บันทึก</button><button class="btn danger" data-a2="ghclr">ล้าง token</button></div>
+   </div>
+   <button class="btn" data-x>ปิด</button>`,el=>{
+   $('#c_m').value=c.mode;
+   const sync=()=>el.querySelectorAll('[data-m]').forEach(e=>e.style.display=e.dataset.m===$('#c_m').value?'flex':'none');sync();
+   el.onchange=e=>{if(e.target.id==='c_m')sync()};
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();const a=b.dataset.a2;
+    GH.cfg.mode=$('#c_m').value;
+    if(a==='login'){
+      Object.assign(GH.cfg,{sbUrl:$('#c_su').value.trim(),sbKey:$('#c_sk').value.trim()});saveCfg();
+      if(!GH.cfg.sbUrl||!GH.cfg.sbKey)return toast('ใส่ Project URL และ anon key');
+      if(!window.supabase)return toast('โหลดไลบรารี Supabase ไม่สำเร็จ ลองรีเฟรชหน้า');
+      SB=null;SBCH=null;sbInit();
+      const em=$('#c_se').value.trim(),pw=$('#c_sp').value;
+      if(em&&pw){const {error}=await SB.auth.signInWithPassword({email:em,password:pw});if(error)return toast('เข้าสู่ระบบไม่สำเร็จ: '+error.message)}
+      closeM();await load();toast(em&&pw?'เข้าสู่ระบบแล้ว':'ตั้งค่าแล้ว (ดูอย่างเดียว ถ้ายังไม่ได้เข้าสู่ระบบ)')}
+    else if(a==='logout'){await SB.auth.signOut();closeM();await load()}
+    else if(a==='import'){closeM();importSeed()}
+    else if(a==='ghsave'){Object.assign(GH.cfg,{owner:$('#g_o').value.trim(),repo:$('#g_r').value.trim(),branch:$('#g_b').value.trim()||'main',token:$('#g_t').value.trim()});saveCfg();closeM();load()}
+    else if(a==='ghclr'){GH.cfg.token='';saveCfg();closeM();load()}}})}
+const ghDialog=connDialog;
 async function load(){
   S.canWrite=ghReady();S.loadErr='';
   try{GH.data=await ghRead();GH.data.works=GH.data.works||{};GH.data.grids=GH.data.grids||{};GH.data.meta=GH.data.meta||{};GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()}catch(e){S.loadErr=e.message}
-  const b=$('#ghbtn');if(b)b.textContent=S.canWrite?'GitHub: เชื่อมแล้ว':'เชื่อม GitHub';
-  stat('');render()}
+  updBtn();stat('');render()}
 async function boot(){
-  ghLoadCfg();
+  ghLoadCfg();sbInit();
   S.dl={save:async({filename,data})=>{const u=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return{status:'saved'}}};
   S.db=dbAdapter;S.ready=true;
   try{const l=location.hash.slice(1);if(l)S.view=decodeURIComponent(l)}catch(e){}

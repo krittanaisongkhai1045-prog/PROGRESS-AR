@@ -10,13 +10,32 @@
 3. เปิด GitHub Pages: Settings → Pages → Source: *Deploy from a branch* → Branch: `main` / `(root)` → Save
 4. รอประมาณ 1 นาที จะได้ลิงก์ `https://<username>.github.io/<repo>/`
 
-## ให้แก้ไขข้อมูลได้จากหน้าเว็บ
+## เชื่อม Supabase (แนะนำ: ซิงก์ทันทีหลายเครื่อง ไม่มี commit ทุกครั้งที่แก้)
+
+1. สร้างโปรเจกต์ที่ supabase.com
+2. SQL Editor → New query → วางไฟล์ `supabase/schema.sql` ทั้งไฟล์ → Run (สร้างตาราง `docs`, ฟังก์ชันรวมข้อมูล, สิทธิ์ RLS และเปิด Realtime)
+3. Authentication → Users → Add user: สร้างอีเมล/รหัสผ่านให้คนที่จะแก้ข้อมูล (ติ๊ก Auto Confirm User) แล้วไปที่ Authentication → Sign In / Providers ปิด *Allow new users to sign up* เพื่อไม่ให้คนนอกสมัครเอง
+4. Project Settings → API คัดลอก **Project URL** และ **anon public key** (ห้ามใช้ service_role key)
+5. เปิดเว็บ กดปุ่ม **เข้าสู่ระบบ / ตั้งค่า** เลือก Supabase ใส่ URL, anon key, อีเมล, รหัสผ่าน แล้วกด "เชื่อมต่อและเข้าสู่ระบบ"
+6. กด **นำเข้า data.json** ครั้งเดียว เพื่อใส่ข้อมูลเริ่มต้นจาก Excel เข้าฐานข้อมูล
+7. (ไม่บังคับ) ใส่ URL และ anon key ในไฟล์ `config.js` เพื่อให้ทุกคนที่เปิดเว็บเชื่อมต่ออัตโนมัติ ผู้ใช้แค่เข้าสู่ระบบ
+
+ทุกคนอ่านข้อมูลได้โดยไม่ต้องเข้าสู่ระบบ เฉพาะผู้ที่เข้าสู่ระบบเท่านั้นที่แก้ได้ ถ้าต้องการให้อ่านได้เฉพาะผู้ที่เข้าสู่ระบบ ให้แก้ policy `docs read` ในไฟล์ SQL เป็น `to authenticated`
+สองคนแก้คนละช่องพร้อมกันจะไม่ทับกัน (ฐานข้อมูลรวมข้อมูลให้ระดับช่อง) ถ้าแก้ช่องเดียวกัน ค่าของคนที่บันทึกทีหลังจะอยู่
+
+### อัปเดตจากเวอร์ชันก่อนหน้า (งานกระเบื้องส่วนกลางกรอกเป็น %)
+
+ถ้านำเข้า data.json เวอร์ชันเก่าไปแล้ว ให้รัน `supabase/migrate_percent.sql` ใน SQL Editor หนึ่งครั้ง (ไม่ลบข้อมูลรายการอื่น) สคริปต์จะเปลี่ยนทางเดิน/บันไดหลักเป็นแบบ % และเพิ่มรายการ "ชั้นดาดฟ้า (ส่วนกลาง)" ของตึก D-G ที่ยังไม่มี
+รายการแบบ % ใช้ได้กับรายการอื่นด้วย: ปุ่ม "จัดการ" ของแต่ละรายการ → "เปลี่ยนเป็นแบบ % (0–100)" หรือเลือกชนิดค่าตอนกด "+ เพิ่มรายการ"
+
+## หรือเก็บข้อมูลเป็นไฟล์ใน GitHub (ทางเลือก)
+
 
 หน้าเว็บบันทึกข้อมูลโดย commit ไฟล์ `data.json` ผ่าน GitHub API ต้องใช้ token ของแต่ละคน
 
 1. GitHub → Settings → Developer settings → Personal access tokens → *Fine-grained tokens* → Generate new token
 2. Repository access: เลือกเฉพาะ repo นี้ / Permissions → Repository permissions → **Contents: Read and write**
-3. เปิดเว็บ กดปุ่ม **เชื่อม GitHub** มุมขวาบน ใส่ username, ชื่อ repo, branch และ token แล้วบันทึก
+3. เปิดเว็บ กดปุ่ม **เข้าสู่ระบบ / ตั้งค่า** มุมขวาบน เลือก GitHub ใส่ username, ชื่อ repo, branch และ token แล้วบันทึก
 4. ทุกครั้งที่แก้สถานะ เว็บจะ commit ใหม่ให้อัตโนมัติ (รอประมาณ 1 วินาทีหลังแก้) ย้อนดูประวัติได้ใน tab Commits
 
 คนที่ไม่ได้ใส่ token จะเห็นข้อมูลแบบดูอย่างเดียว
