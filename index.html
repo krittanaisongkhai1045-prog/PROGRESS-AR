@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Modeva Progress</title>
+<script>try{document.documentElement.dataset.th=localStorage.getItem('mp_th')||'sport'}catch(e){document.documentElement.dataset.th='sport'}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;1,600;1,700&family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@500;600;700&family=Kanit:ital,wght@0,400;0,500;0,600;1,500;1,600;1,700&family=Sarabun:wght@400;500;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="config.js"></script>
@@ -11,14 +12,16 @@
 :root{color-scheme:light}body{margin:0;font-size:14px}[hidden]{display:none!important}img{max-width:100%}
 /* Layout: sticky dark site bar, tab strip per work type, then dashboard cards / room grids that scroll sideways inside their own frame. */
 :root{
-  --bg:#0b2f52; --surface:#0f3a66; --surface2:#154b7f; --ink:#eaf3ff; --muted:#9bbddb; --line:#2d6aa3;
-  --accent:#ffc82e; --accent-ink:#11202f; --accent-soft:#17466f; --bar:#082340; --bar-ink:#eaf3ff; --track:#0b2f52;
-  --done:#ffb020; --cm:#54c8ff; --qc2:#46e0a4; --warn:#ff8a4c; --shadow:none;
-  --f-display:'Chakra Petch','Sarabun',system-ui,sans-serif;
+  --bg:#eef1f0; --surface:#ffffff; --surface2:#e5eae9; --ink:#18231f; --muted:#5a6b66; --line:#cfd8d5;
+  --accent:#0d5f8f; --accent-ink:#ffffff; --accent-soft:#d9eaf4; --bar:#ffffff; --bar-ink:#18231f; --track:#dfe6e4;
+  --done:#e3a82b; --cm:#2f7fb8; --qc2:#25936a; --warn:#c2571a; --dim:#c4c9c4; --shadow:none;
+  --f-display:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif;
   --f-body:'Sarabun','Noto Sans Thai',system-ui,sans-serif;
   --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
-  color-scheme:dark;
+  color-scheme:light;
 }
+:root[data-th=sport]{--bg:#000000;--surface:#0f0f11;--surface2:#1a1a1d;--ink:#f4f4f5;--muted:#9b9ba3;--line:#2b2b30;--accent:#c6ff00;--accent-ink:#0a0a0a;--accent-soft:#1f2606;--bar:#000000;--bar-ink:#f4f4f5;--track:#26262b;--done:#ffb020;--cm:#3da5ff;--qc2:#2ee59d;--warn:#ff6b3d;--dim:#34343a;--f-display:'Kanit','Sarabun',system-ui,sans-serif;--f-mono:'Barlow Condensed','Kanit',ui-monospace,sans-serif;color-scheme:dark}
+:root[data-th=civil]{--bg:#0b2f52;--surface:#0f3a66;--surface2:#154b7f;--ink:#eaf3ff;--muted:#9bbddb;--line:#2d6aa3;--accent:#ffc82e;--accent-ink:#11202f;--accent-soft:#17466f;--bar:#082340;--bar-ink:#eaf3ff;--track:#0b2f52;--done:#ffb020;--cm:#54c8ff;--qc2:#46e0a4;--warn:#ff8a4c;--dim:#4a7399;--f-display:'Chakra Petch','Sarabun',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;padding-inline:0}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -51,7 +54,7 @@ h2{font-size:17px;font-weight:600}
 .btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.danger{color:var(--warn);border-color:var(--warn)}
 .btn.sm{padding:3px 9px;font-size:12.5px}
-.banner{background:#3a3210;color:#ffd24a;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+.banner{background:#fff0d1;color:#a85f00;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
 .big,.m .v,.pc span,td,.hc,.c{font-family:var(--f-mono)}
 td:first-child{font-family:var(--f-body)}
 /* hero */
@@ -100,7 +103,7 @@ tbody tr:last-child td{border-bottom:0}
 .glg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);align-items:center;border-top:1px solid var(--line);padding-top:10px}
 .glg .k{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .glg .k i{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:20px;padding:0 4px;border-radius:5px;font-style:normal;font-size:11px;font-weight:600;font-family:var(--f-mono)}
-.glg .gr{width:90px;height:12px;border-radius:4px;background:linear-gradient(90deg,#4a7399,#25936a)}
+.glg .gr{width:90px;height:12px;border-radius:4px}
 .glg .nn{width:30px;height:20px;border-radius:5px;border:1px dashed var(--line)}
 .btn,.chip,.tab,.opt,.bchip,.c,.hc,.wc,.gh,.gf{transition:background-color .18s ease,color .18s ease,border-color .18s ease,transform .12s ease,box-shadow .18s ease}
 .btn:active,.chip:active,.tab:active,.opt:active,.bchip:active{transform:scale(.95)}
@@ -130,79 +133,162 @@ tbody tr:last-child td{border-bottom:0}
 .toast{animation:toastin .25s cubic-bezier(.2,.8,.2,1)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .expscope *{animation:none!important;transition:none!important}
-/* ---- civil / blueprint theme ---- */
-body{background-color:var(--bg);background-image:linear-gradient(rgba(120,180,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.06) 1px,transparent 1px),linear-gradient(rgba(120,180,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.12) 1px,transparent 1px);background-size:20px 20px,20px 20px,100px 100px,100px 100px;background-attachment:fixed}
-header.top{position:sticky;border-bottom:0;padding-bottom:6px}
-header.top::after{content:'';position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(-45deg,#ffc82e 0 12px,#10202e 12px 24px)}
-.brand{font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:18px;display:flex;flex-direction:column;align-items:flex-start;position:relative;padding-right:34px}
-.brand .bn{color:var(--ink)}
-.brand small{font-family:var(--f-body);font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;color:var(--accent)}
-.brandedit{position:absolute;right:0;top:0;border:1px solid var(--line);background:transparent;color:var(--accent);border-radius:2px;width:26px;height:26px;font-size:13px;padding:0}
+/* ---- shared (brand button, splash) ---- */
+.brand{position:relative;display:flex;flex-direction:column;align-items:flex-start;padding-right:34px}
+.brandedit{position:absolute;right:0;top:0;border:1px solid var(--line);background:transparent;color:var(--accent);border-radius:4px;width:26px;height:26px;font-size:13px;padding:0}
 .brandedit:hover{border-color:var(--accent)}
-.tab{font-family:var(--f-display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;border-radius:2px;padding:7px 14px;color:var(--muted)}
-.tab:hover{background:var(--surface2);color:var(--ink)}
-.tab[aria-selected=true]{background:var(--accent);color:var(--accent-ink);clip-path:none}
-.tab.add{border:1px dashed var(--line);color:var(--accent)}
-h1,h2,h3{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.05em;font-style:normal}
-h2{font-size:17px;font-weight:600}
-.sec>.head h2{padding-left:10px;border-left:4px solid var(--accent)}
-.card{border-radius:2px;background:var(--surface);border:1px solid var(--line);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
-.wc:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 8px 22px rgba(0,0,0,.25)}
-.btn{border-radius:2px;background:var(--surface2);font-weight:500}
-.btn:hover{border-color:var(--accent);color:var(--accent)}
-.btn.pri{background:var(--accent);color:var(--accent-ink);font-weight:600;border-color:var(--accent)}
-.btn.pri:hover{color:var(--accent-ink);filter:brightness(1.07)}
-.chip{border-radius:2px;background:var(--surface2);font-family:var(--f-display);font-style:normal;font-weight:500;color:var(--muted)}
-.chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
-.big{font-family:var(--f-mono);font-style:normal;font-size:30px;font-weight:600;letter-spacing:-.02em}
-.m .v,.pc span{font-family:var(--f-mono);font-style:normal;font-weight:600;font-size:13.5px}
-td{font-family:var(--f-mono);font-size:13.5px}td:first-child{font-family:var(--f-body)}
-thead th{text-transform:uppercase;letter-spacing:.06em;font-family:var(--f-display);font-size:11.5px;background:var(--surface2)}
-tr.wk td{background:var(--surface2);color:var(--accent)}
-.bar{height:8px;border-radius:0;background:linear-gradient(90deg,rgba(255,255,255,.16) 1px,transparent 1px) 0 0/10% 100%,var(--track)}.bar>i{border-radius:0}
-.stack{height:12px;border-radius:0}
-.hc{font-family:var(--f-mono);font-style:normal;font-size:16px;border-radius:2px}
-.ring text{font-style:normal}
-.c{border-radius:2px;font-family:var(--f-mono)}
-.gf{background:var(--surface);color:var(--accent);font-family:var(--f-display);font-style:normal}
-.tw,.brush{background:var(--surface);border-radius:2px}
-.brush{border-color:var(--accent)}
-.bchip{border-radius:2px}.bchip[aria-pressed=true]{border-color:var(--accent);box-shadow:none}
-#modal{background:rgba(3,15,30,.72);backdrop-filter:blur(3px)}
-.sheet{border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:2px}
-.opt{background:var(--surface2);border-radius:2px}.opt:hover{border-color:var(--accent)}
-.toast{background:var(--accent);color:var(--accent-ink);font-weight:600;border-radius:2px}
-input[type=text],input[type=number],select{background:var(--surface2);border-radius:2px;color:var(--ink)}
-.glg b{font-family:var(--f-display);text-transform:uppercase;font-size:11.5px;letter-spacing:.06em;color:var(--accent)!important}
-.hero h1{font-size:26px;font-weight:700}
-.sw{border-radius:1px}
-.pa_prev{background:repeating-conic-gradient(#2a4f78 0 25%,#1f3f63 0 50%) 0 0/16px 16px;border:1px solid var(--line);padding:6px;display:flex;justify-content:center}
+.thbtn{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:4px;padding:6px 10px;font-size:13px;font-weight:500}
+.thbtn:hover{border-color:var(--accent);color:var(--accent)}
+.glg .gr{background:linear-gradient(90deg,var(--dim),#25936a)}
+.pa_prev{background:repeating-conic-gradient(#8a949a 0 25%,#6e777c 0 50%) 0 0/16px 16px;border:1px solid var(--line);padding:6px;display:flex;justify-content:center}
 .pa_prev canvas{max-width:100%;max-height:260px;width:auto;height:auto}
 .wrow{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
 .ir{justify-content:space-between;flex-wrap:nowrap;padding:3px 0 3px 10px;font-size:13.5px}
-.expscope{background-image:none}
-.expscope .card{background:#fff;border-color:#d6dcd8}.expscope .bar{background:#dfe6e4}
-.expscope h1,.expscope h2,.expscope h3,.expscope .tab,.expscope .brand,.expscope thead th{text-transform:none}
-.expscope .sec>.head h2{border-left-color:#0b5d7a}.expscope tr.wk td{color:#15222a;background:#f5f7f5}
-.expscope .glg b{color:#15222a!important}.expscope thead th{background:#f5f7f5}
-.expscope .chip,.expscope .btn{background:#fff;color:#15222a}.expscope .chip[aria-pressed=true]{background:#0b5d7a;color:#fff}
-.expscope .gf{background:#fff;color:#15222a}.expscope .tw{background:#fff}
-/* ---- splash ---- */
-#splash{position:fixed;inset:0;z-index:200;background:var(--bg);background-image:linear-gradient(rgba(120,180,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.08) 1px,transparent 1px),linear-gradient(rgba(120,180,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.16) 1px,transparent 1px);background-size:20px 20px,20px 20px,100px 100px,100px 100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;overflow:hidden;cursor:pointer;padding:16px;text-align:center;transition:opacity .5s ease,transform .6s cubic-bezier(.7,0,.2,1)}
+.cust{box-shadow:0 0 0 2px #ff4fa3 inset}
+.custtag{display:inline-flex;align-items:center;gap:6px;background:#ff4fa3;color:#1a0610;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700}
+.prk{font:700 22px var(--f-display);fill:#ff4fa3;text-anchor:middle;paint-order:stroke;stroke:#000;stroke-width:4px;pointer-events:none}
+.pr.cu polygon{stroke:#ff4fa3;stroke-width:4;stroke-dasharray:10 6}
+.pdim{opacity:.18!important}
+#splash{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;overflow:hidden;cursor:pointer;padding:16px;text-align:center;transition:opacity .5s ease,transform .6s cubic-bezier(.7,0,.2,1)}
 #splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
 #splash .sk{width:min(360px,78vw);height:auto;overflow:visible}
-#splash .sk *{fill:none;stroke:#9bd0ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s cubic-bezier(.4,0,.2,1) forwards;animation-delay:var(--d,0s)}
-#splash .sk .y{stroke:#ffc82e;stroke-width:2.6}
-#splash .sk .t{stroke-width:1.2;stroke:#5f9fd6}
+#splash .sk *{fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s cubic-bezier(.4,0,.2,1) forwards;animation-delay:var(--d,0s)}
+#splash .sk .y{stroke:var(--accent);stroke-width:2.6}
+#splash .sk .t{stroke-width:1.2;opacity:.7}
 @keyframes draw{to{stroke-dashoffset:0}}
-#splash .lg{font:700 42px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.12em;color:#fff;display:flex;flex-wrap:wrap;justify-content:center;max-width:92vw}
+#splash .lg{font:700 42px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.12em;color:var(--ink);display:flex;flex-wrap:wrap;justify-content:center;max-width:92vw}
 #splash .lg span{display:inline-block;opacity:0;transform:translateY(14px);animation:lt .5s cubic-bezier(.2,.8,.2,1) forwards}
 #splash .lg span.sp{width:.4em}
 #splash .sb{font:600 13px var(--f-display);letter-spacing:.5em;margin-right:-.5em;text-transform:uppercase;color:var(--accent);opacity:0;animation:fin .5s ease 1.1s forwards}
-#splash .bar2{width:min(260px,60vw);height:8px;background:repeating-linear-gradient(-45deg,#10202e 0 6px,#1b3550 6px 12px);border:1px solid var(--line);overflow:hidden;opacity:0;animation:fin .3s ease .9s forwards}
-#splash .bar2 i{display:block;height:100%;background:repeating-linear-gradient(-45deg,#ffc82e 0 6px,#10202e 6px 12px);transform:scaleX(0);transform-origin:left;animation:grow 1.4s cubic-bezier(.4,0,.2,1) 1s forwards}
+#splash .bar2{width:min(260px,60vw);height:6px;background:var(--track);border:1px solid var(--line);overflow:hidden;opacity:0;animation:fin .3s ease .9s forwards}
+#splash .bar2 i{display:block;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;animation:grow 1.4s cubic-bezier(.4,0,.2,1) 1s forwards}
 #splash .tg{font:400 13px var(--f-body);color:var(--muted);opacity:0;animation:fin .5s ease 1.1s forwards;max-width:90vw}
 @keyframes lt{to{opacity:1;transform:none}}
+
+/* ---- theme: civil ---- */
+html[data-th=civil] body{background-color:var(--bg);background-image:linear-gradient(rgba(120,180,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.06) 1px,transparent 1px),linear-gradient(rgba(120,180,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.12) 1px,transparent 1px);background-size:20px 20px,20px 20px,100px 100px,100px 100px;background-attachment:fixed}
+html[data-th=civil] header.top{position:sticky;border-bottom:0;padding-bottom:6px}
+html[data-th=civil] header.top::after{content:'';position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(-45deg,#ffc82e 0 12px,#10202e 12px 24px)}
+html[data-th=civil] .brand{font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:18px;display:flex;flex-direction:column;align-items:flex-start;position:relative;padding-right:34px}
+html[data-th=civil] .brand .bn{color:var(--ink)}
+html[data-th=civil] .brand small{font-family:var(--f-body);font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;color:var(--accent)}
+html[data-th=civil] .brandedit{position:absolute;right:0;top:0;border:1px solid var(--line);background:transparent;color:var(--accent);border-radius:2px;width:26px;height:26px;font-size:13px;padding:0}
+html[data-th=civil] .brandedit:hover{border-color:var(--accent)}
+html[data-th=civil] .tab{font-family:var(--f-display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;border-radius:2px;padding:7px 14px;color:var(--muted)}
+html[data-th=civil] .tab:hover{background:var(--surface2);color:var(--ink)}
+html[data-th=civil] .tab[aria-selected=true]{background:var(--accent);color:var(--accent-ink);clip-path:none}
+html[data-th=civil] .tab.add{border:1px dashed var(--line);color:var(--accent)}
+html[data-th=civil] h1,html[data-th=civil] h2,html[data-th=civil] h3{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.05em;font-style:normal}
+html[data-th=civil] h2{font-size:17px;font-weight:600}
+html[data-th=civil] .sec>.head h2{padding-left:10px;border-left:4px solid var(--accent)}
+html[data-th=civil] .card{border-radius:2px;background:var(--surface);border:1px solid var(--line);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+html[data-th=civil] .wc:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 8px 22px rgba(0,0,0,.25)}
+html[data-th=civil] .btn{border-radius:2px;background:var(--surface2);font-weight:500}
+html[data-th=civil] .btn:hover{border-color:var(--accent);color:var(--accent)}
+html[data-th=civil] .btn.pri{background:var(--accent);color:var(--accent-ink);font-weight:600;border-color:var(--accent)}
+html[data-th=civil] .btn.pri:hover{color:var(--accent-ink);filter:brightness(1.07)}
+html[data-th=civil] .chip{border-radius:2px;background:var(--surface2);font-family:var(--f-display);font-style:normal;font-weight:500;color:var(--muted)}
+html[data-th=civil] .chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+html[data-th=civil] .big{font-family:var(--f-mono);font-style:normal;font-size:30px;font-weight:600;letter-spacing:-.02em}
+html[data-th=civil] .m .v,html[data-th=civil] .pc span{font-family:var(--f-mono);font-style:normal;font-weight:600;font-size:13.5px}
+html[data-th=civil] td{font-family:var(--f-mono);font-size:13.5px}
+html[data-th=civil] td:first-child{font-family:var(--f-body)}
+html[data-th=civil] thead th{text-transform:uppercase;letter-spacing:.06em;font-family:var(--f-display);font-size:11.5px;background:var(--surface2)}
+html[data-th=civil] tr.wk td{background:var(--surface2);color:var(--accent)}
+html[data-th=civil] .bar{height:8px;border-radius:0;background:linear-gradient(90deg,rgba(255,255,255,.16) 1px,transparent 1px) 0 0/10% 100%,var(--track)}
+html[data-th=civil] .bar>i{border-radius:0}
+html[data-th=civil] .stack{height:12px;border-radius:0}
+html[data-th=civil] .hc{font-family:var(--f-mono);font-style:normal;font-size:16px;border-radius:2px}
+html[data-th=civil] .ring text{font-style:normal}
+html[data-th=civil] .c{border-radius:2px;font-family:var(--f-mono)}
+html[data-th=civil] .gf{background:var(--surface);color:var(--accent);font-family:var(--f-display);font-style:normal}
+html[data-th=civil] .tw,html[data-th=civil] .brush{background:var(--surface);border-radius:2px}
+html[data-th=civil] .brush{border-color:var(--accent)}
+html[data-th=civil] .bchip{border-radius:2px}
+html[data-th=civil] .bchip[aria-pressed=true]{border-color:var(--accent);box-shadow:none}
+html[data-th=civil] #modal{background:rgba(3,15,30,.72);backdrop-filter:blur(3px)}
+html[data-th=civil] .sheet{border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:2px}
+html[data-th=civil] .opt{background:var(--surface2);border-radius:2px}
+html[data-th=civil] .opt:hover{border-color:var(--accent)}
+html[data-th=civil] .toast{background:var(--accent);color:var(--accent-ink);font-weight:600;border-radius:2px}
+html[data-th=civil] input[type=text],html[data-th=civil] input[type=number],html[data-th=civil] select{background:var(--surface2);border-radius:2px;color:var(--ink)}
+html[data-th=civil] .glg b{font-family:var(--f-display);text-transform:uppercase;font-size:11.5px;letter-spacing:.06em;color:var(--accent)!important}
+html[data-th=civil] .hero h1{font-size:26px;font-weight:700}
+html[data-th=civil] .sw{border-radius:1px}
+html[data-th=civil] .pa_prev{background:repeating-conic-gradient(#2a4f78 0 25%,#1f3f63 0 50%) 0 0/16px 16px;border:1px solid var(--line);padding:6px;display:flex;justify-content:center}
+html[data-th=civil] .pa_prev canvas{max-width:100%;max-height:260px;width:auto;height:auto}
+html[data-th=civil] .wrow{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+html[data-th=civil] .ir{justify-content:space-between;flex-wrap:nowrap;padding:3px 0 3px 10px;font-size:13.5px}
+
+
+html[data-th=civil] #splash{background-image:linear-gradient(rgba(120,180,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.08) 1px,transparent 1px),linear-gradient(rgba(120,180,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.16) 1px,transparent 1px);background-size:20px 20px,20px 20px,100px 100px,100px 100px}
+html[data-th=civil] #splash .bar2{background:repeating-linear-gradient(-45deg,#10202e 0 6px,#1b3550 6px 12px)}
+html[data-th=civil] #splash .bar2 i{background:repeating-linear-gradient(-45deg,#ffc82e 0 6px,#10202e 6px 12px)}
+html[data-th=civil] #splash .sk *{stroke:#9bd0ff}html[data-th=civil] #splash .sk .y{stroke:#ffc82e}
+/* ---- theme: sport ---- */
+html[data-th=sport] body{background:var(--bg)}
+html[data-th=sport] header.top{border-bottom:2px solid var(--accent)}
+html[data-th=sport] .brand{font-family:var(--f-display);font-style:italic;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:19px}
+html[data-th=sport] .brand small{font-style:normal;text-transform:none;letter-spacing:0;font-size:11.5px;color:var(--accent);font-family:var(--f-body);font-weight:400}
+html[data-th=sport] .brandedit{color:var(--accent)}
+html[data-th=sport] .tab{font-family:var(--f-display);font-style:italic;font-weight:500;text-transform:uppercase;letter-spacing:.03em;border-radius:0;padding:8px 18px;color:var(--muted)}
+html[data-th=sport] .tab:hover{background:var(--surface2);color:var(--ink)}
+html[data-th=sport] .tab[aria-selected=true]{background:var(--accent);color:var(--accent-ink);font-weight:600;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+html[data-th=sport] .tab.add{border:0;color:var(--accent)}
+html[data-th=sport] h1,html[data-th=sport] h2,html[data-th=sport] h3{font-style:italic;text-transform:uppercase;letter-spacing:.02em}
+html[data-th=sport] h2{font-size:18px;font-weight:600}
+html[data-th=sport] .sec>.head h2{padding-left:10px;border-left:4px solid var(--accent)}
+html[data-th=sport] .card{border-radius:8px;background:linear-gradient(180deg,var(--surface2),var(--surface) 70%)}
+html[data-th=sport] .wc:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 8px 24px rgba(198,255,0,.10)}
+html[data-th=sport] .btn{background:var(--surface2);font-weight:500}
+html[data-th=sport] .btn:hover{border-color:var(--accent);color:var(--accent)}
+html[data-th=sport] .btn.pri{background:var(--accent);color:var(--accent-ink);font-weight:600}
+html[data-th=sport] .btn.pri:hover{color:var(--accent-ink);filter:brightness(1.08)}
+html[data-th=sport] .chip{background:var(--surface2);font-family:var(--f-display);font-style:italic;font-weight:500}
+html[data-th=sport] .chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+html[data-th=sport] .big{font-family:var(--f-mono);font-style:italic;font-size:38px;font-weight:700;letter-spacing:.01em}
+html[data-th=sport] .m .v,html[data-th=sport] .pc span{font-family:var(--f-mono);font-style:italic;font-weight:700;font-size:15px}
+html[data-th=sport] td{font-family:var(--f-mono);font-size:15px;letter-spacing:.02em}
+html[data-th=sport] td:first-child{font-family:var(--f-body)}
+html[data-th=sport] thead th{text-transform:uppercase;letter-spacing:.06em;font-family:var(--f-display);font-size:11.5px}
+html[data-th=sport] tr.wk td{background:var(--surface2);color:var(--accent)}
+html[data-th=sport] .bar{height:10px;border-radius:2px}
+html[data-th=sport] .bar>i{border-radius:2px}
+html[data-th=sport] .stack{height:14px;border-radius:2px}
+html[data-th=sport] .hc{font-family:var(--f-mono);font-style:italic;font-size:19px;border-radius:6px}
+html[data-th=sport] .ring text{font-style:italic}
+html[data-th=sport] .c{border-radius:5px;font-size:12px;font-family:var(--f-mono)}
+html[data-th=sport] .gf{background:var(--surface);color:var(--accent);font-family:var(--f-display);font-style:italic}
+html[data-th=sport] .tw,html[data-th=sport] .brush{background:var(--surface)}
+html[data-th=sport] .brush{border-color:var(--accent)}
+html[data-th=sport] .bchip[aria-pressed=true]{border-color:var(--accent);box-shadow:none}
+html[data-th=sport] #modal{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+html[data-th=sport] .sheet{border:1px solid var(--line);border-top:2px solid var(--accent)}
+html[data-th=sport] .opt{background:var(--surface2)}
+html[data-th=sport] .opt:hover{border-color:var(--accent)}
+html[data-th=sport] .toast{background:var(--accent);color:var(--accent-ink);font-weight:600}
+html[data-th=sport] input[type=text],html[data-th=sport] input[type=number],html[data-th=sport] select{background:var(--surface2);color:var(--ink)}
+html[data-th=sport] .glg b{font-family:var(--f-display);font-style:italic;text-transform:uppercase;font-size:11.5px;letter-spacing:.05em;color:var(--accent)!important}
+html[data-th=sport] .hero h1{font-size:30px;font-weight:700}
+html[data-th=sport] .wrow{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+
+
+html[data-th=civil] .banner{background:#3a3210;color:#ffd24a}
+html[data-th=civil] #splash.out{opacity:0}
+html[data-th=sport] .banner{background:#3a3210;color:#ffd24a}
+/* ---- export scope (always light) ---- */
+html[data-th] .expscope{background-image:none}
+html[data-th] .expscope .card{background:#fff;border-color:#d6dcd8}
+html[data-th] .expscope .bar{background:#dfe6e4}
+html[data-th] .expscope h1,html[data-th] .expscope h2,html[data-th] .expscope h3,html[data-th] .expscope .tab,html[data-th] .expscope .brand,html[data-th] .expscope thead th{text-transform:none}
+html[data-th] .expscope .sec>.head h2{border-left-color:#0b5d7a}
+html[data-th] .expscope tr.wk td{color:#15222a;background:#f5f7f5}
+html[data-th] .expscope .glg b{color:#15222a!important}
+html[data-th] .expscope thead th{background:#f5f7f5}
+html[data-th] .expscope .chip,html[data-th] .expscope .btn{background:#fff;color:#15222a}
+html[data-th] .expscope .chip[aria-pressed=true]{background:#0b5d7a;color:#fff}
+html[data-th] .expscope .gf{background:#fff;color:#15222a}
+html[data-th] .expscope .tw{background:#fff}
 .plansvg{display:block;width:100%;height:auto;border-radius:6px}
 .pr{cursor:pointer;opacity:0;animation:pin .5s cubic-bezier(.2,.8,.2,1) var(--d,0s) forwards;transition:filter .15s}
 .pr polygon{transition:fill .35s ease}
@@ -277,6 +363,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
   <div class="brand" id="brand"></div>
   <nav class="tabs" id="tabs" role="tablist"></nav>
   <span id="ghstat" class="sub" style="color:var(--bar-ink);opacity:.7"></span><button class="tab" id="ghbtn" data-a="gh">เข้าสู่ระบบ / ตั้งค่า</button>
+  <button class="thbtn" data-a="theme" aria-label="เปลี่ยนธีม">◐ ธีม</button>
 </div></header>
 <main class="wrap" id="app"><div class="empty">กำลังโหลดข้อมูล…</div></main>
 <div id="splash" role="presentation" aria-hidden="true"><svg class="sk" viewBox="0 0 400 200" aria-hidden="true">
@@ -300,7 +387,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 <script>
 (function(){
 'use strict';
-const S={works:{},grids:{},meta:{buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
+const S={works:{},grids:{},meta:{buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},clients:{},pcf:false,view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
 const MS=[['done','เสร็จ'],['cm','CM CLOSE'],['qc2','QC2 CLOSE']];
 const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -317,6 +404,11 @@ function applyBrand(){
   if(b){const k=n+'|'+sb+'|'+(S.canWrite&&S.db);if(b.dataset.k!==k){b.dataset.k=k;b.innerHTML=`<span class="bn">${esc(n)}</span><small>${esc(sb)}</small>${S.canWrite&&S.db?'<button class="brandedit" data-a="rename" aria-label="เปลี่ยนชื่อโครงการ" title="เปลี่ยนชื่อโครงการ">✎</button>':''}`}}
   if(document.title!==n)document.title=n;
   try{if(S.db)localStorage.setItem('mp_brand',JSON.stringify({n,sb}))}catch(e){}}
+const THEMES=[['sport','สปอร์ตดำ','พื้นดำ เน้นสีเขียวนีออน ตัวเอียง','#000','#c6ff00'],['light','สว่าง (ดั้งเดิม)','พื้นขาวเทา สีฟ้า เรียบ อ่านง่าย','#eef1f0','#0d5f8f'],['civil','บลูพริ้นท์ (โยธา)','พื้นน้ำเงินแบบแปลน เส้นกริด เหลืองนิรภัย','#0b2f52','#ffc82e']];
+function setTheme(t){document.documentElement.dataset.th=t;try{localStorage.setItem('mp_th',t)}catch(e){}PVB=null;render()}
+function themeDialog(){const cur=document.documentElement.dataset.th;
+  modal(`<h2>เลือกธีม</h2>${THEMES.map(t=>`<button class="opt" data-t="${t[0]}" style="justify-content:flex-start"><span style="display:inline-flex;width:44px;height:28px;border-radius:4px;border:1px solid var(--line);background:${t[3]};align-items:center;justify-content:flex-end;padding-right:5px"><i style="width:14px;height:14px;border-radius:3px;background:${t[4]}"></i></span><span style="display:flex;flex-direction:column;align-items:flex-start;text-align:left"><b>${t[1]}${t[0]===cur?' ✓':''}</b><span class="sub">${t[2]}</span></span></button>`).join('')}<button class="btn" data-x>ปิด</button>`,el=>{
+   el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(b.dataset.t){closeM();setTheme(b.dataset.t)}}})}
 function renameProject(){
   modal(`<h2>เปลี่ยนชื่อโครงการ</h2><div class="field"><label for="rn_n">ชื่อโครงการ</label><input id="rn_n" type="text" maxlength="40" value="${esc(S.meta.name)}"></div>
   <div class="field"><label for="rn_s">คำอธิบายใต้ชื่อ</label><input id="rn_s" type="text" maxlength="80" value="${esc(S.meta.sub)}"></div>
@@ -328,7 +420,8 @@ function renameProject(){
 async function metaSave(patch){Object.assign(S.meta,patch);applyBrand();render();
   await setDoc('meta/app',{buildings:S.meta.buildings,name:S.meta.name,sub:S.meta.sub})}
 function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
-const sc=c=>c==='#c4c9c4'?'#4a7399':c;
+const dim=()=>cvar('--dim')||'#c4c9c4';
+const sc=c=>c==='#c4c9c4'?dim():c;
 const worksSorted=()=>Object.entries(S.works).map(([id,w])=>({id,...w})).sort((a,b)=>(a.order||0)-(b.order||0));
 const gridsOf=(wid,b)=>Object.entries(S.grids).map(([id,g])=>({id,...g})).filter(g=>g.work===wid&&(!b||b==='ALL'||g.building===b)).sort((a,b)=>(a.order||0)-(b.order||0)||a.id.localeCompare(b.id));
 function sIdx(w,name){const i=(w.statuses||[]).findIndex(s=>s.name===name);return i<0?0:i}
@@ -372,7 +465,8 @@ function floorOverview(b){const ws=worksSorted(),m=S.fm,per=ws.map(w=>({w,gs:gri
     return `<tr><td>${rowName(r)}</td>${tds}<td>${den?pbar(num/den,MSCOL[m]):'<span class="na">–</span>'}</td></tr>`}).join('');
   return `<section class="sec"><div class="head"><h2>% แยกตามชั้น</h2>${fmChips()}<span class="sub">แต่ละงาน ตามชั้นของตึกที่เลือก</span></div><div class="tw"><table class="ft"><thead><tr><th>ชั้น</th>${ws.map(w=>`<th>${esc(w.name)}</th>`).join('')}<th>รวมทุกงาน</th></tr></thead><tbody>${body}</tbody></table></div></section>`}
 /* ---------- QC2 page: a room is ready for QC2 only when every item in it has passed CM ---------- */
-const QCS={no:['#4a7399','·','ยังไม่ผ่าน'],wait:['#2f7fb8','✓','ผ่าน CM ครบ รอ QC2'],open:['#8a6fc4','Q○','QC2 OPEN'],close:['#25936a','Q●','QC2 CLOSE']};
+const QCS={no:['#c4c9c4','·','ยังไม่ผ่าน'],wait:['#2f7fb8','✓','ผ่าน CM ครบ รอ QC2'],open:['#8a6fc4','Q○','QC2 OPEN'],close:['#25936a','Q●','QC2 CLOSE']};
+Object.defineProperty(QCS.no,0,{get:()=>dim(),set:()=>{},configurable:true});
 const qcWorks=()=>worksSorted().filter(w=>msIdx(w,'cm')!=null);
 function qcRooms(w,b){const ci=msIdx(w,'cm'),qi=msIdx(w,'qc2'),rooms=new Map();
   for(const g of gridsOf(w.id,b)){if(g.kind==='percent'||g.rowLabel)continue;
@@ -439,8 +533,8 @@ function roomPct(b,f,c,wid,m){let num=0,den=0;
   for(const w of worksSorted()){if(wid!=='ALL'&&w.id!==wid)continue;const mi=msIdx(w,m);if(mi==null)continue;
     for(const g of gridsOf(w.id,b)){if(g.rowLabel||g.kind==='percent')continue;const v=(g.cells||{})[f+'-'+c];if(!has(v))continue;den++;if(sIdx(w,v)>=mi)num++}}
   return den?num/den:null}
-function planSummary(b,f,rooms,wid,m){let num=0,den=0;
-  for(const c of Object.keys(rooms)){for(const w of worksSorted()){if(wid!=='ALL'&&w.id!==wid)continue;const mi=msIdx(w,m);if(mi==null)continue;
+function planSummary(b,f,rooms,wid,m,onlyC){let num=0,den=0;
+  for(const c of Object.keys(rooms)){if(onlyC&&!isCust(b,f,c))continue;for(const w of worksSorted()){if(wid!=='ALL'&&w.id!==wid)continue;const mi=msIdx(w,m);if(mi==null)continue;
     for(const g of gridsOf(w.id,b)){if(g.rowLabel||g.kind==='percent')continue;const v=(g.cells||{})[f+'-'+c];if(!has(v))continue;den++;if(sIdx(w,v)>=mi)num++}}}
   return den?num/den:null}
 function vPlan(){
@@ -449,40 +543,55 @@ function vPlan(){
   const fl=planFl(b);const f=fl.includes(String(S.pf))?String(S.pf):fl[0];S.pf=f;
   const P=planOf(b,f),ws=worksSorted(),m=S.pm,wid=(S.pw==='ALL'||ws.some(w=>w.id===S.pw))?S.pw:'ALL';
   if(P.loading){const c=P.custom;pimgLoad(c.img,c.n);}
-  const RM=roomsOf(b,f),tot=planSummary(b,+f,RM,wid,m);
+  const RM=roomsOf(b,f),tot=planSummary(b,+f,RM,wid,m,S.pcf),ncu=Object.keys(RM).filter(c=>isCust(b,f,c)).length;
   let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">แปลนตึก ${esc(b)} ชั้น ${esc(f)}</h1><div class="sub">สีของแต่ละห้อง = % งานที่ไปถึงขั้นที่เลือก · กดห้องเพื่อดูรายละเอียด</div></div>
-   <div class="row"><span class="sub">รวมชั้นนี้</span><span class="big" id="ptot" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>
+   <div class="row"><span class="sub">${S.pcf?'รวมห้องลูกค้า':'รวมชั้นนี้'}</span><span class="big" id="ptot" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>
    <div class="row" style="margin-top:12px">${bs.length>1?`<div class="chips">${bs.map(x=>`<button class="chip" data-a="pb" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}</div>`:''}
     <div class="chips">${fl.map(x=>`<button class="chip" data-a="pf" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}</div></div>
    <div class="row" style="margin-top:8px"><div class="chips"><button class="chip" data-a="pw" data-w="ALL" aria-pressed="${wid==='ALL'}">รวมทุกงาน</button>${ws.map(w=>`<button class="chip" data-a="pw" data-w="${w.id}" aria-pressed="${wid===w.id}">${esc(w.name)}</button>`).join('')}</div>
-    <div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="pm" data-k="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div></div>`;
+    <div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="pm" data-k="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div><div class="chips"><button class="chip" data-a="pcf" aria-pressed="${S.pcf}">★ เฉพาะห้องลูกค้า (${ncu})</button></div></div>`;
   if(P.loading)return h+'<div class="card empty" style="margin-top:14px">กำลังโหลดแปลน…</div>';
   let sv=`<svg class="plansvg${S.ps&&!S.pe?' zoomed':''}${S.pe?' editing':''}" style="aspect-ratio:${P.w}/${P.h}" viewBox="0 0 ${P.w} ${P.h}" role="img" aria-label="แปลนตึก ${esc(b)} ชั้น ${esc(f)}"><image href="${P.img}" x="0" y="0" width="${P.w}" height="${P.h}"/>`;
   const cs=Object.keys(RM).sort();
   cs.forEach((c,i)=>{const p=RM[c],pc=roomPct(b,+f,c,wid,m),[cx,cy]=centroid(p);
-    const fill=pc==null?'#9bbddb':(pc===0?'#6b8cad':cvar('--'+m)),fo=pc==null?.25:(pc===0?.7:.3+.65*pc);
-    sv+=`<g class="pr${c===S.ps&&!S.pe?' sel':''}${S.pe&&c===S.pes?' ed':''}" data-a="proom" data-c="${esc(c)}" style="--d:${i*.05}s" tabindex="0" role="button" aria-label="ห้อง ${esc(b)}${esc(f)}${esc(c)} ${fmt(pc)}"><polygon points="${p.map(q=>q.join(',')).join(' ')}" fill="${fill}" fill-opacity="${fo}" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
-     <text x="${cx}" y="${cy-8}" class="prc">${esc(b)}${esc(f)}${esc(c)}</text><text x="${cx}" y="${cy+16}" class="prp" data-v="${pc==null?'':pc}">${fmt(pc)}</text></g>`});
+    const fill=pc==null?'#9bbddb':(pc===0?'var(--dim)':cvar('--'+m)),fo=pc==null?.25:(pc===0?.7:.3+.65*pc);
+    const cu=isCust(b,f,c);sv+=`<g class="pr${c===S.ps&&!S.pe?' sel':''}${S.pe&&c===S.pes?' ed':''}${cu?' cu':''}${S.pcf&&!cu?' pdim':''}" data-a="proom" data-c="${esc(c)}" style="--d:${i*.05}s" tabindex="0" role="button" aria-label="ห้อง ${esc(b)}${esc(f)}${esc(c)} ${fmt(pc)}"><polygon points="${p.map(q=>q.join(',')).join(' ')}" fill="${fill}" fill-opacity="${fo}" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+     <text x="${cx}" y="${cy-8}" class="prc">${esc(b)}${esc(f)}${esc(c)}</text><text x="${cx}" y="${cy+16}" class="prp" data-v="${pc==null?'':pc}">${fmt(pc)}</text>${cu?`<text x="${cx}" y="${cy-34}" class="prk">★</text>`:''}</g>`});
   if(S.pe&&S.pes&&RM[S.pes])sv+=RM[S.pes].map((q,i)=>`<circle class="ph" data-h="${i}" cx="${q[0]}" cy="${q[1]}" r="${Math.round(P.w/95)}"/>`).join('');
   sv+='</svg>';
   const unp=S.pe?planUnplaced(b,f,RM):[];
-  const tc=S.pe?`<div class="row" style="margin-top:10px"><button class="btn pri" data-a="pedit">✓ เสร็จการปรับโซน</button><button class="btn ${S.pd?'pri':''}" data-a="pdraw" ${S.pes?'':'disabled'}>▭ วาดโซนใหม่ให้ห้องที่เลือก</button><button class="btn" data-a="preset" ${S.pes?'':'disabled'}>รีเซ็ตห้องนี้</button><button class="btn" data-a="presetall">รีเซ็ตทั้งชั้น</button><button class="btn" data-a="padd">+ เพิ่มแปลน</button>${P.custom?'<button class="btn" data-a="pcopy">คัดลอกโซนไปชั้นอื่นของแปลนนี้</button><button class="btn danger" data-a="pdel">ลบแปลนนี้</button>':''}</div>${unp.length?`<div class="row" style="margin-top:8px"><span class="sub">ห้องที่ยังไม่มีโซน (กดแล้วลากวาดบนแปลน):</span><div class="chips">${unp.map(c=>`<button class="chip" data-a="pplace" data-c="${esc(c)}" aria-pressed="${S.pd&&S.pes===c}">+ ${esc(b)}${esc(f)}${esc(c)}</button>`).join('')}</div></div>`:''}<div class="sub" style="margin-top:6px">${S.pd?'ลากบนแปลนเพื่อวาดสี่เหลี่ยมของห้อง '+esc(b)+esc(f)+esc(S.pes):(S.pes?`เลือกห้อง ${esc(b)}${esc(f)}${esc(S.pes)} · ลากตัวห้องเพื่อย้าย ลากจุดขาวที่มุมเพื่อปรับขนาด/รูปทรง`:'กดห้องบนแปลนเพื่อเลือก แล้วลากย้ายหรือปรับขนาด')}</div>`:`<div class="row" style="margin-top:10px"><button class="btn ${S.pp?'':'pri'}" data-a="ptour">${S.pp?'⏸ หยุดทัวร์':'▶ ทัวร์ทีละห้อง'}</button><button class="btn" data-a="pprev" aria-label="ห้องก่อนหน้า">◀</button><button class="btn" data-a="pnext" aria-label="ห้องถัดไป">▶</button>${S.ps?'<button class="btn" data-a="pall">ดูทั้งชั้น</button>':''}${S.canWrite&&S.db?'<button class="btn" data-a="pedit">✎ ปรับโซนห้อง</button><button class="btn" data-a="padd">+ เพิ่มแปลน</button>':''}<span class="sub">${S.ps?`ห้อง ${esc(b)}${esc(f)}${esc(S.ps)} (${cs.indexOf(S.ps)+1}/${cs.length})`:'กดห้องบนแปลนเพื่อซูมเข้าไปดู'}</span></div>`;
+  const tc=S.pe?`<div class="row" style="margin-top:10px"><button class="btn pri" data-a="pedit">✓ เสร็จการปรับโซน</button><button class="btn ${S.pd?'pri':''}" data-a="pdraw" ${S.pes?'':'disabled'}>▭ วาดโซนใหม่ให้ห้องที่เลือก</button><button class="btn" data-a="pcust" ${S.pes?'':'disabled'}>★ ห้องลูกค้า</button><button class="btn" data-a="preset" ${S.pes?'':'disabled'}>รีเซ็ตห้องนี้</button><button class="btn" data-a="presetall">รีเซ็ตทั้งชั้น</button><button class="btn" data-a="padd">+ เพิ่มแปลน</button>${P.custom?'<button class="btn" data-a="pcopy">คัดลอกโซนไปชั้นอื่นของแปลนนี้</button><button class="btn danger" data-a="pdel">ลบแปลนนี้</button>':''}</div>${unp.length?`<div class="row" style="margin-top:8px"><span class="sub">ห้องที่ยังไม่มีโซน (กดแล้วลากวาดบนแปลน):</span><div class="chips">${unp.map(c=>`<button class="chip" data-a="pplace" data-c="${esc(c)}" aria-pressed="${S.pd&&S.pes===c}">+ ${esc(b)}${esc(f)}${esc(c)}</button>`).join('')}</div></div>`:''}<div class="sub" style="margin-top:6px">${S.pd?'ลากบนแปลนเพื่อวาดสี่เหลี่ยมของห้อง '+esc(b)+esc(f)+esc(S.pes):(S.pes?`เลือกห้อง ${esc(b)}${esc(f)}${esc(S.pes)} · ลากตัวห้องเพื่อย้าย ลากจุดขาวที่มุมเพื่อปรับขนาด/รูปทรง`:'กดห้องบนแปลนเพื่อเลือก แล้วลากย้ายหรือปรับขนาด')}</div>`:`<div class="row" style="margin-top:10px"><button class="btn ${S.pp?'':'pri'}" data-a="ptour">${S.pp?'⏸ หยุดทัวร์':'▶ ทัวร์ทีละห้อง'}</button><button class="btn" data-a="pprev" aria-label="ห้องก่อนหน้า">◀</button><button class="btn" data-a="pnext" aria-label="ห้องถัดไป">▶</button>${S.ps?'<button class="btn" data-a="pall">ดูทั้งชั้น</button>':''}${S.canWrite&&S.db?'<button class="btn" data-a="pedit">✎ ปรับโซนห้อง</button><button class="btn" data-a="padd">+ เพิ่มแปลน</button>':''}<span class="sub">${S.ps?`ห้อง ${esc(b)}${esc(f)}${esc(S.ps)} (${cs.indexOf(S.ps)+1}/${cs.length})`:'กดห้องบนแปลนเพื่อซูมเข้าไปดู'}</span></div>`;
   h+=tc+`<section class="sec"><div class="card" style="padding:8px">${sv}</div>${S.pe?'':(S.ps&&RM[S.ps]?planCallout(b,+f,S.ps,wid,m):planOverview(b,+f,RM,wid,m))}
-   <div class="glg"><b>สีของห้อง</b><span class="k">0%<span class="gr" style="background:linear-gradient(90deg,#6b8cad,${cvar('--'+m)})"></span>100%</span><span class="k"><span class="nn" style="background:rgba(155,189,219,.18)"></span>ไม่มีรายการในห้อง</span></div>
+   <div class="glg"><b>สีของห้อง</b><span class="k">0%<span class="gr" style="background:linear-gradient(90deg,var(--dim),${cvar('--'+m)})"></span>100%</span><span class="k"><span class="nn" style="background:rgba(155,189,219,.18)"></span>ไม่มีรายการในห้อง</span><span class="k"><span class="custtag">★</span>ห้องลูกค้า</span></div>
    <div class="sub">ขอบเขตห้องบนแปลนลากโดยประมาณ ถ้าตำแหน่งไม่ตรงบอกได้</div></section>`;
   return h}
+
+/* ---------- customer rooms ---------- */
+const ckey=(b,f,c)=>b+'-'+f+'-'+c;
+const isCust=(b,f,c)=>Object.prototype.hasOwnProperty.call(S.clients||{},ckey(b,f,c));
+const custName=(b,f,c)=>(S.clients||{})[ckey(b,f,c)]||'';
+function custSave(){try{S.db&&S.db.doc('meta/clients').set({r:S.clients}).catch(e=>toast('บันทึกห้องลูกค้าไม่สำเร็จ'))}catch(e){}}
+function custDialog(c){if(!c)return toast('เลือกห้องก่อน');if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  const b=S.pb,f=S.pf,on=isCust(b,f,c);
+  modal(`<h2>ห้อง ${esc(b)}${esc(f)}${esc(c)} · ห้องลูกค้า</h2><div class="sub">ห้องลูกค้าจะมีกรอบสีชมพูและดาว ★ ในแปลนและตารางงาน และกรองดูเฉพาะห้องลูกค้าได้</div>
+   <div class="field"><label for="cu_n">ชื่อลูกค้า / หมายเหตุ (ไม่บังคับ)</label><input id="cu_n" type="text" maxlength="60" value="${esc(custName(b,f,c))}"></div>
+   <div class="row"><button class="btn pri" data-ok>${on?'บันทึก':'ระบุเป็นห้องลูกค้า'}</button>${on?'<button class="btn danger" data-off>ยกเลิกห้องลูกค้า</button>':''}<button class="btn" data-x>ปิด</button></div>`,el=>{
+   el.onclick=e=>{const x=e.target.closest('button');if(!x)return;if(x.hasAttribute('data-x'))return closeM();
+     S.clients=Object.assign({},S.clients);
+     if(x.hasAttribute('data-off'))delete S.clients[ckey(b,f,c)];else S.clients[ckey(b,f,c)]=$('#cu_n').value.trim();
+     custSave();closeM();render()}})}
 function itemRows(x){const s=(x.w.statuses||[])[sIdx(x.w,x.v)]||{color:'#999',name:x.v};
   return `<div class="row ir"><span>${esc(x.g.item)}</span><span class="chip" style="background:${sc(s.color)};color:${fg(sc(s.color))};border-color:${sc(s.color)};white-space:nowrap">${esc(s.name)}</span></div>`}
 function planCallout(b,f,c,wid,m){
   const ws=worksSorted().filter(w=>wid==='ALL'||w.id===wid),tot=roomPct(b,f,c,wid,m),mlabel=(MS.find(x=>x[0]===m)||[])[1]||'',all=planItems(b,f,c);
   const rows=ws.map(w=>{const its=all.filter(x=>x.w.id===w.id),p=roomPct(b,f,c,w.id,m);if(!its.length)return '';
     return `<div class="wrow"><div class="m" style="grid-template-columns:100px 1fr 56px"><b>${esc(w.name)}</b><div class="bar"><i style="width:${p==null?0:p*100}%;background:${MSCOL[m]}"></i></div><span class="v ${p==null?'na':''}">${fmt(p)}</span></div>${its.map(itemRows).join('')}</div>`}).join('')||'<div class="sub">ไม่มีรายการในห้องนี้</div>';
-  return `<div class="card callout" data-ck="${esc(b+f+c+wid+m)}"><div class="row" style="justify-content:space-between"><h2>ห้อง ${esc(b)}${esc(f)}${esc(c)} · ${wid==='ALL'?'รวมทุกงาน':esc((S.works[wid]||{}).name||'')}</h2><div><span class="sub">${mlabel}</span> <span class="big cop" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>${rows}</div>`}
+  return `<div class="card callout" data-ck="${esc(b+f+c+wid+m)}${isCust(b,f,c)?'c':''}"><div class="row" style="margin-bottom:6px">${isCust(b,f,c)?`<span class="custtag">★ ห้องลูกค้า${custName(b,f,c)?' · '+esc(custName(b,f,c)):''}</span>`:''}${S.canWrite&&S.db?`<button class="btn sm" data-a="pcust">${isCust(b,f,c)?'แก้ไข/ยกเลิกห้องลูกค้า':'★ ระบุเป็นห้องลูกค้า'}</button>`:''}</div><div class="row" style="justify-content:space-between"><h2>ห้อง ${esc(b)}${esc(f)}${esc(c)} · ${wid==='ALL'?'รวมทุกงาน':esc((S.works[wid]||{}).name||'')}</h2><div><span class="sub">${mlabel}</span> <span class="big cop" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>${rows}</div>`}
 function planOverview(b,f,RM,wid,m){
   const ws=worksSorted().filter(w=>wid==='ALL'||w.id===wid),tot=planSummary(b,f,RM,wid,m),mlabel=(MS.find(x=>x[0]===m)||[])[1]||'';
   const n=Object.keys(RM).length;
   const rows=ws.map(w=>{const p=planSummary(b,f,RM,w.id,m);return `<div class="m" style="grid-template-columns:100px 1fr 56px"><b>${esc(w.name)}</b><div class="bar"><i style="width:${p==null?0:p*100}%;background:${MSCOL[m]}"></i></div><span class="v ${p==null?'na':''}">${fmt(p)}</span></div>`}).join('');
-  return `<div class="card callout" data-ck="ov${esc(b+f+wid+m)}"><div class="row" style="justify-content:space-between"><h2>ภาพรวมชั้น ${esc(f)} · ตึก ${esc(b)}</h2><div><span class="sub">${mlabel}</span> <span class="big cop" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div><div class="sub">${n} ห้อง · กดห้องบนแปลน หรือกด “ทัวร์” เพื่อดูรายละเอียดทีละห้องว่ามีงานอะไรและ % เท่าไหร่</div>${rows}</div>`}
+  return `<div class="card callout" data-ck="ov${esc(b+f+wid+m)}"><div class="row" style="justify-content:space-between"><h2>ภาพรวมชั้น ${esc(f)} · ตึก ${esc(b)}</h2><div><span class="sub">${mlabel}</span> <span class="big cop" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div><div class="sub">${n} ห้อง${Object.keys(RM).filter(c=>isCust(b,f,c)).length?` · ★ ห้องลูกค้า ${Object.keys(RM).filter(c=>isCust(b,f,c)).length} ห้อง (${fmt(planSummary(b,f,RM,wid,m,true))})`:''} · กดห้องบนแปลน หรือกด “ทัวร์” เพื่อดูรายละเอียดทีละห้องว่ามีงานอะไรและ % เท่าไหร่</div>${rows}</div>`}
 function planUnplaced(b,f,RM){const o=new Set(),pre=f+'-';
   for(const g of Object.values(S.grids)){if(g.building!==b||g.rowLabel)continue;for(const [k,v] of Object.entries(g.cells||{})){if(k.startsWith(pre)&&has(v)){const c=k.slice(pre.length);if(!RM[c])o.add(c)}}}
   return [...o].sort()}
@@ -665,7 +774,7 @@ function vWork(w){
   if(!gs.length)h+=`<div class="card empty" style="margin-top:16px">ยังไม่มีรายการ${b==='ALL'?'':'ในตึก '+esc(b)} ${S.canWrite?'กด “+ เพิ่มรายการ” เพื่อสร้างตารางชั้น × ห้อง':''}</div>`;
   for(const g of gs)h+=gridCard(w,g,b==='ALL');
   return h}
-function pctColor(v){const a=[74,115,153],b=[37,147,106],t=v/100;return '#'+a.map((x,i)=>Math.round(x+(b[i]-x)*t).toString(16).padStart(2,'0')).join('')}
+function pctColor(v){const a=hex3(dim()),b=[37,147,106],t=v/100;return '#'+a.map((x,i)=>Math.round(x+(b[i]-x)*t).toString(16).padStart(2,'0')).join('')}
 function gridCard(w,g,showB){
   const tl=tally(w,[g]),p=pcts(w,tl),cols=g.cols||[],fl=g.floors||[];
   let h=`<section class="card item sec" style="margin-top:16px"><div class="hd"><h3>${showB?`<span class="sub" style="margin-right:6px">ตึก ${esc(g.building)}</span>`:''}${esc(g.item)}</h3>
@@ -678,7 +787,7 @@ function gridCard(w,g,showB){
       else if(g.kind==='percent'){const pv=Math.max(0,Math.min(100,+v||0)),col=pctColor(pv);
         h+=`<button class="c" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" title="${esc(c)} ${esc(g.rowLabel||'ชั้น '+f)}: ${pv}%" aria-label="${esc(c)} ${esc(g.rowLabel||'ชั้น '+f)}: ${pv}%" style="background:${col};color:${fg(col)}">${Math.round(pv*10)/10}${(g.cw||32)>40?'%':''}</button>`}
       else{const i=sIdx(w,v),s=(w.statuses||[])[i]||{color:'#ccc',name:v};
-        h+=`<button class="c" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" title="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" aria-label="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" style="background:${sc(s.color)};color:${fg(sc(s.color))}">${esc(s.short||s.name.slice(0,2))}</button>`}}}
+        h+=`<button class="c${isCust(g.building,f,c)?' cust':''}" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" title="${isCust(g.building,f,c)?'★ ห้องลูกค้า · ':''}ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" aria-label="ห้อง ${esc(c)} ชั้น ${f}: ${esc(s.name)}" style="background:${sc(s.color)};color:${fg(sc(s.color))}">${esc(s.short||s.name.slice(0,2))}</button>`}}}
   return h+`</div></div>${gridLegend(w,g)}</section>`}
 function gridLegend(w,g){
   const none=`<span class="k"><span class="nn"></span>ไม่มีห้อง</span>`;
@@ -853,7 +962,8 @@ function buildClone(t,title){
   const hd=document.createElement('div');hd.className='exphead';hd.innerHTML=`<b>${esc(S.meta.name)}</b> · ${esc(title)} · ข้อมูล ณ ${date}`;
   const LT={done:[227,168,43],cm:[47,127,184],qc2:[37,147,106]};
   c.querySelectorAll('.hc[data-hp]').forEach(e=>{const p=+e.dataset.hp,a=LT[e.dataset.hk],t=(8+p*82)/100;e.style.background='rgb('+a.map(x=>Math.round(x*t+255*(1-t))).join(',')+')';e.style.color=p>.6?'#fff':'#15222a'});
-  c.querySelectorAll('[style]').forEach(e=>{if(e.style.backgroundColor==='rgb(74, 115, 153)'){e.style.backgroundColor='#c4c9c4';e.style.color='#14212a'}});
+  const DIMRGB='rgb('+hex3(dim()).join(', ')+')';
+  c.querySelectorAll('[style]').forEach(e=>{if(e.style.backgroundColor===DIMRGB){e.style.backgroundColor='#c4c9c4';e.style.color='#14212a'}});
   scope.append(hd,c);document.body.appendChild(scope);
   const wide=Math.max(0,...[...scope.querySelectorAll('.g')].map(g=>g.scrollWidth));
   scope.style.width=Math.max(t.g?640:1100,wide+80)+'px';
@@ -920,6 +1030,9 @@ document.addEventListener('click',async e=>{
   else if(a==='pprev'){planStop();planStep(-1)}
   else if(a==='ptour'){if(S.pp)planStop(),render();else planPlay()}
   else if(a==='rename'){renameProject()}
+  else if(a==='theme'){themeDialog()}
+  else if(a==='pcust'){custDialog(S.pe?S.pes:S.ps)}
+  else if(a==='pcf'){S.pcf=!S.pcf;render()}
   else if(a==='padd'){planAddDialog()}
   else if(a==='pdel'){planDelete()}
   else if(a==='pcopy'){planCopyZones()}
@@ -1083,6 +1196,7 @@ async function boot(){
   const onErr=()=>{};
   S.db.collection('works').onSnapshot(s=>{S.works={};s.docs.forEach(d=>S.works[d.id]=JSON.parse(JSON.stringify(d.data())));render()},onErr);
   S.db.collection('grids').onSnapshot(s=>{const old=S.grids;S.grids={};s.docs.forEach(d=>{const q=queue[d.id];S.grids[d.id]=(q&&(q.run||Object.keys(q.p).length)&&old[d.id])?old[d.id]:JSON.parse(JSON.stringify(d.data()))});render()},onErr);
+  S.db.doc('meta/clients').onSnapshot(s=>{S.clients=(s.exists&&JSON.parse(JSON.stringify(s.data())).r)||{};render()},onErr);
   S.db.doc('meta/plans').onSnapshot(s=>{if(!S._drag){const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.planov=d.ov||{};S.plancustom=d.cp||{};render()}},onErr);
   S.db.doc('meta/app').onSnapshot(s=>{if(s.exists){const m=s.data();if(m.buildings)S.meta.buildings=m.buildings.slice();if(m.name)S.meta.name=m.name;if(m.sub!=null)S.meta.sub=m.sub}render()},onErr);
   await load();setInterval(poll,45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()})}
