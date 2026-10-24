@@ -289,6 +289,12 @@ html[data-th] .expscope .chip,html[data-th] .expscope .btn{background:#fff;color
 html[data-th] .expscope .chip[aria-pressed=true]{background:#0b5d7a;color:#fff}
 html[data-th] .expscope .gf{background:#fff;color:#15222a}
 html[data-th] .expscope .tw{background:#fff}
+.planlay{position:relative}
+.planlay.has{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:36px;align-items:start}
+.planside{position:sticky;top:84px;min-width:0}
+.planside .callout{margin-top:0}
+.plead{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:5}
+@media(max-width:899px){.planlay.has{grid-template-columns:1fr;gap:0}.plead{display:none}.planside{position:static;margin-top:12px}}
 .plansvg{display:block;width:100%;height:auto;border-radius:6px}
 .pr{cursor:pointer;opacity:0;animation:pin .5s cubic-bezier(.2,.8,.2,1) var(--d,0s) forwards;transition:filter .15s}
 .pr polygon{transition:fill .35s ease}
@@ -561,7 +567,8 @@ function vPlan(){
   sv+='</svg>';
   const unp=S.pe?planUnplaced(b,f,RM):[];
   const tc=S.pe?`<div class="row" style="margin-top:10px"><button class="btn pri" data-a="pedit">✓ เสร็จการปรับโซน</button><button class="btn ${S.pd?'pri':''}" data-a="pdraw" ${S.pes?'':'disabled'}>▭ วาดโซนใหม่ให้ห้องที่เลือก</button><button class="btn" data-a="pcust" ${S.pes?'':'disabled'}>★ ห้องลูกค้า</button><button class="btn" data-a="preset" ${S.pes?'':'disabled'}>รีเซ็ตห้องนี้</button><button class="btn" data-a="presetall">รีเซ็ตทั้งชั้น</button><button class="btn" data-a="padd">+ เพิ่มแปลน</button>${P.custom?'<button class="btn" data-a="pcopy">คัดลอกโซนไปชั้นอื่นของแปลนนี้</button><button class="btn danger" data-a="pdel">ลบแปลนนี้</button>':''}</div>${unp.length?`<div class="row" style="margin-top:8px"><span class="sub">ห้องที่ยังไม่มีโซน (กดแล้วลากวาดบนแปลน):</span><div class="chips">${unp.map(c=>`<button class="chip" data-a="pplace" data-c="${esc(c)}" aria-pressed="${S.pd&&S.pes===c}">+ ${esc(b)}${esc(f)}${esc(c)}</button>`).join('')}</div></div>`:''}<div class="sub" style="margin-top:6px">${S.pd?'ลากบนแปลนเพื่อวาดสี่เหลี่ยมของห้อง '+esc(b)+esc(f)+esc(S.pes):(S.pes?`เลือกห้อง ${esc(b)}${esc(f)}${esc(S.pes)} · ลากตัวห้องเพื่อย้าย ลากจุดขาวที่มุมเพื่อปรับขนาด/รูปทรง`:'กดห้องบนแปลนเพื่อเลือก แล้วลากย้ายหรือปรับขนาด')}</div>`:`<div class="row" style="margin-top:10px"><button class="btn ${S.pp?'':'pri'}" data-a="ptour">${S.pp?'⏸ หยุดทัวร์':'▶ ทัวร์ทีละห้อง'}</button><button class="btn" data-a="pprev" aria-label="ห้องก่อนหน้า">◀</button><button class="btn" data-a="pnext" aria-label="ห้องถัดไป">▶</button>${S.ps?'<button class="btn" data-a="pall">ดูทั้งชั้น</button>':''}${S.canWrite&&S.db?'<button class="btn" data-a="pedit">✎ ปรับโซนห้อง</button><button class="btn" data-a="padd">+ เพิ่มแปลน</button>':''}<span class="sub">${S.ps?`ห้อง ${esc(b)}${esc(f)}${esc(S.ps)} (${cs.indexOf(S.ps)+1}/${cs.length})`:'กดห้องบนแปลนเพื่อซูมเข้าไปดู'}</span></div>`;
-  h+=tc+`<section class="sec"><div class="card" style="padding:8px">${sv}</div>${S.pe?'':(S.ps&&RM[S.ps]?planCallout(b,+f,S.ps,wid,m):planOverview(b,+f,RM,wid,m))}
+  const panel=S.pe?'':(S.ps&&RM[S.ps]?planCallout(b,+f,S.ps,wid,m):planOverview(b,+f,RM,wid,m));
+  h+=tc+`<section class="sec"><div class="planlay${panel?' has':''}"><div class="card plancard" style="padding:8px">${sv}</div>${panel?`<div class="planside">${panel}</div><svg class="plead" aria-hidden="true"></svg>`:''}</div>
    <div class="glg"><b>สีของห้อง</b><span class="k">0%<span class="gr" style="background:linear-gradient(90deg,var(--dim),${cvar('--'+m)})"></span>100%</span><span class="k"><span class="nn" style="background:rgba(155,189,219,.18)"></span>ไม่มีรายการในห้อง</span><span class="k"><span class="custtag">★</span>ห้องลูกค้า</span></div>
    <div class="sub">ขอบเขตห้องบนแปลนลากโดยประมาณ ถ้าตำแหน่งไม่ตรงบอกได้</div></section>`;
   return h}
@@ -605,15 +612,30 @@ function planApply(first){
   const svg=document.querySelector('.plansvg');if(!svg)return;
   const b=S.pb,f=S.pf,P=planOf(b,f);if(!P||!P.w)return;
   const to=S.ps&&!S.pe&&roomsOf(b,f)[S.ps]?planVB(P,S.ps):[0,0,P.w,P.h];
-  if(first||!PVB){PVB=to;PTW=null;svg.setAttribute('viewBox',to.join(' '));return}
-  if(PTW){svg.setAttribute('viewBox',PVB.join(' '));if(PTW.to.join()===to.join())return;PVB=PVB.slice()}
+  if(first||!PVB){PVB=to;PTW=null;svg.setAttribute('viewBox',to.join(' '));planLead();return}
+  if(PTW){svg.setAttribute('viewBox',PVB.join(' '));if(PTW.to.join()===to.join()){planLead();return}PVB=PVB.slice()}
   const from=PVB.slice(),t0=performance.now(),dur=matchMedia('(prefers-reduced-motion:reduce)').matches?1:800;
   const tw=PTW={to};
   const ease=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
-  const step=n=>{if(PTW!==tw)return;const k=Math.min(1,(n-t0)/dur),e=ease(k);PVB=from.map((v,i)=>v+(to[i]-v)*e);
+  const step=n=>{if(PTW!==tw)return;requestAnimationFrame(planLead);const k=Math.min(1,(n-t0)/dur),e=ease(k);PVB=from.map((v,i)=>v+(to[i]-v)*e);
     const el=document.querySelector('.plansvg');if(el)el.setAttribute('viewBox',PVB.join(' '));
-    if(k<1)requestAnimationFrame(step);else{PTW=null;PVB=to}};
+    if(k<1)requestAnimationFrame(step);else{PTW=null;PVB=to;planLead()}};
   requestAnimationFrame(step)}
+function planLead(){
+  const lay=document.querySelector('.planlay.has'),ld=document.querySelector('.plead');if(!lay||!ld)return;
+  if(window.innerWidth<900){ld.innerHTML='';return}
+  const svg=lay.querySelector('.plansvg'),side=lay.querySelector('.planside .callout');if(!svg||!side)return;
+  const RM=roomsOf(S.pb,S.pf);let pt;
+  if(S.ps&&RM[S.ps])pt=centroid(RM[S.ps]);else{const cs=Object.values(RM).map(centroid);if(!cs.length)return;pt=[cs.reduce((a,q)=>a+q[0],0)/cs.length,cs.reduce((a,q)=>a+q[1],0)/cs.length]}
+  const m=svg.getScreenCTM();if(!m)return;
+  const lr=lay.getBoundingClientRect(),sr=side.getBoundingClientRect();
+  const sx=m.a*pt[0]+m.c*pt[1]+m.e-lr.left,sy=m.b*pt[0]+m.d*pt[1]+m.f-lr.top;
+  const ex=sr.left-lr.left,ey=Math.min(sr.bottom-lr.top-20,Math.max(sr.top-lr.top+20,sy));
+  const d=`M${sx.toFixed(1)},${sy.toFixed(1)} L${(ex-18).toFixed(1)},${ey.toFixed(1)} L${ex.toFixed(1)},${ey.toFixed(1)}`;
+  ld.setAttribute('width',lr.width);ld.setAttribute('height',lr.height);
+  ld.innerHTML=`<path d="${d}" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="6" fill="var(--accent)" stroke="#000" stroke-width="2"/><circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="4" fill="var(--accent)" stroke="#000" stroke-width="1.5"/>`}
+let plRaf=0;const plSoon=()=>{if(S.view==='plan'&&!plRaf)plRaf=requestAnimationFrame(()=>{plRaf=0;planLead()})};
+window.addEventListener('resize',plSoon);window.addEventListener('scroll',plSoon,{passive:true});
 function planCodes(){const P=planOf(S.pb,S.pf);return P?Object.keys(roomsOf(S.pb,S.pf)).sort():[]}
 function planStep(d){const seq=[null,...planCodes()];if(seq.length<2)return;const i=Math.max(0,seq.indexOf(S.ps));S.ps=seq[(i+d+seq.length)%seq.length];render()}
 function planStop(){S.pp=false;clearInterval(PPT);PPT=null}
@@ -813,7 +835,7 @@ function doRender(){
   const key=S.view+'|'+S.pb+'|'+S.pf+'|'+S.pw+'|'+S.pm+'|'+S.bld+'|'+S.obld+'|'+S.qw+'|'+S.qb;const ent=key!==S._k;S._k=key;
   app.classList.remove('enter');app.innerHTML=h;
   if(ent&&S.view==='plan'){app.querySelectorAll('[data-v]').forEach(e=>{if(!e.matches('.prp,#ptot'))return;const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const step=n=>{const k=Math.min(1,(n-t0)/900),x=t*(1-Math.pow(1-k,3));e.textContent=fmt(x);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
-  if(S.view==='plan'){planApply(ent);const ck=app.querySelector('.callout');const k=ck?ck.dataset.ck:'';if(k&&k!==S._ck){app.querySelectorAll('.cop').forEach(e=>{const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const st=n=>{const q=Math.min(1,(n-t0)/800);e.textContent=fmt(t*(1-Math.pow(1-q,3)));if(q<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}S._ck=k}
+  if(S.view==='plan'){planApply(ent);setTimeout(planLead,480);const ck=app.querySelector('.callout');const k=ck?ck.dataset.ck:'';if(k&&k!==S._ck){app.querySelectorAll('.cop').forEach(e=>{const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const st=n=>{const q=Math.min(1,(n-t0)/800);e.textContent=fmt(t*(1-Math.pow(1-q,3)));if(q<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}S._ck=k}
   if(ent){void app.offsetWidth;app.classList.add('enter');clearTimeout(S._et);S._et=setTimeout(()=>app.classList.remove('enter'),1400);window.scrollTo({top:0})}
   app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]})}
 
