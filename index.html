@@ -348,6 +348,7 @@ input[type=text],input[type=number],select{font:inherit;color:var(--ink);backgro
 input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface)}
 .srow{display:grid;grid-template-columns:38px 1fr auto auto auto;gap:6px;align-items:center}
 .srow input[type=text]{padding:6px 8px}
+.pdfg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;max-height:50vh;overflow:auto;padding:2px}.pdc{border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--surface2)}.pdc.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pdc canvas{width:100%;height:auto;display:block;background:#fff;border-radius:4px;margin-top:6px;cursor:pointer}.pdc input[type=text]{min-width:0}
 .chk{display:flex;gap:6px;align-items:center;font-size:13px}
 .empty{padding:30px 16px;text-align:center;color:var(--muted)}
 .expscope{position:fixed;left:-100000px;top:0;padding:20px;
@@ -691,13 +692,78 @@ function removeBg(cv,tol,clean){
     const mx=Math.max(...sizes);
     for(let y=0;y<h;y++)for(let xx=0;xx<w;xx++){const i=y*w+xx;if(d[i*4+3]){const l=lab[((y/C)|0)*gw+((xx/C)|0)];if(sizes[l]<mx*.15)d[i*4+3]=0}}}
   x.putImageData(im,0,0)}
+let _pdfjs=null;
+function loadPdfjs(){if(window.pdfjsLib&&_pdfjs)return Promise.resolve(window.pdfjsLib);
+  return _pdfjs=new Promise((res,rej)=>{const B='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+   const ld=u=>new Promise((a,b)=>{const s=document.createElement('script');s.src=u;s.onload=a;s.onerror=()=>b(new Error('โหลดไลบรารี PDF ไม่ได้'));document.head.appendChild(s)});
+   ld(B+'pdf.min.js').then(()=>ld(B+'pdf.worker.min.js')).then(()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=B+'pdf.worker.min.js';res(window.pdfjsLib)}).catch(e=>{_pdfjs=null;rej(e)})})}
+function planEncode(cv,alpha){let url='',q=.82,work=cv;
+  for(let t=0;t<8;t++){url=work.toDataURL(alpha?'image/webp':'image/jpeg',q);if(url.length<=520000)break;q-=.12;if(q<.4){q=.7;const c2=document.createElement('canvas');c2.width=Math.round(work.width*.8);c2.height=Math.round(work.height*.8);c2.getContext('2d').drawImage(work,0,0,c2.width,c2.height);work=c2}}
+  return url.length>900000?null:{url,w:work.width,h:work.height}}
+async function planUpload(url){const id='pi'+uid(),CH=180000,n=Math.max(1,Math.ceil(url.length/CH));
+  for(let k=0;k<n;k++)await S.db.doc('meta/pimg-'+id+'-'+k).set({d:url.slice(k*CH,(k+1)*CH)});S.pimg[id]=url;return {id,n}}
+function planPdfDialog(file){
+  if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  const bs=S.meta.buildings;let pdf=null,N=0;const rows=[];
+  modal(`<h2>เพิ่มแปลนจาก PDF</h2>
+   <div class="sub" id="pd_st">กำลังเปิดไฟล์ <b>${esc(file.name)}</b>…</div>
+   <div class="row" id="pd_tools" hidden>
+    <div class="field" style="flex:1;min-width:130px"><label for="pd_b">ตึกสำหรับหน้าที่เลือก</label><input id="pd_b" type="text" list="pd_bl" maxlength="6" value="${esc(S.pb||bs[0]||'')}"><datalist id="pd_bl">${bs.map(b=>`<option value="${esc(b)}">`).join('')}</datalist></div>
+    <div class="field" style="width:110px"><label for="pd_s">ชั้นเริ่มต้น</label><input id="pd_s" type="number" value="1" min="0"></div>
+    <button class="btn sm" data-a2="fill" style="align-self:flex-end">ใส่ตึก/ชั้นให้หน้าที่เลือก</button>
+    <button class="btn sm" data-a2="all" style="align-self:flex-end">เลือกทั้งหมด</button>
+    <button class="btn sm" data-a2="none" style="align-self:flex-end">ไม่เลือก</button></div>
+   <div class="sub" id="pd_h" hidden>ติ๊กหน้าที่ต้องการ แล้วระบุตึกและชั้นของแต่ละหน้า (ชั้นพิมพ์ได้ เช่น 2 หรือ 2-7 หรือ 1,3,5) · “ใส่ตึก/ชั้นให้หน้าที่เลือก” จะรันเลขชั้นต่อเนื่องตามลำดับหน้า</div>
+   <div class="pdfg" id="pd_g"></div>
+   <label class="chk"><input id="pd_bg" type="checkbox"> ลบพื้นหลัง (สีรอบนอก)</label>
+   <div class="row"><button class="btn pri" data-ok disabled id="pd_ok">นำเข้าหน้าที่เลือก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.style.maxWidth='900px';
+   const g=$('#pd_g'),sel=()=>rows.filter(r=>r.cb.checked);
+   const upd=()=>{rows.forEach(r=>r.card.classList.toggle('on',r.cb.checked));const n=sel().length;$('#pd_ok').disabled=!n;$('#pd_ok').textContent=n?`นำเข้า ${n} หน้า`:'นำเข้าหน้าที่เลือก'};
+   (async()=>{try{const lib=await loadPdfjs();pdf=await lib.getDocument({data:await file.arrayBuffer()}).promise;N=pdf.numPages;
+     $('#pd_st').textContent=`${file.name} · ${N} หน้า`;$('#pd_tools').hidden=false;$('#pd_h').hidden=false;
+     for(let i=1;i<=N;i++){const card=document.createElement('div');card.className='pdc';
+       card.innerHTML=`<label class="chk"><input type="checkbox" class="pc"> <b>หน้า ${i}</b></label><canvas></canvas><div class="row" style="gap:6px;margin-top:6px;flex-wrap:nowrap"><input class="pb" type="text" list="pd_bl" maxlength="6" placeholder="ตึก" style="width:64px"><input class="pf" type="text" placeholder="ชั้น เช่น 2-7" style="flex:1;min-width:0"></div>`;
+       g.appendChild(card);const r={i,card,cb:card.querySelector('.pc'),b:card.querySelector('.pb'),f:card.querySelector('.pf')};rows.push(r);
+       r.cb.onchange=upd;
+       const pg=await pdf.getPage(i),v0=pg.getViewport({scale:1}),cv=card.querySelector('canvas'),k=240/v0.width,v=pg.getViewport({scale:k});
+       cv.width=Math.round(v.width);cv.height=Math.round(v.height);const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);await pg.render({canvasContext:x,viewport:v}).promise;
+       cv.onclick=()=>{r.cb.checked=!r.cb.checked;upd()}}
+   }catch(e){$('#pd_st').textContent='เปิด PDF ไม่ได้: '+((e&&e.message)||e)}})();
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+     if(b.hasAttribute('data-x'))return closeM();
+     const a2=b.getAttribute('data-a2');
+     if(a2==='all'){rows.forEach(r=>r.cb.checked=true);upd();return}
+     if(a2==='none'){rows.forEach(r=>r.cb.checked=false);upd();return}
+     if(a2==='fill'){const bl=$('#pd_b').value.trim().toUpperCase().replace(/[^A-Z0-9ก-๙]/g,''),s0=parseInt($('#pd_s').value,10);if(!bl)return toast('ระบุชื่อตึก');
+       let f=isNaN(s0)?1:s0;for(const r of sel()){r.b.value=bl;r.f.value=String(f++)}return}
+     if(!b.hasAttribute('data-ok'))return;
+     const pick=[];for(const r of sel()){const bl=r.b.value.trim().toUpperCase().replace(/[^A-Z0-9ก-๙]/g,''),fl=parseFloors(r.f.value);
+       if(!bl||!fl||!fl.length)return toast('หน้า '+r.i+': ระบุตึกและชั้นให้ครบ');pick.push({r,bl,fl})}
+     if(!pick.length)return toast('เลือกหน้าก่อน');
+     const alpha=$('#pd_bg').checked;b.disabled=true;
+     try{const nb=[...new Set(pick.map(p=>p.bl))].filter(x=>!S.meta.buildings.includes(x));
+       if(nb.length)await metaSave({buildings:[...S.meta.buildings,...nb]});
+       const old=new Set(),acc={};let first=null,n=0;
+       for(const p of pick){b.textContent=`กำลังนำเข้า ${++n}/${pick.length}…`;
+         const pg=await pdf.getPage(p.r.i),v0=pg.getViewport({scale:1}),k=Math.min(3,1600/Math.max(v0.width,v0.height)),v=pg.getViewport({scale:k});
+         const cv=document.createElement('canvas');cv.width=Math.round(v.width);cv.height=Math.round(v.height);const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);
+         await pg.render({canvasContext:x,viewport:v}).promise;if(alpha)removeBg(cv,34,true);
+         const enc=planEncode(cv,alpha);if(!enc){toast('หน้า '+p.r.i+' ใหญ่เกินไป ข้าม');continue}
+         const up=await planUpload(enc.url);
+         for(const f of p.fl){const key=p.bl+'-'+f;acc[key]={img:up.id,w:enc.w,h:enc.h,n:up.n};if(!first)first={b:p.bl,f}}}
+       for(const [key,v] of Object.entries(acc)){if(S.plancustom[key]){old.add(S.plancustom[key].img);S._pn=S._pn||{};S._pn[S.plancustom[key].img]=S.plancustom[key].n}S.plancustom[key]=v;if(S.planov[key])delete S.planov[key]}
+       planSave();planGcImages(old);closeM();
+       if(first){S.pb=first.b;S.pf=first.f;S.pe=true;S.ps=null;S.pes=null;S.pd=false;S.view='plan'}
+       render();toast('นำเข้าแปลนแล้ว ลากวาดโซนห้องของแต่ละชั้นได้เลย',4500)}
+     catch(err){b.disabled=false;toast('นำเข้าไม่สำเร็จ: '+((err&&err.message)||err))}}})}
 function planAddDialog(){
   if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
   let img=null;const bs=S.meta.buildings;
   modal(`<h2>เพิ่มแปลน</h2>
    <div class="field"><label for="pa_b">ตึก</label><select id="pa_b">${bs.map(b=>`<option ${b===S.pb?'selected':''}>${esc(b)}</option>`).join('')}</select></div>
    <div class="field"><label for="pa_f">ชั้นที่ใช้แปลนนี้ (เช่น 2 หรือ 2-7 หรือ 1,3,5)</label><input id="pa_f" type="text" placeholder="2-7"></div>
-   <div class="field"><label for="pa_i">ไฟล์แปลน (รูป PNG / JPG)</label><input id="pa_i" type="file" accept="image/*"></div>
+   <div class="field"><label for="pa_i">ไฟล์แปลน (รูป PNG / JPG หรือ PDF หลายหน้า)</label><input id="pa_i" type="file" accept="image/*,application/pdf,.pdf"></div>
    <label class="chk"><input id="pa_bg" type="checkbox" checked> ลบพื้นหลัง (สีรอบนอก)</label>
    <div class="field" id="pa_tw"><label for="pa_t">ความไวการลบพื้นหลัง <span id="pa_tv"></span></label><input id="pa_t" type="range" min="6" max="90" value="34"></div>
    <label class="chk" id="pa_cw"><input id="pa_c" type="checkbox" checked> ลบตัวอักษร/ชิ้นเล็กที่อยู่รอบนอกอาคาร</label>
@@ -707,7 +773,7 @@ function planAddDialog(){
    const cv=$('#pa_cv'),proc=()=>{if(!img)return;const k=Math.min(1,1600/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
      cv.width=Math.round((img.naturalWidth||img.width)*k);cv.height=Math.round((img.naturalHeight||img.height)*k);const x=cv.getContext('2d');x.clearRect(0,0,cv.width,cv.height);x.drawImage(img,0,0,cv.width,cv.height);
      $('#pa_tv').textContent=$('#pa_t').value;if($('#pa_bg').checked)removeBg(cv,+$('#pa_t').value,$('#pa_c').checked)};
-   $('#pa_i').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const u=URL.createObjectURL(f);img=await loadImgEl(u);proc()}catch(x){toast('เปิดรูปไม่ได้')}};
+   $('#pa_i').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.type==='application/pdf'||/\.pdf$/i.test(f.name)){closeM();return planPdfDialog(f)}try{const u=URL.createObjectURL(f);img=await loadImgEl(u);proc()}catch(x){toast('เปิดรูปไม่ได้')}};
    let tm=0;const re=()=>{clearTimeout(tm);tm=setTimeout(proc,120)};
    ['pa_bg','pa_t','pa_c'].forEach(id=>$('#'+id).addEventListener('input',re));
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
