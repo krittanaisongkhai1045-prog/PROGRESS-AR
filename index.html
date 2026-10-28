@@ -361,13 +361,6 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 .gtr{position:relative;border-bottom:1px solid var(--line)}.gbar{position:absolute;top:10px;height:24px;border:1px solid;border-radius:6px;overflow:hidden;padding:0;cursor:pointer;min-width:6px}.gbar i{position:absolute;left:0;top:0;bottom:0;opacity:.85}.gbar span{position:relative;font-size:11px;font-weight:700;color:var(--ink);padding:0 5px;text-shadow:0 0 3px var(--surface)}
 .gtd{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:.9;pointer-events:none}
 @media(max-width:640px){.gl{flex-basis:130px}}
-.dzlay{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:16px;align-items:start}
-@media(max-width:860px){.dzlay{grid-template-columns:1fr}}
-.dzf{display:flex;flex-direction:column;gap:10px}.dzf select,.dzf input[type=number]{width:100%}
-.dzb{display:inline-block;font-weight:700;padding:6px 14px;border-radius:99px;color:#fff;margin-bottom:10px}.dzb.ok{background:#25936a}.dzb.warn{background:#c98a14}.dzb.ng{background:#d64545}
-.dzt{width:100%;border-collapse:collapse}.dzt td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.dzt .dzv{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.dzt .dzk{width:22px;text-align:center}
-.dzt .dzs td{background:var(--surface2);font-weight:700;font-size:12.5px;color:var(--muted);letter-spacing:.2px}
-.dzwarn{grid-column:1/-1;margin-top:0;font-size:12.5px;color:var(--muted);line-height:1.6}
 .chk{display:flex;gap:6px;align-items:center;font-size:13px}
 .empty{padding:30px 16px;text-align:center;color:var(--muted)}
 .expscope{position:fixed;left:-100000px;top:0;padding:20px;
@@ -382,6 +375,23 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 .expscope .exphead{font-size:13px;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
 .expscope .exphead b{color:var(--ink);font-family:var(--f-display);font-size:15px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;z-index:60;font-size:13px}
+
+.rkp{display:flex;gap:16px;flex-wrap:wrap}.kp{display:flex;flex-direction:column;min-width:84px}.kp .kl{font-size:11px;color:var(--muted)}.kp b{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.dl{font-style:normal;font-size:12px;font-weight:600;white-space:nowrap}.dl.up{color:#25936a}.dl.dn{color:#d64545}.dl.z{color:var(--muted)}
+.rb{margin-top:14px}.rb h3{font-size:16px}.rbh{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.rbody{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px}@media(max-width:760px){.rbody{grid-template-columns:1fr}}
+.rsub{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rw{display:grid;grid-template-columns:minmax(70px,120px) 1fr auto;gap:8px;align-items:center;font-size:13px;margin:5px 0}.rw>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rw .pc{justify-content:flex-start}.rw .pc .bar{flex:1;width:auto}
+.rit{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:8px 0;color:inherit;font:inherit;cursor:pointer}.rit:hover{background:var(--surface2)}.rit .sr{text-align:right;flex:none}
+.rphg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}.rph{position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;border:1px solid var(--line);padding:0;background:var(--surface2);cursor:pointer;display:block}.rph img{width:100%;height:100%;object-fit:cover;display:block}.rph .phc{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;font-size:11px;padding:14px 6px 4px;text-align:left}.rph .phc:empty{display:none}.rph.ld{animation:fin 1s ease infinite alternate}
+.rnote{margin-top:12px;border-top:1px dashed var(--line);padding-top:8px}.rnt{white-space:pre-wrap;font-size:14px;margin-top:4px}
+.l3{min-width:760px}.l3h,.l3r{display:flex}.l3l{flex:0 0 230px;padding:6px 10px 6px 4px;display:flex;flex-direction:column;font-size:13px;min-width:0}.l3l b{overflow:hidden;text-overflow:ellipsis}
+.l3t{flex:1;display:grid;grid-template-columns:repeat(3,1fr);min-width:0}.l3r>.l3t{display:block}.l3w{border-left:1px solid var(--line);padding:2px 4px;font-size:12px;display:flex;flex-direction:column}.l3w span{color:var(--muted);font-size:11px}
+.l3d{display:grid;grid-template-columns:repeat(7,1fr);font-size:10px;color:var(--muted);text-align:center}.l3d .we{opacity:.55}
+.l3g{margin-top:12px;border-top:2px solid var(--line)}.l3gh{display:flex;align-items:center;gap:10px;padding:8px 4px;flex-wrap:wrap}.l3gh b{font-size:15px}.l3ph{display:flex;gap:6px;margin-left:auto}.l3ph .rph{width:64px;aspect-ratio:1}.l3ph .phc{display:none}
+.l3r{border-top:1px solid var(--line);align-items:stretch}.l3tr{position:relative;height:100%;min-height:42px;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/3 - 1px),var(--line) calc(100%/3 - 1px) calc(100%/3))}.l3tr .gbar{top:9px}.l3tr .gtd{position:absolute;top:0;bottom:0;width:2px;background:var(--warn,#d64545)}
+.l3 .rnote{margin-left:4px}
+.rpres{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;font-size:16px;color:var(--ink)}.rpres[hidden]{display:none}.rpbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;background:var(--bar,var(--surface));color:var(--bar-ink,var(--ink));flex-wrap:wrap}.rpbody{flex:1;overflow:auto;padding:16px clamp(12px,3vw,40px)}.rpin{max-width:1200px;margin:0 auto}.rpres .noexp{display:none!important}.rpres .rb{margin-top:0}.rpres .rkp b{font-size:30px}.rpres .rph{cursor:default}.rpres .rit{cursor:default}
 </style>
 
 </head><body>
@@ -731,192 +741,6 @@ function vSched(){
      <div class="gtd" style="left:${(t-mn+.5)*dw}px"></div></div></div></div><div class="sub" style="margin-top:6px">แถบสี = ช่วงเวลาตามแผน · ส่วนที่เติม = ความคืบหน้าจริง · เส้นแนวตั้ง = วันนี้ · กดแถบเพื่อแก้ไข</div></section>`}
   else h+=`<section class="sec"><div class="tw"><table><thead><tr><th>โซน</th><th>งาน</th><th>เริ่ม</th><th>กำหนดเสร็จ</th><th>ความคืบหน้าจริง</th><th>สถานะ</th>${S.canWrite?'<th class="noexp"></th>':''}</tr></thead><tbody>${L.map(x=>{const dl=Math.round(dnum(x.e)-t);return `<tr><td>${schedZone(x)}${x.n?`<div class="sub">${esc(x.n)}</div>`:''}</td><td>${esc((S.works[x.w]||{}).name||'ไม่พบงาน')}</td><td>${fd(x.s)}</td><td>${fd(x.e)}<div class="sub">${x.st.k==='done'?'':dl>=0?'อีก '+dl+' วัน':'เกิน '+(-dl)+' วัน'}</div></td><td><div class="m" style="grid-template-columns:1fr 52px"><div class="bar"><i style="width:${x.pr==null?0:x.pr*100}%;background:${x.st.c}"></i></div><span class="v ${x.pr==null?'na':''}">${fmt(x.pr)}</span></div></td><td><span class="sbadge" style="background:${x.st.c}">${x.st.l}</span></td>${S.canWrite?`<td class="noexp"><button class="btn sm" data-a="schededit" data-id="${x.id}">แก้ไข</button></td>`:''}</tr>`}).join('')}</tbody></table></div></section>`;
   return h}
-/* ===== design calc ===== */
-const DZ=(()=>{
-const E_S=2.04e6,PI=Math.PI;
-const fx=(x,n=2)=>{if(x==null||!isFinite(x))return '–';const s=(+x).toFixed(n);return s.includes('.')?s.replace(/\.?0+$/,''):s};
-const BARS={RB6:[.6,.283],RB9:[.9,.636],RB12:[1.2,1.131],DB10:[1,.785],DB12:[1.2,1.131],DB16:[1.6,2.011],DB20:[2,3.142],DB25:[2.5,4.909],DB28:[2.8,6.158],DB32:[3.2,8.042]};
-const CODES={eit:{n:'วสท. (แนวทาง ACI 318-99)',cD:1.4,cL:1.7,pv:.85,pt:.70,ps:.75,vr:false},aci:{n:'ACI 318-14',cD:1.2,cL:1.6,pv:.75,pt:.65,ps:.75,vr:true}};
-const b1=fc=>Math.max(.65,Math.min(.85,.85-.05*(fc-280)/70));
-const HB=[[100,100,6,8],[125,125,6.5,9],[150,75,5,7],[148,100,6,9],[150,150,7,10],[175,90,5,8],[175,175,7.5,11],[198,99,4.5,7],[200,100,5.5,8],[194,150,6,9],[200,200,8,12],[248,124,5,8],[250,125,6,9],[244,175,7,11],[250,250,9,14],[298,149,5.5,8],[300,150,6.5,9],[294,200,8,12],[300,300,10,15],[346,174,6,9],[350,175,7,11],[340,250,9,14],[350,350,12,19],[396,199,7,11],[400,200,8,13],[390,300,10,16],[400,400,13,21],[446,199,8,12],[450,200,9,14],[496,199,9,14],[500,200,10,16],[482,300,11,15],[488,300,11,18],[596,199,10,15],[600,200,11,17],[582,300,12,17],[588,300,12,20]];
-const HBN=HB.map(a=>`H ${a[0]}x${a[1]}x${a[2]}x${a[3]}`);
-const FYS={SS400:2400,SM490:3300,A36:2500,A572G50:3500};
-function mk(){const R=[];let st='ok';return{R,get st(){return st},ng(){st='ng'},wn(){if(st==='ok')st='warn'},s(t){R.push({s:t})},r(l,f,v,u,ok){R.push({l,f,v,u,ok})}}}
-/* ---------- RC beam / one-way slab ---------- */
-function flex(I,As){const a=As*I.fy/(.85*I.fc*I.b),c=a/b1(I.fc),et=.003*(I.d-c)/c,ey=I.fy/E_S;let phi=.9;
-  if(CODES[I.code].vr)phi=et>=.005?.9:et<=ey?.65:.65+.25*(et-ey)/(.005-ey);
-  return{a,c,et,phi,phiMn:phi*As*I.fy*(I.d-a/2)}}
-function asMax(I){if(!CODES[I.code].vr){const rb=.85*b1(I.fc)*I.fc/I.fy*(.003*E_S/(.003*E_S+I.fy));return .75*rb*I.b*I.d}
-  const a=b1(I.fc)*(.003/.007)*I.d;return .85*I.fc*I.b*a/I.fy}
-function asReq(I,Mu){const hi=asMax(I);if(flex(I,hi).phiMn<Mu)return null;let lo=0,h=hi;for(let i=0;i<60;i++){const m=(lo+h)/2;if(flex(I,m).phiMn<Mu)lo=m;else h=m}return h}
-function rcBeam(I){const C=CODES[I.code],M=mk(),slab=I.type==='slab';
-  const bar=BARS[I.bar],db=bar[0],Ab=bar[1],dst=slab?0:BARS[I.stir][0],b=slab?100:I.b,h=I.h,fc=I.fc,fy=I.fy,L=I.L;
-  const d=I.dov>0?I.dov:h-I.cover-dst-db/2,J={...I,b,d};
-  if(!(b>0&&h>0&&L>0&&fc>0&&fy>0&&d>0)){M.s('กรอกข้อมูลให้ครบ');M.wn();return M}
-  M.s('ข้อมูลหน้าตัดและวัสดุ');
-  M.r('มาตรฐาน',C.n+` (${C.cD}D+${C.cL}L)`);
-  M.r('หน้าตัด b × h',null,`${fx(b)} × ${fx(h)}`,'ซม.');
-  M.r('ความลึกประสิทธิผล d','h − cover − d_stirrup − d_b/2',fx(d),'ซม.');
-  M.r('f′c / fy',null,`${fx(fc,0)} / ${fx(fy,0)}`,'ksc');M.r('β1','0.85 − 0.05(f′c−280)/70 (0.65–0.85)',fx(b1(fc),3));
-  const ratio={simple:16,end:18.5,int:21,cant:8},rs={simple:20,end:24,int:28,cant:10},fac=.4+fy/7000,rr=(slab?rs:ratio)[I.cont];
-  const hmin=L*100/rr*fac;M.r('ความหนา/ลึกขั้นต่ำ (ไม่ต้องตรวจการแอ่นตัว)',`L/${rr} × (0.4+fy/7000)`,fx(hmin,1),'ซม.',h>=hmin?true:'w');if(h<hmin)M.wn();
-  M.s('น้ำหนักบรรทุก');
-  const self=slab?24*h:.24*b*h,wD=(+I.wD||0)+(I.sw?self:0),wL=+I.wL||0,wu=C.cD*wD+C.cL*wL;
-  M.r('น้ำหนักตัวเอง',slab?'2400·h/100 ต่อแถบ 1 ม.':'2400·b·h',fx(self,1),'กก./ม.');
-  M.r('wD / wL',null,`${fx(wD,1)} / ${fx(wL,1)}`,'กก./ม.');M.r('wu',`${C.cD}wD + ${C.cL}wL`,fx(wu,1),'กก./ม.');
-  const mom={simple:[['บวกกลางช่วง',1/8,'1/8']],end:[['บวกกลางช่วง',1/14,'1/14'],['ลบที่ฐานรองรับในตัวแรก',1/10,'1/10']],int:[['บวกกลางช่วง',1/16,'1/16'],['ลบที่ฐานรอง',1/11,'1/11']],cant:[['ลบที่ฐานรอง',1/2,'1/2']]}[I.cont];
-  const Vf={simple:.5,end:.575,int:.5,cant:1}[I.cont],Vu0=Vf*wu*L,Vud=Math.max(0,Vu0-wu*d/100);
-  const rmin=Math.max(.8*Math.sqrt(fc)/fy,14/fy);
-  mom.forEach(([nm,c,cs])=>{const Mu=c*wu*L*L*100;M.s(`การดัด — ${nm}`);
-    M.r('Mu',`wu·L² × ${cs}`,fx(Mu/1e5,3),'ตัน-ม.');
-    const As=asReq(J,Mu);if(As==null){M.r('ผล','หน้าตัดเล็กเกินไปสำหรับเหล็กรับแรงดึงอย่างเดียว','ไม่ผ่าน','',false);M.ng();return}
-    const Asmin=slab?(fy>=4000?.0018:.0020)*b*h:rmin*b*d,Au=Math.max(As,Asmin),F=flex(J,Au);
-    M.r('As ที่ต้องการ','จาก φMn ≥ Mu (หาค่าด้วยการวนซ้ำ)',fx(As,2),'ซม.²');
-    M.r(slab?'As ขั้นต่ำ (อุณหภูมิ/หดตัว)':'As ขั้นต่ำ',slab?(fy>=4000?'0.0018':'0.0020')+'·b·h':'max(0.8√f′c/fy, 14/fy)·b·d',fx(Asmin,2),'ซม.²');
-    M.r('As ที่ใช้ออกแบบ',null,fx(Au,2),'ซม.²',true);
-    M.r('εt / φ',null,`${fx(F.et,4)} / ${fx(F.phi,2)}`);if(CODES[I.code].vr&&F.et<.005)M.wn();
-    M.r('φMn',null,fx(F.phiMn/1e5,3),'ตัน-ม.',F.phiMn>=Mu*.999);
-    if(slab){const sp=Math.min(Math.floor(Ab*100/Au/2.5)*2.5,3*h,45);M.r(`เหล็ก ${I.bar} ระยะ`,'s = Ab·100/As (≤ 3h, 45 ซม.)',fx(sp,1),'ซม.',sp>=7.5?true:'w');if(sp<7.5)M.wn()}
-    else{const n=Math.max(2,Math.ceil(Au/Ab)),bmin=2*(I.cover+dst)+n*db+(n-1)*Math.max(db,2.5);M.r(`เหล็ก ${I.bar} จำนวน`,'n = ⌈As/Ab⌉ (≥2)',String(n),'เส้น',true);M.r('ความกว้างที่ต้องการแถวเดียว',null,fx(bmin,1),'ซม.',b>=bmin?true:'w');if(b<bmin)M.wn()}});
-  M.s('แรงเฉือน');const phiV=C.pv,Vc=.53*Math.sqrt(fc)*b*d;
-  M.r('Vu ที่ระยะ d จากหน้าฐานรอง',`ค่าปลาย × wu·L − wu·d`,fx(Vud/1000,2),'ตัน');
-  M.r('φVc',`φ·0.53√f′c·b·d (φ=${phiV})`,fx(phiV*Vc/1000,2),'ตัน');
-  if(slab){M.r('ตรวจแรงเฉือนแผ่นพื้น','Vu ≤ φVc',Vud<=phiV*Vc?'ผ่าน':'ไม่ผ่าน','',Vud<=phiV*Vc);if(Vud>phiV*Vc)M.ng()}
-  else{const Av=2*BARS[I.stir][1],fyt=+I.fyt;
-    if(Vud<=.5*phiV*Vc){M.r('ผล','Vu ≤ φVc/2','ไม่ต้องใช้เหล็กปลอกตามการคำนวณ (ควรใส่ขั้นต่ำ)','',true)}
-    const Vs=Math.max(0,Vud/phiV-Vc);M.r('Vs ที่ต้องการ','Vu/φ − Vc',fx(Vs/1000,2),'ตัน');
-    const Vsmax=2.1*Math.sqrt(fc)*b*d;M.r('Vs สูงสุด','2.1√f′c·b·d',fx(Vsmax/1000,2),'ตัน',Vs<=Vsmax);
-    if(Vs>Vsmax){M.ng()}else{const big=Vs>1.1*Math.sqrt(fc)*b*d,smx=big?Math.min(d/4,30):Math.min(d/2,60),sv=Vs>0?Av*fyt*d/Vs:1e9,sAm=Av*fyt/(Math.max(.2*Math.sqrt(fc),3.5)*b),s=Math.floor(Math.min(sv,smx,sAm)/2.5)*2.5;
-      M.r(`เหล็กปลอก ${I.stir} (2 ขา) Av`,null,fx(Av,3),'ซม.²');M.r('ระยะที่คำนวณได้','Av·fyt·d/Vs',sv>1e8?'–':fx(sv,1),'ซม.');M.r('ระยะสูงสุด',big?'min(d/4,30)':'min(d/2,60)',fx(smx,1),'ซม.');M.r('ระยะตาม Av,min','Av·fyt/(max(0.2√f′c,3.5)·b)',fx(sAm,1),'ซม.');
-      M.r('ใช้ระยะเหล็กปลอก',null,fx(s,1),'ซม.',s>=5?true:'w');if(s<5)M.wn()}}
-  return M}
-/* ---------- RC column (axial) ---------- */
-function rcCol(I){const C=CODES[I.code],M=mk(),rect=I.shape==='rect',bar=BARS[I.bar],db=bar[0],Ab=bar[1],fc=I.fc,fy=I.fy;
-  const Ag=rect?I.b*I.h:PI*I.D*I.D/4;if(!(Ag>0&&fc>0&&fy>0&&I.n>0)){M.s('กรอกข้อมูลให้ครบ');M.wn();return M}
-  const Ast=I.n*Ab,rho=Ast/Ag,phi=I.tie==='spiral'?C.ps:C.pt,Pu=C.cD*I.PD+C.cL*I.PL,k=I.tie==='spiral'?.85:.80;
-  M.s('ข้อมูลหน้าตัด');M.r('มาตรฐาน',C.n+` (${C.cD}D+${C.cL}L)`);
-  M.r('หน้าตัด',null,rect?`${fx(I.b)} × ${fx(I.h)} ซม.`:`กลม Ø ${fx(I.D)} ซม.`);M.r('Ag',null,fx(Ag,1),'ซม.²');
-  M.r('เหล็กยืน',null,`${I.n}-${I.bar}`);M.r('Ast',null,fx(Ast,2),'ซม.²');
-  M.r('ρg = Ast/Ag','1% ≤ ρg ≤ 8%',fx(rho*100,2),'%',rho>=.01&&rho<=.08);if(rho<.01||rho>.08)M.ng();else if(rho>.04)M.wn();
-  const nmin=rect?4:6;M.r('จำนวนเหล็กยืนขั้นต่ำ',rect?'สี่เหลี่ยม ≥ 4':'กลม ≥ 6',String(nmin),'เส้น',I.n>=nmin);if(I.n<nmin)M.ng();
-  M.s('กำลังรับแรงตามแนวแกน');M.r('Pu',`${C.cD}PD + ${C.cL}PL`,fx(Pu,2),'ตัน');
-  const Pn=k*(.85*fc*(Ag-Ast)+fy*Ast),pm=phi*Pn/1000;
-  M.r(`φPn,max`,`${k.toFixed(2)}·φ[0.85f′c(Ag−Ast)+fy·Ast] (φ=${phi})`,fx(pm,2),'ตัน',pm>=Pu);if(pm<Pu)M.ng();
-  M.r('Pu / φPn,max',null,fx(Pu/pm,3),'',Pu/pm<=1);
-  const Asr=(Pu*1000/(k*phi)-.85*fc*Ag)/(fy-.85*fc),Asm=Math.max(Asr,.01*Ag);M.r('Ast ที่ต้องการ','ย้อนกลับจาก Pu, ขั้นต่ำ 1%Ag',fx(Asm,2),'ซม.²');
-  const L=I.L*100,r=rect?.3*Math.min(I.b,I.h):.25*I.D,sl=I.k*L/r;M.s('ความชะลูด');M.r('kl/r',rect?'r = 0.3·h (ด้านแคบ)':'r = 0.25·D',fx(sl,1));
-  M.r('เสาสั้น (ตรวจแบบไม่มีการเซ)','kl/r ≤ 22',sl<=22?'เป็นเสาสั้น':'เกิน 22 ต้องพิจารณาผลความชะลูด','',sl<=22?true:'w');if(sl>22)M.wn();if(sl>100)M.ng();
-  M.s('เหล็กปลอก');const dt=BARS[I.tieb][0],sM=Math.min(16*db,48*dt,rect?Math.min(I.b,I.h):I.D);
-  M.r(`ปลอก ${I.tieb} ระยะสูงสุด`,'min(16·d_b, 48·d_tie, ด้านแคบ)',fx(Math.floor(sM/2.5)*2.5,1),'ซม.');
-  const dtmin=db<=3.2?.9:1.2;M.r('ขนาดปลอกขั้นต่ำ','เหล็กยืน ≤ DB32 ใช้ ≥ RB9/DB10',`≥ Ø ${dtmin} ซม.`,'',dt>=dtmin-1e-9?true:'w');if(dt<dtmin-1e-9)M.wn();
-  M.s('หมายเหตุ');M.r('ขอบเขต','เหมาะกับเสารับแรงตามแนวแกน (e ≤ e_min) — เสาที่มีโมเมนต์ดัดต้องใช้แผนภาพ interaction','');return M}
-/* ---------- steel section ---------- */
-function sec(I){let d,bf,tw,tf;if(I.sh==='custom'){d=I.d;bf=I.bf;tw=I.tw;tf=I.tf}else{const a=HB[+I.sh]||HB[0];d=a[0]/10;bf=a[1]/10;tw=a[2]/10;tf=a[3]/10}
-  const hw=d-2*tf,A=2*bf*tf+hw*tw,Ix=(bf*d**3-(bf-tw)*hw**3)/12,Iy=(2*tf*bf**3+hw*tw**3)/12,Sx=Ix/(d/2),Zx=bf*tf*(d-tf)+tw*hw*hw/4,
-   rx=Math.sqrt(Ix/A),ry=Math.sqrt(Iy/A),W=.785*A,J=(2*bf*tf**3+hw*tw**3)/3,ho=d-tf,Cw=Iy*ho*ho/4,rts=Math.sqrt(Math.sqrt(Iy*Cw)/Sx),rT=bf/Math.sqrt(12*(1+hw*tw/(6*bf*tf)));
-  return{d,bf,tw,tf,hw,A,Ix,Iy,Sx,Zx,rx,ry,W,J,ho,Cw,rts,rT}}
-function secRows(M,s,I){M.s('คุณสมบัติหน้าตัด (คำนวณจากขนาด ไม่รวม fillet จึงต่ำกว่าตารางผู้ผลิตเล็กน้อย)');
-  M.r('หน้าตัด d × bf × tw × tf',null,`${fx(s.d,1)} × ${fx(s.bf,1)} × ${fx(s.tw,2)} × ${fx(s.tf,2)}`,'ซม.');M.r('เหล็ก Fy',null,fx(I.Fy,0),'ksc');
-  M.r('A / น้ำหนัก',null,`${fx(s.A,1)} ซม.² / ${fx(s.W,1)} กก./ม.`);M.r('Ix / Sx / Zx',null,`${fx(s.Ix,0)} / ${fx(s.Sx,0)} / ${fx(s.Zx,0)}`,'ซม.⁴ / ซม.³ / ซม.³');M.r('rx / ry',null,`${fx(s.rx,2)} / ${fx(s.ry,2)}`,'ซม.')}
-/* ---------- steel beam ---------- */
-function stBeam(I){const M=mk(),s=sec(I),Fy=+I.Fy,E=E_S,L=I.L*100,Lb=I.Lb*100,Cb=Math.max(1,+I.Cb||1);
-  if(!(s.d>0&&s.bf>0&&s.tw>0&&s.tf>0&&I.L>0&&Fy>0)){M.s('กรอกข้อมูลให้ครบ');M.wn();return M}
-  secRows(M,s,I);const wD=(+I.wD||0)+s.W,wL=+I.wL||0,w=wD+wL;M.s('น้ำหนักบรรทุก');M.r('wD (รวมน้ำหนักเหล็ก) / wL',null,`${fx(wD,1)} / ${fx(wL,1)}`,'กก./ม.');
-  const lf=s.bf/(2*s.tf),lw=s.hw/s.tw;
-  if(I.code==='eit'){M.s('วสท. 011009 (ASD — แนวทาง AISC 1989)');const Ms=w*I.L**2/8*100,V=w*I.L/2;
-    M.r('M, V (บริการ)','w·L²/8, w·L/2',`${fx(Ms/1e5,3)} ตัน-ม. , ${fx(V/1000,2)} ตัน`);
-    const cf=lf<=545/Math.sqrt(Fy),cw=s.d/s.tw<=5370/Math.sqrt(Fy);M.r('ปีกกะทัดรัด','bf/2tf ≤ 545/√Fy',`${fx(lf,2)} ≤ ${fx(545/Math.sqrt(Fy),2)}`,'',cf?true:'w');M.r('เอวกะทัดรัด','d/tw ≤ 5370/√Fy',`${fx(s.d/s.tw,1)} ≤ ${fx(5370/Math.sqrt(Fy),1)}`,'',cw?true:'w');if(!(cf&&cw))M.wn();
-    const Lc=Math.min(637*s.bf/Math.sqrt(Fy),3.5712e6/((s.d/(s.bf*s.tf))*Fy)),comp=cf&&cw;let Fb=comp&&Lb<=Lc?.66*Fy:.60*Fy;
-    M.r('Lc (ระยะค้ำยันที่ใช้ 0.66Fy)','min(637bf/√Fy, 3.57×10⁶/((d/Af)Fy))',fx(Lc/100,2),'ม.');
-    if(Lb>Lc){const lr=Lb/s.rT,a=Math.sqrt(7.171e6*Cb/Fy),b=Math.sqrt(3.5856e7*Cb/Fy);let F1;if(lr<a)F1=.6*Fy;else if(lr<=b)F1=Math.min(.6*Fy,(2/3-Fy*lr*lr/(1.0757e8*Cb))*Fy);else F1=Math.min(.6*Fy,1.1952e7*Cb/(lr*lr));
-      const F2=Math.min(.6*Fy,843684*Cb/(Lb*s.d/(s.bf*s.tf)));Fb=Math.max(F1,F2);M.r('Lb/rT',`rT = ${fx(s.rT,2)} ซม.`,fx(lr,1))}
-    M.r('Fb',Lb<=Lc&&comp?'0.66Fy':'ตามสมการ LTB/0.60Fy',fx(Fb,0),'ksc');const fb=Ms/s.Sx;M.s('ตรวจสอบหน่วยแรง');
-    M.r('fb = M/Sx',null,fx(fb,0),'ksc',fb<=Fb);M.r('fb/Fb',null,fx(fb/Fb,3),'',fb<=Fb);if(fb>Fb)M.ng();
-    const Fv=.4*Fy,fv=V/(s.d*s.tw);M.r('fv = V/(d·tw)  vs  Fv = 0.40Fy',null,`${fx(fv,0)} ≤ ${fx(Fv,0)}`,'ksc',fv<=Fv);if(fv>Fv)M.ng();
-    var dL=5*(wL/100)*L**4/(384*E*s.Ix),dT=5*(w/100)*L**4/(384*E*s.Ix)}
-  else{M.s('AISC 360-16 (LRFD)');const wu=1.2*wD+1.6*wL,Mu=wu*I.L**2/8*100,Vu=wu*I.L/2;
-    M.r('wu',null,fx(wu,1),'กก./ม.');M.r('Mu, Vu','wu·L²/8, wu·L/2',`${fx(Mu/1e5,3)} ตัน-ม. , ${fx(Vu/1000,2)} ตัน`);
-    const rE=Math.sqrt(E/Fy),lp=.38*rE,lr=rE,Mp=Fy*s.Zx;M.r('ปีก bf/2tf',`λp = 0.38√(E/Fy) = ${fx(lp,2)}, λr = ${fx(lr,2)}`,fx(lf,2),'',lf<=lr);
-    M.r('เอว h/tw',`λp = 3.76√(E/Fy) = ${fx(3.76*rE,1)}`,fx(lw,1),'',lw<=3.76*rE);if(lf>lr||lw>3.76*rE){M.ng();M.r('ผล','หน้าตัดมีองค์ประกอบบางเกิน ต้องใช้บทที่ F4–F5 (ไม่ครอบคลุมในเครื่องมือนี้)','ไม่ผ่านขอบเขต','',false)}
-    const Lp=1.76*s.ry*rE,c=1,Jc=s.J*c/(s.Sx*s.ho),Lr=1.95*s.rts*E/(.7*Fy)*Math.sqrt(Jc+Math.sqrt(Jc*Jc+6.76*(.7*Fy/E)**2));
-    M.r('Lp / Lr',null,`${fx(Lp/100,2)} / ${fx(Lr/100,2)}`,'ม.');let Mn;if(Lb<=Lp)Mn=Mp;else if(Lb<=Lr)Mn=Math.min(Mp,Cb*(Mp-(Mp-.7*Fy*s.Sx)*(Lb-Lp)/(Lr-Lp)));
-    else{const x=Lb/s.rts,Fcr=Cb*PI*PI*E/(x*x)*Math.sqrt(1+.078*Jc*x*x);Mn=Math.min(Mp,Fcr*s.Sx)}
-    if(lf>lp&&lf<=lr)Mn=Math.min(Mn,Mp-(Mp-.7*Fy*s.Sx)*(lf-lp)/(lr-lp));
-    M.r('Mp = Fy·Zx',null,fx(Mp/1e5,3),'ตัน-ม.');M.r('φMn (φ=0.90)',`Cb = ${fx(Cb,2)}`,fx(.9*Mn/1e5,3),'ตัน-ม.',.9*Mn>=Mu);M.r('Mu/φMn',null,fx(Mu/(.9*Mn),3),'',Mu<=.9*Mn);if(Mu>.9*Mn)M.ng();
-    const Vn=.6*Fy*s.d*s.tw,okv=lw<=2.24*rE;M.r('φVn (φ=1.00)','0.6Fy·d·tw  (h/tw ≤ 2.24√(E/Fy))',fx(Vn/1000,2),'ตัน',Vu<=Vn&&okv);if(Vu>Vn||!okv)M.ng();
-    var Ms=(wD+wL)*I.L**2/8*100;dL=5*(wL/100)*L**4/(384*E*s.Ix);dT=5*((wD+wL)/100)*L**4/(384*E*s.Ix)}
-  M.s('การแอ่นตัว');const lim1=L/(+I.dl||360),lim2=L/(+I.dt||240);
-  M.r('δ จากน้ำหนักจร',`5wL⁴/(384EI)  ≤ L/${I.dl||360}`,`${fx(dL,2)} ≤ ${fx(lim1,2)}`,'ซม.',dL<=lim1?true:'w');M.r('δ รวม',`≤ L/${I.dt||240}`,`${fx(dT,2)} ≤ ${fx(lim2,2)}`,'ซม.',dT<=lim2?true:'w');if(dL>lim1||dT>lim2)M.wn();
-  return M}
-/* ---------- steel column ---------- */
-function stCol(I){const M=mk(),s=sec(I),Fy=+I.Fy,E=E_S;if(!(s.d>0&&s.A>0&&I.L>0&&Fy>0)){M.s('กรอกข้อมูลให้ครบ');M.wn();return M}
-  secRows(M,s,I);const lx=I.Kx*I.L*100/s.rx,ly=I.Ky*I.L*100/s.ry,lam=Math.max(lx,ly);
-  M.s('ความชะลูด');M.r('KL/r แกนแข็ง / แกนอ่อน',null,`${fx(lx,1)} / ${fx(ly,1)}`);M.r('KL/r ที่ควบคุม','≤ 200',fx(lam,1),'',lam<=200);if(lam>200)M.ng();
-  const PD=+I.PD||0,PL=+I.PL||0,lf=s.bf/(2*s.tf),lw=s.hw/s.tw;
-  if(I.code==='eit'){M.s('วสท. 011009 (ASD — แนวทาง AISC 1989)');const Cc=Math.sqrt(2*PI*PI*E/Fy);M.r('Cc','√(2π²E/Fy)',fx(Cc,1));let Fa;
-    if(lam<Cc){const FS=5/3+3*lam/(8*Cc)-lam**3/(8*Cc**3);Fa=(1-lam*lam/(2*Cc*Cc))*Fy/FS;M.r('FS',null,fx(FS,3))}else Fa=12*PI*PI*E/(23*lam*lam);
-    M.r('Fa',lam<Cc?'[1−(KL/r)²/2Cc²]Fy/FS':'12π²E/[23(KL/r)²]',fx(Fa,0),'ksc');const Pa=Fa*s.A/1000,P=PD+PL;
-    M.r('ตรวจการโก่งเฉพาะที่','bf/2tf ≤ 797/√Fy , d/tw ≤ 1,900/√Fy (ประมาณ)',`${fx(lf,2)} / ${fx(s.d/s.tw,1)}`,'',(lf<=797/Math.sqrt(Fy)&&s.d/s.tw<=1900/Math.sqrt(Fy))?true:'w');if(!(lf<=797/Math.sqrt(Fy)))M.wn();
-    M.r('P (บริการ)','PD + PL',fx(P,2),'ตัน');M.r('Pa = Fa·A',null,fx(Pa,2),'ตัน',Pa>=P);M.r('P/Pa',null,fx(P/Pa,3),'',P<=Pa);if(P>Pa)M.ng()}
-  else{M.s('AISC 360-16 (LRFD)');const rE=Math.sqrt(E/Fy),Fe=PI*PI*E/(lam*lam),Fcr=lam<=4.71*rE?Math.pow(.658,Fy/Fe)*Fy:.877*Fe,pn=.9*Fcr*s.A/1000,Pu=1.2*PD+1.6*PL;
-    M.r('Fe','π²E/(KL/r)²',fx(Fe,0),'ksc');M.r('Fcr',lam<=4.71*rE?'0.658^(Fy/Fe)·Fy':'0.877Fe',fx(Fcr,0),'ksc');
-    const sl=lf>.56*rE||lw>1.49*rE;M.r('องค์ประกอบบาง (ตรวจ)','bf/2tf ≤ 0.56√(E/Fy), h/tw ≤ 1.49√(E/Fy)',`${fx(lf,2)} / ${fx(lw,1)}`,'',!sl);if(sl){M.ng();M.r('ผล','มีองค์ประกอบบาง ต้องใช้ E7 (ไม่ครอบคลุม)','ไม่ผ่านขอบเขต','',false)}
-    M.r('Pu','1.2PD + 1.6PL',fx(Pu,2),'ตัน');M.r('φPn (φ=0.90)','φ·Fcr·A',fx(pn,2),'ตัน',pn>=Pu);M.r('Pu/φPn',null,fx(Pu/pn,3),'',Pu<=pn);if(Pu>pn)M.ng()}
-  M.s('หมายเหตุ');M.r('ขอบเขต','เสารับแรงตามแนวแกนเท่านั้น — เสาที่มีโมเมนต์ต้องตรวจสมการ interaction (H1)','');return M}
-return{CODES,BARS,HB,HBN,FYS,fx,rcBeam,rcCol,stBeam,stCol,sec,asReq,flex}})();
-/* ---------- ออกแบบโครงสร้าง RC / เหล็ก (เครื่องมือช่วยคำนวณเบื้องต้น) ---------- */
-const DZSH=[...DZ.HBN.map((n,i)=>[String(i),n]),['custom','กำหนดขนาดเอง']];
-const DZFY=[[2400,'SS400 (2,400)'],[3300,'SM490 (3,300)'],[2500,'A36 (2,500)'],[3500,'A572 Gr.50 (3,500)']];
-const DZFS=[[2400,'SR24 / RB (2,400)'],[3000,'SD30 (3,000)'],[4000,'SD40 (4,000)'],[5000,'SD50 (5,000)']];
-const DZBAR=['DB12','DB16','DB20','DB25','DB28','DB32'].map(x=>[x,x]),DZST=['RB6','RB9','DB10','RB12'].map(x=>[x,x]);
-const DZSEC=[{k:'sh',l:'หน้าตัดเหล็กรูปพรรณ H',s:DZSH,d:String(DZ.HBN.indexOf('H 400x200x8x13'))},{k:'d',l:'d',u:'ซม.',n:40,sh:I=>I.sh==='custom'},{k:'bf',l:'bf',u:'ซม.',n:20,sh:I=>I.sh==='custom'},{k:'tw',l:'tw',u:'ซม.',n:.8,sh:I=>I.sh==='custom'},{k:'tf',l:'tf',u:'ซม.',n:1.3,sh:I=>I.sh==='custom'},{k:'Fy',l:'เกรดเหล็ก (Fy ksc)',s:DZFY,d:2400}];
-const DZF={
- rcb:{t:'คาน / พื้นทางเดียว RC',calc:DZ.rcBeam,f:[
-  {k:'code',l:'มาตรฐาน / ตัวคูณน้ำหนัก',s:[['eit','วสท. (แนวทาง ACI 318-99): 1.4D+1.7L, φv=0.85'],['aci','ACI 318-14: 1.2D+1.6L, φv=0.75']],d:'eit'},
-  {k:'type',l:'ชนิด',s:[['beam','คาน'],['slab','แผ่นพื้นทางเดียว (แถบ 1 ม.)']],d:'beam'},
-  {k:'cont',l:'เงื่อนไขช่วง',s:[['simple','ช่วงเดียว ปลายอิสระ (wL²/8)'],['end','ช่วงริมต่อเนื่อง (+1/14, −1/10)'],['int','ช่วงในต่อเนื่อง (+1/16, −1/11)'],['cant','คานยื่น (wL²/2)']],d:'simple'},
-  {k:'b',l:'กว้าง b',u:'ซม.',n:30,sh:I=>I.type==='beam'},{k:'h',l:'ลึก h / หนา',u:'ซม.',n:60},{k:'L',l:'ช่วงยาว L',u:'ม.',n:6},
-  {k:'fc',l:'f′c (ทรงกระบอก)',u:'ksc',n:240},{k:'fy',l:'fy เหล็กเสริมหลัก',s:DZFS,d:4000},{k:'fyt',l:'fy เหล็กปลอก',s:DZFS,d:2400,sh:I=>I.type==='beam'},
-  {k:'cover',l:'ระยะหุ้มคอนกรีต',u:'ซม.',n:3},{k:'bar',l:'เหล็กเสริมหลัก',s:DZBAR,d:'DB20'},{k:'stir',l:'เหล็กปลอก',s:DZST,d:'RB9',sh:I=>I.type==='beam'},
-  {k:'wD',l:'น้ำหนักบรรทุกคงที่เพิ่มเติม (ไม่รวมน้ำหนักตัวเอง)',u:'กก./ม.',n:1500},{k:'wL',l:'น้ำหนักบรรทุกจร',u:'กก./ม.',n:1000},{k:'sw',l:'รวมน้ำหนักตัวเอง',c:true,d:true},
-  {k:'dov',l:'d กำหนดเอง (เว้น 0 = คำนวณ)',u:'ซม.',n:0}]},
- rcc:{t:'เสา RC (รับแรงตามแนวแกน)',calc:DZ.rcCol,f:[
-  {k:'code',l:'มาตรฐาน',s:[['eit','วสท. (แนวทาง ACI 318-99): 1.4D+1.7L, φ=0.70'],['aci','ACI 318-14: 1.2D+1.6L, φ=0.65']],d:'eit'},
-  {k:'shape',l:'รูปตัด',s:[['rect','สี่เหลี่ยม'],['round','กลม']],d:'rect'},{k:'b',l:'b',u:'ซม.',n:40,sh:I=>I.shape==='rect'},{k:'h',l:'h',u:'ซม.',n:40,sh:I=>I.shape==='rect'},{k:'D',l:'เส้นผ่านศูนย์กลาง D',u:'ซม.',n:45,sh:I=>I.shape==='round'},
-  {k:'fc',l:'f′c',u:'ksc',n:240},{k:'fy',l:'fy',s:DZFS,d:4000},{k:'tie',l:'ชนิดเหล็กปลอก',s:[['tied','ปลอกเดี่ยว (tied)'],['spiral','ปลอกเกลียว (spiral)']],d:'tied'},
-  {k:'n',l:'จำนวนเหล็กยืน',u:'เส้น',n:8},{k:'bar',l:'ขนาดเหล็กยืน',s:DZBAR,d:'DB20'},{k:'tieb',l:'เหล็กปลอก',s:DZST,d:'RB9'},
-  {k:'L',l:'ความสูงเสา',u:'ม.',n:3.5},{k:'k',l:'ค่า k',n:1},{k:'PD',l:'แรงอัดคงที่ PD',u:'ตัน',n:100},{k:'PL',l:'แรงอัดจร PL',u:'ตัน',n:50}]},
- stb:{t:'คานเหล็ก',calc:DZ.stBeam,f:[
-  {k:'code',l:'วิธี / มาตรฐาน',s:[['eit','วสท. 011009 (ASD)'],['aisc','AISC 360-16 (LRFD)']],d:'eit'},...DZSEC,
-  {k:'L',l:'ช่วงคาน L',u:'ม.',n:6},{k:'Lb',l:'ระยะค้ำยันด้านข้าง Lb',u:'ม.',n:2},{k:'Cb',l:'Cb',n:1},
-  {k:'wD',l:'น้ำหนักคงที่เพิ่มเติม (ไม่รวมน้ำหนักเหล็ก)',u:'กก./ม.',n:800},{k:'wL',l:'น้ำหนักจร',u:'กก./ม.',n:1200},
-  {k:'dl',l:'เกณฑ์แอ่นตัวจาก LL: L/',n:360},{k:'dt',l:'เกณฑ์แอ่นตัวรวม: L/',n:240}]},
- stc:{t:'เสาเหล็ก (รับแรงตามแนวแกน)',calc:DZ.stCol,f:[
-  {k:'code',l:'วิธี / มาตรฐาน',s:[['eit','วสท. 011009 (ASD)'],['aisc','AISC 360-16 (LRFD)']],d:'eit'},...DZSEC.map(x=>x.k==='sh'?{...x,d:String(DZ.HBN.indexOf('H 250x250x9x14'))}:x),
-  {k:'L',l:'ความสูงเสา',u:'ม.',n:4},{k:'Kx',l:'Kx',n:1},{k:'Ky',l:'Ky',n:1},{k:'PD',l:'แรงอัดคงที่ PD',u:'ตัน',n:40},{k:'PL',l:'แรงอัดจร PL',u:'ตัน',n:30}]}};
-S.dzt='rcb';S.dz={};
-(function(){let sv={};try{sv=JSON.parse(localStorage.getItem('mp_dz')||'{}')||{}}catch(e){}
-  for(const [t,F] of Object.entries(DZF)){S.dz[t]={};for(const f of F.f)S.dz[t][f.k]=(sv[t]&&sv[t][f.k]!=null)?sv[t][f.k]:(f.c?f.d:(f.s?f.d:f.n))}})();
-function dzNorm(t){const I={};for(const f of DZF[t].f){const v=S.dz[t][f.k];I[f.k]=f.c?!!v:(f.s?(typeof f.s[0][0]==='number'?+v:String(v)):(+v));}return I}
-function dzForm(t){const F=DZF[t],I=dzNorm(t);
-  return `<div class="dzf">${F.f.filter(f=>!f.sh||f.sh(I)).map(f=>{const v=S.dz[t][f.k],id='dz_'+f.k;
-   if(f.c)return `<label class="chk dzw"><input type="checkbox" data-dz="${f.k}" ${v?'checked':''}> ${esc(f.l)}</label>`;
-   if(f.s)return `<div class="field"><label for="${id}">${esc(f.l)}</label><select id="${id}" data-dz="${f.k}">${f.s.map(([o,n])=>`<option value="${esc(o)}" ${String(o)===String(v)?'selected':''}>${esc(n)}</option>`).join('')}</select></div>`;
-   return `<div class="field"><label for="${id}">${esc(f.l)}${f.u?` <span class="sub">(${f.u})</span>`:''}</label><input id="${id}" data-dz="${f.k}" type="number" step="any" inputmode="decimal" value="${esc(v)}"></div>`}).join('')}</div>`}
-function dzRes(t){const M=DZF[t].calc(dzNorm(t));
-  const bd={ok:['ok','ผ่านเกณฑ์ที่ตรวจ'],warn:['warn','ผ่านแต่มีข้อควรตรวจสอบเพิ่มเติม'],ng:['ng','ไม่ผ่านเกณฑ์ — ปรับขนาดหน้าตัดหรือเหล็กเสริม']}[M.st];
-  return `<div class="dzb ${bd[0]}">${bd[1]}</div><div class="tw"><table class="dzt"><tbody>${M.R.map(r=>r.s?`<tr class="dzs"><td colspan="3">${esc(r.s)}</td></tr>`:`<tr><td>${esc(r.l)}${r.f?`<div class="sub">${esc(r.f)}</div>`:''}</td><td class="dzv">${esc(r.v==null?'':r.v)}${r.u?` <span class="sub">${esc(r.u)}</span>`:''}</td><td class="dzk">${r.ok===true?'<b style="color:#25936a">✓</b>':r.ok==='w'?'<b style="color:#e3a82b">!</b>':r.ok===false?'<b style="color:#d64545">✕</b>':''}</td></tr>`).join('')}</tbody></table></div>`}
-function vDesign(){const t=S.dzt;
-  return `<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">ออกแบบโครงสร้าง</h1><div class="sub">เครื่องมือช่วยคำนวณ/ตรวจสอบเบื้องต้น RC และเหล็ก · หน่วย กก. ซม. ksc · มาตรฐาน วสท. / ACI 318 / AISC</div></div><div class="row noexp"><button class="btn" data-a="exp">ส่งออก PDF / ภาพ</button></div></div>
-   <div class="chips noexp" style="margin-top:12px">${Object.entries(DZF).map(([k,F])=>`<button class="chip" data-a="dzt" data-k="${k}" aria-pressed="${t===k}">${F.t}</button>`).join('')}</div>
-   <section class="sec"><div class="dzlay"><div class="card noexp"><h3 style="margin-bottom:10px">${DZF[t].t}</h3><div id="dzform">${dzForm(t)}</div></div>
-   <div class="card"><div id="dzres">${dzRes(t)}</div></div></div>
-   <div class="card dzwarn">⚠ เครื่องมือนี้ใช้ช่วยประเมินและตรวจสอบเบื้องต้นเท่านั้น ไม่แทนการออกแบบ การรับรอง และการลงนามของวิศวกรผู้ได้รับใบอนุญาต (สามัญวิศวกร) · สูตรอ้างอิงแนวทางของมาตรฐาน วสท. (ASD/USD), ACI 318 และ AISC 360 แบบประยุกต์ ไม่รวมแรงลม/แผ่นดินไหว การเสียรูป การยึดเหนี่ยว/ต่อเหล็ก และเงื่อนไขพิเศษ ต้องตรวจสอบกับมาตรฐานฉบับที่ใช้งานจริงก่อนนำไปใช้ก่อสร้าง</div></section>`}
-document.addEventListener('input',e=>{const el=e.target.closest&&e.target.closest('[data-dz]');if(!el||S.view!=='design')return;const t=S.dzt,k=el.dataset.dz;
-  S.dz[t][k]=el.type==='checkbox'?el.checked:el.value;try{localStorage.setItem('mp_dz',JSON.stringify(S.dz))}catch(x){}
-  const f=DZF[t].f.find(x=>x.k===k);if(f&&(f.s||f.c)){const fm=$('#dzform');if(fm)fm.innerHTML=dzForm(t)}
-  const r=$('#dzres');if(r)r.innerHTML=dzRes(t)});
-
 function vPlan(){
   const bs=planBs();if(!bs.length)return `<div class="card empty">ยังไม่มีแปลน ${S.canWrite&&S.db?'<br><button class="btn pri" data-a="padd" style="margin-top:10px">+ เพิ่มแปลน</button>':''}</div>`;
   const b=bs.includes(S.pb)?S.pb:bs[0];S.pb=b;
@@ -1311,9 +1135,215 @@ function gridLegend(w,g){
   if(g.kind==='percent')return `<div class="glg"><b style="color:var(--ink)">สีแสดง % ที่เสร็จ</b><span class="k">0%<span class="gr"></span>100%</span>${none}</div>`;
   return `<div class="glg"><b style="color:var(--ink)">สีสถานะ</b>${(w.statuses||[]).map(s=>`<span class="k"><i style="background:${sc(s.color)};color:${fg(sc(s.color))}">${esc(s.short||s.name.slice(0,2))}</i>${esc(s.name)}</span>`).join('')}${none}</div>`}
 
+/* ---------- นำเสนอ (3W / รายสัปดาห์) ---------- */
+Object.assign(S,{rpt:{},rm:'weekly',rb:'ALL',ra:null,rws:1,rsrc:{web:true,man:true},phimg:{},rpres:false,rsi:0});
+try{const v=localStorage.getItem('mp_rws');if(v!=null&&!isNaN(+v))S.rws=+v}catch(e){}
+const phReq={};
+const MST={plan:['วางแผน','#8a949a'],doing:['กำลังทำ','#2f7fb8'],done:['เสร็จ','#25936a'],delay:['ล่าช้า','#d64545'],hold:['พักงาน','#e3a82b']};
+const wkS=n=>n-((((n+4-S.rws)%7)+7)%7);
+const dsn=n=>new Date(n*DAY).toISOString().slice(0,10);
+const fdn=n=>fd(dsn(n));
+const fds=n=>new Date(n*DAY).toLocaleDateString('th-TH',{day:'numeric',month:'short',timeZone:'UTC'});
+const wkLabel=ws=>fds(ws)+' – '+fds(ws+6)+' '+new Date((ws+6)*DAY).toLocaleDateString('th-TH',{year:'numeric',timeZone:'UTC'});
+const rptWeek=()=>wkS(S.ra!=null?S.ra:todayN());
+const rpOv=(it,a,b)=>dnum(it.s)<=b&&dnum(it.e)>=a;
+function rptSet(k,v){if(!(S.db&&S.canWrite))return Promise.reject(new Error('ro'));const d=S.db.doc('meta/rpt');
+  if(v==null)delete S.rpt[k];else S.rpt[k]=v;
+  const p=(S._rptEx||v==null)?d.update({[k]:v}):d.set({[k]:v});S._rptEx=true;render();return p}
+function rptItems(){const out=[];
+  if(S.rsrc.web)for(const it of schedList()){if(S.rpt['h:'+it.id])continue;
+    out.push({k:it.id,src:'web',b:it.b,z:it.z,t:(S.works[it.w]||{}).name||'',f:it.f,r:it.r,s:it.s,e:it.e,n:it.n,pr:it.pr,st:it.st,link:true})}
+  if(S.rsrc.man)for(const [k,v] of Object.entries(S.rpt)){if(k.slice(0,2)!=='l:'||!v||!v.b||isNaN(dnum(v.s))||isNaN(dnum(v.e)))continue;
+    const link=!!(v.w&&S.works[v.w]);let pr=(v.p===''||v.p==null)?null:Math.max(0,Math.min(1,v.p/100)),st;
+    if(link){pr=schedProg(v);st=schedState(v,pr)}else{const m=MST[v.st]||MST.plan;st={k:v.st||'plan',l:m[0],c:m[1]}}
+    out.push({k:k.slice(2),src:'man',b:v.b,z:v.z,t:v.t||(link?S.works[v.w].name:'(ไม่มีชื่อ)'),f:v.f,r:v.r,s:v.s,e:v.e,n:v.n,pr,st,link})}
+  return out}
+const itZone=it=>`${it.z?esc(it.z)+' · ':''}${it.f?'ชั้น '+esc(it.f):'ทุกชั้น'}${it.r?' · ห้อง '+esc(it.r):''}`;
+
+/* snapshots */
+function liveVals(){const o={};for(const b of S.meta.buildings){const ov=overall(b),w={};for(const wk of worksSorted()){const tl=tally(wk,gridsOf(wk.id,b));if(!tl.n)continue;w[wk.id]=pcts(wk,tl).done}o[b]={t:[ov.done,ov.cm,ov.qc2],w}}return o}
+const snapDates=()=>Object.keys(S.rpt).filter(k=>k.slice(0,2)==='s:').map(k=>k.slice(2)).sort();
+function decS(s){const o={},q=v=>v<0?null:v;for(const [b,x] of Object.entries((s&&s.b)||{})){const w={};for(const [i,p] of Object.entries(x.w||{}))w[i]=q(p);o[b]={t:(x.t||[]).map(q),w}}return o}
+function valsAt(day){if(day>=todayN())return{vals:liveVals(),date:todayS(),live:true};let b=null;for(const d of snapDates())if(dnum(d)<=day)b=d;return b?{vals:decS(S.rpt['s:'+b]),date:b}:null}
+function baseAt(ws){const l=snapDates();let b=null;for(const d of l)if(dnum(d)<=ws)b=d;if(!b)for(const d of l)if(dnum(d)>ws&&dnum(d)<=ws+6){b=d;break}return b?{vals:decS(S.rpt['s:'+b]),date:b}:null}
+function snapSave(force){if(!(S.db&&S.canWrite&&S.ready))return Promise.resolve();const k='s:'+todayS();if(S.rpt[k]&&!force)return Promise.resolve();if(!Object.keys(S.grids).length)return Promise.resolve();
+  const v=liveVals(),e=x=>x==null?-1:Math.round(x*1e4)/1e4,b={};for(const [n,o] of Object.entries(v)){const w={};for(const [i,p] of Object.entries(o.w))w[i]=e(p);b[n]={t:o.t.map(e),w}}
+  return rptSet(k,{t:Date.now(),b}).catch(()=>{})}
+function rptTick(){if(S.ready&&S.canWrite&&S.db&&!S._snapT&&!S._snapDone){S._snapT=setTimeout(()=>{S._snapDone=1;snapSave()},4000)}}
+
+/* photos */
+const phList=(b,ws,we)=>Object.entries(S.rpt).filter(([k,v])=>k.slice(0,2)==='p:'&&v&&(!b||v.b===b)&&(ws==null||(dnum(v.d)>=ws&&dnum(v.d)<=we))).map(([k,v])=>({id:k.slice(2),...v})).sort((a,c)=>dnum(c.d)-dnum(a.d)||(c.t||0)-(a.t||0));
+function phLoad(id,n){if(S.phimg[id]||phReq[id])return;phReq[id]=1;const parts=new Array(n).fill(null);let got=0;
+  for(let k=0;k<n;k++)S.db.doc('meta/ph-'+id+'-'+k).onSnapshot(s=>{if(!s.exists||parts[k]!=null)return;parts[k]=s.data().d;got++;if(got===n){S.phimg[id]=parts.join('');render()}},()=>{})}
+function phImg(p){if(S.db)phLoad(p.id,p.n||1);const u=S.phimg[p.id];
+  return u?`<button class="rph" data-a="phview" data-id="${p.id}" aria-label="${esc(p.c||'รูปตึก '+p.b)}"><img src="${u}" alt="${esc(p.c||'รูปตึก '+p.b)}"><span class="phc">${esc(p.c||'')}</span></button>`:`<div class="rph ld"></div>`}
+function phCompress(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{URL.revokeObjectURL(u);let sc=Math.min(1,1280/Math.max(im.width,im.height)),q=.75,url='';
+    for(let t=0;t<7;t++){const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));c.getContext('2d').drawImage(im,0,0,c.width,c.height);url=c.toDataURL('image/jpeg',q);if(url.length<=450000)break;q-=.1;if(q<.5){q=.7;sc*=.8}}
+    res(url)};im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('img'))};im.src=u})}
+async function phAdd(files,b,d,c){let ok=0;
+  for(const f of files){try{const url=await phCompress(f),CH=180000,n=Math.ceil(url.length/CH),id='p'+uid();
+    for(let k=0;k<n;k++)await S.db.doc('meta/ph-'+id+'-'+k).set({d:url.slice(k*CH,(k+1)*CH)});
+    S.phimg[id]=url;await rptSet('p:'+id,{b,d,c,n,t:Date.now()});ok++}catch(e){}}
+  toast(ok?`เพิ่มรูปแล้ว ${ok} รูป`:'เพิ่มรูปไม่สำเร็จ')}
+async function phDel(id){const p=S.rpt['p:'+id];if(!p)return;const n=p.n||1;
+  try{await rptSet('p:'+id,null);for(let k=0;k<n;k++)S.db.doc('meta/ph-'+id+'-'+k).delete().catch(()=>{});delete S.phimg[id];toast('ลบรูปแล้ว')}catch(e){toast('ลบไม่สำเร็จ')}}
+function phForm(b0){if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  const bs=S.meta.buildings;
+  modal(`<h2>เพิ่มรูปอาคาร</h2>
+   <div class="field"><label for="ph_b">ตึก</label><select id="ph_b">${bs.map(b=>`<option value="${esc(b)}" ${b===b0?'selected':''}>ตึก ${esc(b)}</option>`).join('')}</select></div>
+   <div class="field"><label for="ph_d">วันที่ถ่าย (ใช้จัดรูปเข้าสัปดาห์)</label><input id="ph_d" type="date" value="${todayS()}"></div>
+   <div class="field"><label for="ph_c">คำอธิบายรูป (ไม่บังคับ)</label><input id="ph_c" type="text" placeholder="เช่น ปูกระเบื้องชั้น 3 โถงทางเดิน"></div>
+   <div class="field"><label for="ph_f">เลือกรูป (เลือกได้หลายรูป)</label><input id="ph_f" type="file" accept="image/*" multiple></div>
+   <div class="row"><button class="btn pri" data-ok>อัปโหลด</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;
+     const fs=[...$('#ph_f').files],bb=$('#ph_b').value,d=$('#ph_d').value,c=$('#ph_c').value.trim();
+     if(!fs.length)return toast('เลือกรูปก่อน');if(isNaN(dnum(d)))return toast('ระบุวันที่');
+     closeM();toast('กำลังอัปโหลด…');phAdd(fs,bb,d,c)}})}
+function phView(id){const p=S.rpt['p:'+id];if(!p)return;const u=S.phimg[id];
+  modal(`<h2>ตึก ${esc(p.b)} · ${fd(p.d)}</h2>${u?`<img src="${u}" alt="${esc(p.c||'')}" style="width:100%;border-radius:8px;display:block">`:''}${p.c?`<div class="sub" style="margin-top:8px">${esc(p.c)}</div>`:''}
+   <div class="row" style="margin-top:12px">${S.canWrite&&S.db?'<button class="btn danger" data-del>ลบรูป</button>':''}<button class="btn" data-x>ปิด</button></div>`,el=>{
+   el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-del')){closeM();return confirmM('ลบรูปนี้?',()=>phDel(id))}if(b.hasAttribute('data-x'))closeM()}})}
+
+/* notes */
+function noteForm(key,title){if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  modal(`<h2>${esc(title)}</h2><div class="field"><label for="nt_t">ข้อความ (สรุป / ปัญหา / สิ่งที่ต้องตาม)</label><textarea id="nt_t" rows="6" style="font:inherit;background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px">${esc(S.rpt[key]||'')}</textarea></div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;
+     const v=$('#nt_t').value.trim();closeM();try{await rptSet(key,v||null);toast('บันทึกแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
+const noteBox=(key,title)=>{const v=S.rpt[key];return `<div class="rnote"><div class="row" style="justify-content:space-between"><b>${esc(title)}</b>${S.canWrite&&S.db?`<button class="btn sm noexp" data-a="note" data-k="${esc(key)}" data-t="${esc(title)}">${v?'แก้ไข':'+ เขียน'}</button>`:''}</div>${v?`<div class="rnt">${esc(v)}</div>`:'<div class="sub">ยังไม่มีข้อความ</div>'}</div>`};
+
+/* manual plan item */
+function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  const cur=id?S.rpt['l:'+id]:null,bs=S.meta.buildings,ws=worksSorted(),t0=todayS(),lk=!!(cur&&cur.w);
+  modal(`<h2>${cur?'แก้ไขแผนงาน':'เพิ่มแผนงาน (ในหน้านำเสนอ)'}</h2>
+   <div class="field"><label for="lk_t">ชื่อแผน / หัวข้องาน</label><input id="lk_t" type="text" value="${esc(cur?cur.t||'':'')}" placeholder="เช่น เทพื้นชั้น 5 / ติดตั้งฝ้าโถงชั้น 2"></div>
+   <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_b">ตึก</label><select id="lk_b">${bs.map(b=>`<option value="${esc(b)}" ${(cur?cur.b:b0)===b?'selected':''}>ตึก ${esc(b)}</option>`).join('')}</select></div>
+    <div class="field" style="flex:1;min-width:130px"><label for="lk_z">โซน / ทีมงาน</label><input id="lk_z" type="text" value="${esc(cur?cur.z||'':'')}"></div></div>
+   <div class="field"><label>ที่มาของสถานะ</label><div class="chips"><label class="chk"><input type="radio" name="lk_m" value="web" ${lk?'checked':''}> ดึงจากข้อมูลในเว็บ</label><label class="chk"><input type="radio" name="lk_m" value="man" ${lk?'':'checked'}> กรอกเอง</label></div></div>
+   <div data-m="web" ${lk?'':'hidden'}><div class="field"><label for="lk_w">งาน (ดึง % จากตารางความคืบหน้า)</label><select id="lk_w">${ws.map(w=>`<option value="${w.id}" ${cur&&cur.w===w.id?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>
+    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_f">ชั้น (ว่าง = ทุกชั้น)</label><input id="lk_f" type="text" value="${esc(cur?cur.f||'':'')}"></div>
+    <div class="field" style="flex:1;min-width:130px"><label for="lk_r">ห้อง/จุด (ว่าง = ทั้งหมด)</label><input id="lk_r" type="text" value="${esc(cur?cur.r||'':'')}"></div></div></div>
+   <div data-m="man" ${lk?'hidden':''}><div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_st">สถานะ</label><select id="lk_st">${Object.entries(MST).map(([k,v])=>`<option value="${k}" ${cur&&cur.st===k?'selected':''}>${v[0]}</option>`).join('')}</select></div>
+    <div class="field" style="flex:1;min-width:130px"><label for="lk_p">ความคืบหน้า % (0-100)</label><input id="lk_p" type="number" min="0" max="100" value="${cur&&cur.p!==''&&cur.p!=null?esc(cur.p):''}"></div></div></div>
+   <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_s">วันเริ่มตามแผน</label><input id="lk_s" type="date" value="${esc(cur?cur.s:t0)}"></div>
+    <div class="field" style="flex:1;min-width:130px"><label for="lk_e">กำหนดเสร็จ</label><input id="lk_e" type="date" value="${esc(cur?cur.e:'')}"></div></div>
+   <div class="field"><label for="lk_n">หมายเหตุ</label><input id="lk_n" type="text" value="${esc(cur?cur.n||'':'')}"></div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button>${cur?'<button class="btn danger" data-del>ลบ</button>':''}<button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onchange=e=>{if(e.target.name==='lk_m'){const v=e.target.value;el.querySelectorAll('[data-m]').forEach(x=>x.hidden=x.dataset.m!==v)}};
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     if(b.hasAttribute('data-del')){closeM();try{await rptSet('l:'+id,null);toast('ลบแล้ว')}catch(err){}return}
+     if(!b.hasAttribute('data-ok'))return;
+     const web=el.querySelector('input[name=lk_m]:checked').value==='web',s0=$('#lk_s').value,e0=$('#lk_e').value,f=$('#lk_f').value.trim(),t=$('#lk_t').value.trim();
+     if(isNaN(dnum(s0))||isNaN(dnum(e0)))return toast('ระบุวันเริ่มและวันเสร็จ');if(dnum(e0)<dnum(s0))return toast('กำหนดเสร็จต้องไม่ก่อนวันเริ่ม');
+     if(web&&f&&!parseFloors(f))return toast('รูปแบบชั้นไม่ถูกต้อง เช่น 2 หรือ 2-7');
+     if(!web&&!t)return toast('ใส่ชื่อแผน');
+     const pv=$('#lk_p').value,o={t,b:$('#lk_b').value,z:$('#lk_z').value.trim(),s:s0,e:e0,n:$('#lk_n').value.trim(),
+       w:web?$('#lk_w').value:'',f:web?f:'',r:web?$('#lk_r').value.trim():'',st:web?'':$('#lk_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0))};
+     closeM();try{await rptSet('l:'+(id||'m'+uid()),o);toast('บันทึกแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
+function itemOpen(src,k){const it=rptItems().find(x=>x.src===src&&x.k===k);if(!it)return;
+  modal(`<h2>${esc(it.t)}</h2><div class="sub">ตึก ${esc(it.b)} · ${itZone(it)}</div>
+   <div style="margin:10px 0"><span class="sbadge" style="background:${it.st.c}">${esc(it.st.l)}</span> <span class="sub">${fd(it.s)} – ${fd(it.e)}${it.pr!=null?' · '+fmt(it.pr):''}</span></div>
+   <div class="sub">ที่มา: ${src==='web'?'แท็บ “แผนงาน” (ดึงอัตโนมัติ)':it.link?'ผูกกับข้อมูลในเว็บ':'กรอกเอง'}</div>${it.n?`<div class="rnt" style="margin-top:8px">${esc(it.n)}</div>`:''}
+   <div class="row" style="margin-top:12px">${S.canWrite&&S.db?`<button class="btn pri" data-ed>แก้ไข</button>${src==='web'?'<button class="btn" data-hide>ซ่อนจากหน้านี้</button>':''}`:''}<button class="btn" data-x>ปิด</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     if(b.hasAttribute('data-ed')){closeM();return src==='web'?schedForm(k):lookForm(k)}
+     if(b.hasAttribute('data-hide')){closeM();try{await rptSet('h:'+k,1);toast('ซ่อนแล้ว')}catch(err){}}}})}
+
+/* blocks */
+function rptCtx(){const ws=rptWeek(),we=ws+6,bs=S.rb==='ALL'?S.meta.buildings.slice():[S.rb];
+  let endv=valsAt(we),approx=false;if(!endv){endv={vals:liveVals(),date:todayS(),live:true};approx=true}
+  return{ws,we,bs,items:rptItems(),base:baseAt(ws),endv,approx}}
+const dtxt=d=>d==null?'':`<i class="dl ${Math.abs(d)<.0005?'z':d>0?'up':'dn'}">${Math.abs(d)<.0005?'±0':(d>0?'▲ +':'▼ ')+(Math.abs(d)*100).toFixed(1)+'%'}</i>`;
+const dlt=(a,b)=>a==null||b==null?null:a-b;
+function kpis(b,c){const cur=(c.endv.vals[b]||{}).t||[],pv=c.base&&(c.base.vals[b]||{}).t||[];
+  return `<div class="rkp">${MS.map(([k,l],i)=>`<div class="kp"><span class="kl">${l}</span><b style="color:${MSCOL[k]}">${fmt(cur[i])}</b>${dtxt(dlt(cur[i],pv[i]))}</div>`).join('')}</div>`}
+function workBars(b,c){const cur=(c.endv.vals[b]||{}).w||{},pv=c.base&&(c.base.vals[b]||{}).w||{};
+  const rows=worksSorted().filter(w=>cur[w.id]!==undefined).map(w=>`<div class="rw"><span title="${esc(w.name)}">${esc(w.name)}</span>${pbar(cur[w.id],'var(--done)')}<span>${dtxt(dlt(cur[w.id],pv[w.id]))}</span></div>`);
+  return rows.length?`<div class="rsub">สถานะแต่ละงาน (เสร็จ %)</div>${rows.join('')}`:'<div class="sub">ยังไม่มีข้อมูลงานของตึกนี้</div>'}
+const itRow=it=>`<button class="rit" data-a="ritem" data-s="${it.src}" data-id="${esc(it.k)}"><div><b>${esc(it.t)}</b><div class="sub">${itZone(it)}</div></div><div class="sr"><span class="sbadge" style="background:${it.st.c}">${esc(it.st.l)}</span><div class="sub">${fds(dnum(it.s))} – ${fds(dnum(it.e))}${it.pr!=null?' · '+fmt(it.pr):''}</div></div></button>`;
+function stChips(L){const m={};for(const it of L){const o=m[it.st.k]||(m[it.st.k]={l:it.st.l,c:it.st.c,n:0});o.n++}return Object.values(m).map(o=>`<span class="sbadge" style="background:${o.c}">${esc(o.l)} ${o.n}</span>`).join(' ')}
+function bBlock(b,c){
+  const cur=phList(b,c.ws,c.we),last=cur.length?cur:phList(b).slice(0,4),L=c.items.filter(x=>x.b===b&&rpOv(x,c.ws,c.we)).sort((a,z)=>dnum(a.e)-dnum(z.e)),
+    N=c.items.filter(x=>x.b===b&&rpOv(x,c.ws+7,c.we+7)&&!rpOv(x,c.ws,c.we)).sort((a,z)=>dnum(a.s)-dnum(z.s));
+  return `<section class="card rb" data-bb="${esc(b)}"><div class="rbh"><h3>ตึก ${esc(b)}</h3>${kpis(b,c)}</div>
+   <div class="rbody"><div class="rcol">${workBars(b,c)}
+     <div class="rsub" style="margin-top:12px">แผนงานสัปดาห์นี้ ${L.length?stChips(L):''}</div>${L.length?L.map(itRow).join(''):'<div class="sub">ไม่มีแผนงานในสัปดาห์นี้</div>'}
+     ${N.length?`<div class="rsub" style="margin-top:12px">เริ่มสัปดาห์ถัดไป</div>${N.slice(0,6).map(itRow).join('')}`:''}</div>
+    <div class="rcol"><div class="row" style="justify-content:space-between"><div class="rsub">รูปหน้างาน${cur.length?'':' (ล่าสุด)'}</div>${S.canWrite&&S.db?`<button class="btn sm noexp" data-a="phadd" data-b="${esc(b)}">+ เพิ่มรูป</button>`:''}</div>
+     ${last.length?`<div class="rphg">${last.slice(0,6).map(phImg).join('')}</div>${last.length>6?`<div class="sub">และอีก ${last.length-6} รูป</div>`:''}`:'<div class="sub">ยังไม่มีรูป กด “+ เพิ่มรูป”</div>'}</div></div>
+   ${noteBox('n:'+c.ws+'|'+b,'สรุป / ประเด็นประจำสัปดาห์ ตึก '+b)}</section>`}
+function summaryBlock(c){
+  const rows=c.bs.map(b=>{const L=c.items.filter(x=>x.b===b&&rpOv(x,c.ws,c.we));return `<tr><td><b>ตึก ${esc(b)}</b></td>${MS.map(([k],i)=>{const v=((c.endv.vals[b]||{}).t||[])[i],p=c.base&&((c.base.vals[b]||{}).t||[])[i];return `<td class="num">${fmt(v)} ${dtxt(dlt(v,p))}</td>`}).join('')}<td>${L.length?stChips(L):'<span class="sub">–</span>'}</td></tr>`}).join('');
+  return `<section class="card rb"><h3>สรุปความคืบหน้ารายตึก</h3><div class="tw"><table><thead><tr><th>ตึก</th>${MS.map(m=>`<th>${m[1]}</th>`).join('')}<th>แผนสัปดาห์นี้</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <div class="sub" style="margin-top:6px">${c.base?`เทียบกับสถานะวันที่ ${fd(c.base.date)}`:'ยังไม่มีข้อมูลเก็บไว้เทียบ (ระบบบันทึกสถานะรายวันอัตโนมัติเมื่อมีการเปิดใช้งาน)'}${c.approx?' · สัปดาห์ที่ผ่านมาแสดงค่าปัจจุบัน':''}</div>
+   ${noteBox('n:'+c.ws+'|*','สรุปภาพรวมโครงการประจำสัปดาห์')}</section>`}
+function look3(c,bs,opt){
+  const ws=c.ws,N=21,pc=x=>((x-ws)/N*100),inWin=it=>dnum(it.e)>=ws&&dnum(it.s)<=ws+N-1,late=it=>dnum(it.e)<ws&&it.st.k!=='done'&&!(it.pr!=null&&it.pr>=.999);
+  const t=todayN();
+  let h=`<div class="l3"><div class="l3h"><div class="l3l"></div><div class="l3t">${[0,1,2].map(i=>`<div class="l3w"><b>สัปดาห์ ${i+1}</b><span>${fds(ws+i*7)} – ${fds(ws+i*7+6)}</span><div class="l3d">${[0,1,2,3,4,5,6].map(d=>`<i class="${(ws+i*7+d+4)%7===0||(ws+i*7+d+4)%7===6?'we':''}">${new Date((ws+i*7+d)*DAY).getUTCDate()}</i>`).join('')}</div></div>`).join('')}</div></div>`;
+  let any=false;
+  for(const b of bs){const L=c.items.filter(x=>x.b===b&&(inWin(x)||late(x))).sort((a,z)=>dnum(a.s)-dnum(z.s)||dnum(a.e)-dnum(z.e));
+    const ph=phList(b).slice(0,3),ov=((c.endv.vals[b]||{}).t||[])[0];
+    h+=`<div class="l3g"><div class="l3gh"><b>ตึก ${esc(b)}</b><span class="sub">เสร็จ ${fmt(ov)}</span>${opt&&opt.noPh?'':`<span class="l3ph">${ph.map(phImg).join('')}</span>`}${S.canWrite&&S.db&&!(opt&&opt.noEdit)?`<button class="btn sm noexp" data-a="lkadd" data-b="${esc(b)}">+ แผน</button>`:''}</div>`;
+    if(!L.length)h+='<div class="l3r"><div class="l3l sub">ไม่มีงานตามแผนใน 3 สัปดาห์</div></div>';
+    for(const it of L){any=true;const s=Math.max(dnum(it.s),ws),e=Math.min(dnum(it.e),ws+N-1),isL=late(it)&&dnum(it.e)<ws;
+      const l=isL?0:pc(s),w=isL?Math.max(100/N*1.2,3):((e-s+1)/N*100),pr=it.pr==null?0:it.pr;
+      h+=`<div class="l3r"><div class="l3l"><b>${esc(it.t)}</b><span class="sub">${itZone(it)}</span></div><div class="l3t"><div class="l3tr">${t>=ws&&t<ws+N?`<div class="gtd" style="left:${pc(t+.5)}%"></div>`:''}<button class="gbar" data-a="ritem" data-s="${it.src}" data-id="${esc(it.k)}" style="left:${l}%;width:${w}%;background:${it.st.c}33;border-color:${it.st.c}" title="${esc(it.st.l)} · ${fd(it.s)} – ${fd(it.e)}"><i style="width:${pr*100}%;background:${it.st.c}"></i><span>${isL?'◀ ค้าง ':''}${it.pr==null?esc(it.st.l):fmt(it.pr)}</span></button></div></div></div>`}
+    h+=noteBox('n3:'+ws+'|'+b,'ข้อจำกัด / สิ่งที่ต้องเตรียม ตึก '+b)+'</div>'}
+  return h+'</div>'+(any?'':'<div class="sub" style="margin-top:8px">ยังไม่มีแผนงานในช่วงนี้ กด “+ เพิ่มแผน” หรือเพิ่มในแท็บ “แผนงาน”</div>')}
+function rptTitle(){return S.rm==='3w'?'แผน 3 สัปดาห์ (3W look-ahead)':'รายงานประจำสัปดาห์'}
+function vReport(){
+  const c=rptCtx(),ws=c.ws,cur=wkS(todayN())===ws,hid=Object.keys(S.rpt).filter(k=>k.slice(0,2)==='h:').length;
+  let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">นำเสนอ · ${S.rm==='3w'?'3W look-ahead':'รายสัปดาห์'}</h1><div class="sub">${S.rm==='3w'?`3 สัปดาห์ข้างหน้า เริ่ม ${fdn(ws)} ถึง ${fdn(ws+20)}`:'สัปดาห์ '+wkLabel(ws)}${cur?' · สัปดาห์นี้':''}</div></div>
+   <div class="row noexp"><button class="btn pri" data-a="rpstart">▶ โหมดนำเสนอ</button><button class="btn" data-a="exp">ส่งออก PDF / ภาพ</button></div></div>
+   <div class="row noexp" style="margin-top:12px"><div class="chips"><button class="chip" data-a="rm" data-k="weekly" aria-pressed="${S.rm==='weekly'}">รายสัปดาห์</button><button class="chip" data-a="rm" data-k="3w" aria-pressed="${S.rm==='3w'}">3W (3 สัปดาห์)</button></div>
+    <div class="chips"><button class="chip" data-a="rwk" data-d="-7" aria-label="สัปดาห์ก่อนหน้า">‹</button><button class="chip" data-a="rwk" data-d="0" aria-pressed="${cur}">สัปดาห์นี้</button><button class="chip" data-a="rwk" data-d="7" aria-label="สัปดาห์ถัดไป">›</button></div>
+    <label class="sub" style="display:flex;gap:6px;align-items:center">เริ่มสัปดาห์วัน<select id="rws" data-a="rwsel" style="font:inherit;background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:4px 6px">${[[1,'จันทร์'],[6,'เสาร์'],[0,'อาทิตย์']].map(([v,l])=>`<option value="${v}" ${S.rws===v?'selected':''}>${l}</option>`).join('')}</select></label></div>
+   <div class="row noexp" style="margin-top:10px"><div class="chips"><button class="chip" data-a="rb" data-b="ALL" aria-pressed="${S.rb==='ALL'}">ทุกตึก</button>${S.meta.buildings.map(b=>`<button class="chip" data-a="rb" data-b="${esc(b)}" aria-pressed="${S.rb===b}">ตึก ${esc(b)}</button>`).join('')}</div></div>
+   <div class="row noexp" style="margin-top:10px"><span class="sub">ที่มาข้อมูลแผนงาน:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">ดึงจากแท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มเอง</button></div>
+    ${S.canWrite&&S.db?'<button class="btn sm" data-a="lkadd">+ เพิ่มแผนเอง</button><button class="btn sm" data-a="phadd">+ เพิ่มรูป</button><button class="btn sm" data-a="snapnow" title="บันทึกสถานะปัจจุบันไว้ใช้เทียบสัปดาห์ถัดไป">บันทึกสถานะตอนนี้</button>':''}${hid?`<button class="btn sm" data-a="unhide">คืนรายการที่ซ่อน (${hid})</button>`:''}</div>`;
+  if(S.rm==='3w')h+=`<section class="sec"><div class="card" style="padding:12px">${look3(c,c.bs)}</div></section>`;
+  else h+=(S.rb==='ALL'?summaryBlock(c):'')+c.bs.map(b=>bBlock(b,c)).join('')+(S.rb==='ALL'?'':'');
+  return h}
+
+/* presentation mode */
+function rpSlides(){const c=rptCtx(),s=[];
+  if(S.rm==='3w'){s.push(['3W look-ahead · ภาพรวม',summaryBlock(c)]);for(const b of c.bs)s.push(['3W · ตึก '+b,look3(c,[b],{noEdit:1})])}
+  else{s.push(['สรุปรายสัปดาห์ · '+wkLabel(c.ws),summaryBlock(c)]);for(const b of c.bs)s.push(['ตึก '+b,bBlock(b,c)]);s.push(['แผนล่วงหน้า 3 สัปดาห์',look3(c,c.bs,{noEdit:1,noPh:1})])}
+  return s}
+function rpDraw(){let o=document.getElementById('rpres');
+  if(!S.rpres){if(o)o.hidden=true;return}
+  if(!o){o=document.createElement('div');o.id='rpres';o.className='rpres';document.body.appendChild(o)}
+  const sl=rpSlides();S.rsi=Math.max(0,Math.min(sl.length-1,S.rsi));const [t,body]=sl[S.rsi],sc=o.querySelector('.rpbody'),top=sc?sc.scrollTop:0;
+  o.hidden=false;o.innerHTML=`<div class="rpbar"><div><b>${esc(S.meta.name)}</b> · ${esc(t)}</div><div class="row"><span class="sub">${S.rsi+1} / ${sl.length}</span><button class="btn sm" data-a="rpprev" aria-label="ก่อนหน้า">‹</button><button class="btn sm" data-a="rpnext" aria-label="ถัดไป">›</button><button class="btn sm" data-a="rpfs">เต็มจอ</button><button class="btn sm" data-a="rpx" aria-label="ปิด">✕</button></div></div><div class="rpbody"><div class="rpin">${body}</div></div>`;
+  o.querySelector('.rpbody').scrollTop=top}
+function rpGo(d){S.rsi+=d;S._k=null;rpDraw();const b=document.querySelector('#rpres .rpbody');if(b)b.scrollTop=0}
+function rpStop(){S.rpres=false;rpDraw();try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+document.addEventListener('keydown',e=>{if(!S.rpres||!$('#modal').hidden)return;if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();rpGo(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();rpGo(-1)}else if(e.key==='Escape')rpStop()});
+function rptAct(a,d){
+  if(a==='rm'){S.rm=d.k;render();return true}
+  if(a==='rb'){S.rb=d.b;render();return true}
+  if(a==='rwk'){const x=+d.d;S.ra=x===0?null:rptWeek()+x;render();return true}
+  if(a==='rsrc'){S.rsrc[d.k]=!S.rsrc[d.k];render();return true}
+  if(a==='lkadd'){lookForm(null,d.b);return true}
+  if(a==='phadd'){phForm(d.b);return true}
+  if(a==='phview'){phView(d.id);return true}
+  if(a==='ritem'){itemOpen(d.s,d.id);return true}
+  if(a==='note'){noteForm(d.k,d.t);return true}
+  if(a==='snapnow'){snapSave(true).then(()=>toast('บันทึกสถานะวันนี้แล้ว'));return true}
+  if(a==='unhide'){const ks=Object.keys(S.rpt).filter(k=>k.slice(0,2)==='h:');(async()=>{for(const k of ks)await rptSet(k,null).catch(()=>{});toast('คืนรายการแล้ว')})();return true}
+  if(a==='rpstart'){S.rpres=true;S.rsi=0;rpDraw();return true}
+  if(a==='rpx'){rpStop();return true}
+  if(a==='rpprev'){rpGo(-1);return true}
+  if(a==='rpnext'){rpGo(1);return true}
+  if(a==='rpfs'){try{const o=document.getElementById('rpres');if(document.fullscreenElement)document.exitFullscreen();else o.requestFullscreen()}catch(e){}return true}
+  return false}
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rws'){S.rws=+t.value;S.ra=null;try{localStorage.setItem('mp_rws',String(S.rws))}catch(err){}render()}});
+
 /* ---------- render ---------- */
 function renderTabs(){const t=$('#tabs');
-  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">แปลน</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">แผนงาน</button><button class="tab" role="tab" data-a="go" data-v="design" aria-selected="${S.view==='design'}">ออกแบบ</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">QC2</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
+  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">แปลน</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">แผนงาน</button><button class="tab" role="tab" data-a="go" data-v="report" aria-selected="${S.view==='report'}">นำเสนอ</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">QC2</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
 let raf=0;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
 function doRender(){
   if(S._drag){S._pend=true;return}
@@ -1326,7 +1356,7 @@ function doRender(){
   const w=S.works[S.view];
   if(S.view==='plan')h+=vPlan();
   else if(S.view==='sched')h+=vSched();
-  else if(S.view==='design')h+=vDesign();
+  else if(S.view==='report')h+=vReport();
   else if(S.view==='qc2')h+=vQC2();
   else if(S.view!=='overview'&&w)h+=vWork({id:S.view,...w});else{S.view='overview';h+=vOverview()}
   const key=S.view+'|'+S.pb+'|'+S.pf+'|'+S.pw+'|'+S.pm+'|'+S.bld+'|'+S.obld+'|'+S.qw+'|'+S.qb;const ent=key!==S._k;S._k=key;
@@ -1334,7 +1364,7 @@ function doRender(){
   if(ent&&S.view==='plan'){app.querySelectorAll('[data-v]').forEach(e=>{if(!e.matches('.prp,#ptot'))return;const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const step=n=>{const k=Math.min(1,(n-t0)/900),x=t*(1-Math.pow(1-k,3));e.textContent=fmt(x);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
   if(S.view==='plan'){planApply(ent);setTimeout(planLead,480);const ck=app.querySelector('.callout');const k=ck?ck.dataset.ck:'';if(k&&k!==S._ck){app.querySelectorAll('.cop').forEach(e=>{const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const st=n=>{const q=Math.min(1,(n-t0)/800);e.textContent=fmt(t*(1-Math.pow(1-q,3)));if(q<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}S._ck=k}
   if(ent){void app.offsetWidth;app.classList.add('enter');clearTimeout(S._et);S._et=setTimeout(()=>app.classList.remove('enter'),1400);window.scrollTo({top:0})}
-  app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]})}
+  app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]});rptTick();if(S.rpres)rpDraw()}
 
 /* ---------- writes ---------- */
 const queue={};
@@ -1542,6 +1572,7 @@ async function runExport(t,title,o){
 document.addEventListener('click',async e=>{
   const el=e.target.closest('[data-a]');if(!el||el.closest('#modal'))return;const a=el.dataset.a,d=el.dataset;
   const W=S.works[S.view]&&{id:S.view,...S.works[S.view]};
+  if(rptAct(a,d))return;
   if(a==='go'){planStop();S.pe=false;S.view=d.v;S.brush=null;window.scrollTo(0,0);render()}
   else if(a==='open'){S.view=d.w;S.bld=d.b||'ALL';S.brush=null;window.scrollTo(0,0);render()}
   else if(a==='obld'){S.obld=d.b;render()}
@@ -1558,7 +1589,6 @@ document.addEventListener('click',async e=>{
   else if(a==='ppoly'){S._pp=null;S._drag=false;S.pd=S.pd==='poly'?false:'poly';render()}
   else if(a==='pfin')polyFinish();
   else if(a==='schedadd')schedForm();
-  else if(a==='dzt'){S.dzt=d.k;render()}
   else if(a==='schededit')schedForm(d.id);
   else if(a==='sb'){S.sb=d.b;render()}
   else if(a==='sw'){S.sw=d.w;render()}
@@ -1598,7 +1628,7 @@ document.addEventListener('click',async e=>{
   else if(a==='colset'&&W&&S.canWrite){const g=S.grids[d.g];pickFor(g,`ห้อง ${d.c} ทุกชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const f of g.floors){const k=f+'-'+d.c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
   else if(a==='addb')addBuilding();
   else if(a==='gh')ghDialog();else if(a==='mgb')manageBuildings();else if(a==='levels')levelsDialog();
-  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='sched'?'แผนงาน':S.view==='design'?'ออกแบบโครงสร้าง '+DZF[S.dzt].t:S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
+  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='sched'?'แผนงาน':S.view==='report'?rptTitle():S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
@@ -1742,6 +1772,7 @@ async function boot(){
   S.db.collection('works').onSnapshot(s=>{S.works={};s.docs.forEach(d=>S.works[d.id]=JSON.parse(JSON.stringify(d.data())));render()},onErr);
   S.db.collection('grids').onSnapshot(s=>{const old=S.grids;S.grids={};s.docs.forEach(d=>{const q=queue[d.id];S.grids[d.id]=(q&&(q.run||Object.keys(q.p).length)&&old[d.id])?old[d.id]:JSON.parse(JSON.stringify(d.data()))});render()},onErr);
   S.db.doc('meta/sched').onSnapshot(s=>{S._schedEx=s.exists;const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.sched={};for(const [k,v] of Object.entries(d))if(v&&typeof v==='object')S.sched[k]=v;render()},onErr);
+  S.db.doc('meta/rpt').onSnapshot(s=>{S._rptEx=s.exists;const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.rpt={};for(const [k,v] of Object.entries(d))if(v!=null)S.rpt[k]=v;render()},onErr);
   S.db.doc('meta/clients').onSnapshot(s=>{S.clients=(s.exists&&JSON.parse(JSON.stringify(s.data())).r)||{};render()},onErr);
   S.db.doc('meta/plans').onSnapshot(s=>{if(!S._drag){const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.planov=d.ov||{};S.plancustom=d.cp||{};S.planhide=d.hide||{};render()}},onErr);
   S.db.doc('meta/app').onSnapshot(s=>{if(s.exists){const m=s.data();if(m.buildings)S.meta.buildings=m.buildings.slice();if(m.name)S.meta.name=m.name;if(m.sub!=null)S.meta.sub=m.sub;if(m.levels)S.meta.levels=JSON.parse(JSON.stringify(m.levels))}render()},onErr);
