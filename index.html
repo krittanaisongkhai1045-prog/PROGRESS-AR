@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;1,600;1,700&family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@500;600;700&family=Kanit:ital,wght@0,400;0,500;0,600;1,500;1,600;1,700&family=Sarabun:wght@400;500;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js"></script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
@@ -392,6 +393,26 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 .l3r{border-top:1px solid var(--line);align-items:stretch}.l3tr{position:relative;height:100%;min-height:42px;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/3 - 1px),var(--line) calc(100%/3 - 1px) calc(100%/3))}.l3tr .gbar{top:9px}.l3tr .gtd{position:absolute;top:0;bottom:0;width:2px;background:var(--warn,#d64545)}
 .l3 .rnote{margin-left:4px}
 .rpres{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;font-size:16px;color:var(--ink)}.rpres[hidden]{display:none}.rpbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;background:var(--bar,var(--surface));color:var(--bar-ink,var(--ink));flex-wrap:wrap}.rpbody{flex:1;overflow:auto;padding:16px clamp(12px,3vw,40px)}.rpin{max-width:1200px;margin:0 auto}.rpres .noexp{display:none!important}.rpres .rb{margin-top:0}.rpres .rkp b{font-size:30px}.rpres .rph{cursor:default}.rpres .rit{cursor:default}
+.rhd{position:relative;width:1280px;height:100px;color:#fff}.rhb{height:100px}.rh1{height:52px;background:#2323b4;display:flex;align-items:center;padding:0 22px;font-size:30px;font-weight:700}.rh2{height:48px;background:#e3261c;display:flex;align-items:center;padding:0 22px;font-size:24px}.rhl{position:absolute;right:0;top:0;height:100px;width:170px;background:#fff;display:flex;align-items:center;justify-content:center}.rhl img{max-width:150px;max-height:92px}
+.rsht{font-size:26px;font-weight:700;margin:2px 0 12px;color:#14212a}.rsht span{font-size:15px;font-weight:400;color:#5a6b66}
+
+.rpres{background:#05070f!important;color:#fff}.rpstw{flex:1;position:relative;overflow:hidden;cursor:pointer}.rpst{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;box-shadow:0 10px 60px rgba(0,0,0,.6);background:#fff}.rpst.an{animation:rpfade .5s ease}@keyframes rpfade{from{opacity:0}to{opacity:1}}
+.rpres .rpbar{height:52px;flex:none;display:flex;justify-content:center;align-items:center;gap:10px;padding:0 12px;background:#0b0f1d;color:#fff}.rpc{min-width:64px;text-align:center;font-size:13px;color:#b6bccd}.rpld{flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;color:#b6bccd}
+
+.aptb{border-collapse:collapse;min-width:720px;width:100%;font-size:12.5px}.aptb th,.aptb td{border:1px solid var(--line);padding:3px 6px;text-align:center}.aptb td:first-child{text-align:left}.aptb td:last-child{text-align:left}.aptb .apb{color:var(--cm,#2f4fd6)}.aptb .apr{color:var(--warn,#d64545)}.aptb tr.aph td{font-weight:700;background:var(--surface2)}.aptb tr[data-a]{cursor:pointer}.aptb tr[data-a]:hover td{background:var(--accent-soft,var(--surface2))}.aptb .pc{justify-content:center}.aptb .pc .bar{width:44px}
+.apgrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr);gap:14px;margin-top:10px;align-items:start}@media(max-width:900px){.apgrid{grid-template-columns:1fr}}
+.apsvg{width:100%;display:block;height:auto;border-radius:8px;background:#fff}.apsvg.drawing{cursor:crosshair}.aplb{touch-action:none}
+
+.apone-w{position:relative;width:100%;overflow:hidden;border-radius:6px;border:1px solid var(--line)}.apone{position:absolute;left:0;top:0;width:1400px;height:990px;transform-origin:0 0;background:#fff;color:#111;font-family:Sarabun,Tahoma,Arial,sans-serif;font-size:13px;line-height:1.3;border:2px solid #b86ad0;box-sizing:border-box}.apone *{box-sizing:border-box}
+.aohd{position:absolute;left:24px;top:14px;right:24px;height:80px;display:flex;justify-content:space-between;align-items:center}.aot{font:700 38px/1.1 Georgia,'Times New Roman',serif;color:#1f2fe0;letter-spacing:.5px}.aos{font-size:17px;color:#333;margin-top:2px}.aoco{display:flex;align-items:center;gap:12px;font-weight:700;color:#1f1fb5;font-size:16px}.aoco img{height:64px;max-width:220px;object-fit:contain}
+.apone table{width:100%;table-layout:fixed;border-collapse:collapse;min-width:0}.apone td,.apone th{color:#111;background:none;white-space:normal;word-break:break-word}.aobox{position:absolute;border:1px solid #cfd4d8;background:#fff;overflow:hidden}.aosv{position:absolute;left:0;top:0;pointer-events:none}
+.aoc{position:absolute;width:160px;height:98px;background:#fff;border:2.5px solid;padding:4px 6px;font-size:11.5px;line-height:1.28;overflow:hidden}.aoc b{display:flex;align-items:center;gap:5px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aoc i{display:inline-block;width:16px;height:10px;flex:none;border:1px solid #111}.aoc span{display:block;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aoc .aop{font-weight:700}
+.aomini{position:absolute;background:#fff;border:1px solid #cfd4d8;overflow:hidden}.aomh{display:flex;justify-content:space-between;padding:3px 8px;font-size:14px;background:#eef0ff}
+.aopn{position:absolute;border:1px solid #cfd4d8;padding:10px 12px;overflow:hidden;background:#fff}.aoh2{display:flex;justify-content:space-between;align-items:baseline;font:700 22px/1.2 Georgia,serif;color:#1f2fe0}.aoh2 span{font:800 40px/1 Sarabun,Arial,sans-serif}.aosub{font-size:11px;color:#666}
+.aot2{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}.aot2 th,.aot2 td{border:1px solid #cfd4d8;padding:3px 5px;text-align:center;vertical-align:middle}.apone .aot2 th{background:#eef0ff;color:#1f2fe0;font-size:11px}.apone .aot2 .aob{color:#1f2fe0;font-weight:600;white-space:nowrap;font-size:11.5px}.aosw{display:inline-block;width:14px;height:14px;border:1px solid #111}
+.aopb{height:6px;background:#e3e7ea;border-radius:9px;overflow:hidden;margin-bottom:2px}.aopb i{display:block;height:100%}
+.aolg{position:absolute;left:24px;top:896px;display:flex;gap:22px;align-items:center;font-size:13px;color:#444}.aolg .k{display:flex;align-items:center;gap:6px}.aolg .k i{display:inline-block;width:200px;height:12px;border:1px solid #888}
+.aoup{position:absolute;right:28px;bottom:14px;font:700 26px/1.2 Georgia,serif;color:#1f2fe0}
 </style>
 
 </head><body>
@@ -1296,32 +1317,36 @@ function rptTitle(){return S.rm==='3w'?'แผน 3 สัปดาห์ (3W lo
 function vReport(){
   const c=rptCtx(),ws=c.ws,cur=wkS(todayN())===ws,hid=Object.keys(S.rpt).filter(k=>k.slice(0,2)==='h:').length;
   let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">นำเสนอ · ${S.rm==='3w'?'3W look-ahead':'รายสัปดาห์'}</h1><div class="sub">${S.rm==='3w'?`3 สัปดาห์ข้างหน้า เริ่ม ${fdn(ws)} ถึง ${fdn(ws+20)}`:'สัปดาห์ '+wkLabel(ws)}${cur?' · สัปดาห์นี้':''}</div></div>
-   <div class="row noexp"><button class="btn pri" data-a="rpstart">▶ โหมดนำเสนอ</button><button class="btn" data-a="exp">ส่งออก PDF / ภาพ</button></div></div>
+   <div class="row noexp"><button class="btn pri" data-a="rpstart">▶ โหมดนำเสนอ</button><button class="btn" data-a="rpexp">ส่งออก PDF / PowerPoint</button></div></div>
    <div class="row noexp" style="margin-top:12px"><div class="chips"><button class="chip" data-a="rm" data-k="weekly" aria-pressed="${S.rm==='weekly'}">รายสัปดาห์</button><button class="chip" data-a="rm" data-k="3w" aria-pressed="${S.rm==='3w'}">3W (3 สัปดาห์)</button></div>
     <div class="chips"><button class="chip" data-a="rwk" data-d="-7" aria-label="สัปดาห์ก่อนหน้า">‹</button><button class="chip" data-a="rwk" data-d="0" aria-pressed="${cur}">สัปดาห์นี้</button><button class="chip" data-a="rwk" data-d="7" aria-label="สัปดาห์ถัดไป">›</button></div>
     <label class="sub" style="display:flex;gap:6px;align-items:center">เริ่มสัปดาห์วัน<select id="rws" data-a="rwsel" style="font:inherit;background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:4px 6px">${[[1,'จันทร์'],[6,'เสาร์'],[0,'อาทิตย์']].map(([v,l])=>`<option value="${v}" ${S.rws===v?'selected':''}>${l}</option>`).join('')}</select></label></div>
    <div class="row noexp" style="margin-top:10px"><div class="chips"><button class="chip" data-a="rb" data-b="ALL" aria-pressed="${S.rb==='ALL'}">ทุกตึก</button>${S.meta.buildings.map(b=>`<button class="chip" data-a="rb" data-b="${esc(b)}" aria-pressed="${S.rb===b}">ตึก ${esc(b)}</button>`).join('')}</div></div>
    <div class="row noexp" style="margin-top:10px"><span class="sub">ที่มาข้อมูลแผนงาน:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">ดึงจากแท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มเอง</button></div>
+    <span class="sub">สไลด์:</span><div class="chips"><button class="chip" data-a="rplan" aria-pressed="${S.rplan!==false}">ใส่แปลนรายชั้น</button>${MS.map(([k,l])=>`<button class="chip" data-a="rpm" data-k="${k}" aria-pressed="${(S.rpm||'done')===k}">แปลน: ${l}</button>`).join('')}</div>
     ${S.canWrite&&S.db?'<button class="btn sm" data-a="lkadd">+ เพิ่มแผนเอง</button><button class="btn sm" data-a="phadd">+ เพิ่มรูป</button><button class="btn sm" data-a="snapnow" title="บันทึกสถานะปัจจุบันไว้ใช้เทียบสัปดาห์ถัดไป">บันทึกสถานะตอนนี้</button>':''}${hid?`<button class="btn sm" data-a="unhide">คืนรายการที่ซ่อน (${hid})</button>`:''}</div>`;
   if(S.rm==='3w')h+=`<section class="sec"><div class="card" style="padding:12px">${look3(c,c.bs)}</div></section>`;
   else h+=(S.rb==='ALL'?summaryBlock(c):'')+c.bs.map(b=>bBlock(b,c)).join('')+(S.rb==='ALL'?'':'');
   return h}
 
 /* presentation mode */
-function rpSlides(){const c=rptCtx(),s=[];
-  if(S.rm==='3w'){s.push(['3W look-ahead · ภาพรวม',summaryBlock(c)]);for(const b of c.bs)s.push(['3W · ตึก '+b,look3(c,[b],{noEdit:1})])}
-  else{s.push(['สรุปรายสัปดาห์ · '+wkLabel(c.ws),summaryBlock(c)]);for(const b of c.bs)s.push(['ตึก '+b,bBlock(b,c)]);s.push(['แผนล่วงหน้า 3 สัปดาห์',look3(c,c.bs,{noEdit:1,noPh:1})])}
-  return s}
+async function rpStart(){S.rpres=true;S.rsi=0;S.rdeck=null;rpDraw();const id=S._rpid=(S._rpid||0)+1;
+  try{const d=await xDeck(xOpts());if(S._rpid===id&&S.rpres){S.rdeck=d;rpDraw()}}catch(err){console.error(err);toast('เตรียมสไลด์ไม่สำเร็จ');S.rpres=false;rpDraw()}}
+function rpFit(){const o=document.getElementById('rpres'),st=o&&o.querySelector('.rpst');if(!st)return;const k=Math.min(o.clientWidth/1280,(o.clientHeight-52)/720);st.style.transform=`translate(-50%,-50%) scale(${k})`}
 function rpDraw(){let o=document.getElementById('rpres');
   if(!S.rpres){if(o)o.hidden=true;return}
-  if(!o){o=document.createElement('div');o.id='rpres';o.className='rpres';document.body.appendChild(o)}
-  const sl=rpSlides();S.rsi=Math.max(0,Math.min(sl.length-1,S.rsi));const [t,body]=sl[S.rsi],sc=o.querySelector('.rpbody'),top=sc?sc.scrollTop:0;
-  o.hidden=false;o.innerHTML=`<div class="rpbar"><div><b>${esc(S.meta.name)}</b> · ${esc(t)}</div><div class="row"><span class="sub">${S.rsi+1} / ${sl.length}</span><button class="btn sm" data-a="rpprev" aria-label="ก่อนหน้า">‹</button><button class="btn sm" data-a="rpnext" aria-label="ถัดไป">›</button><button class="btn sm" data-a="rpfs">เต็มจอ</button><button class="btn sm" data-a="rpx" aria-label="ปิด">✕</button></div></div><div class="rpbody"><div class="rpin">${body}</div></div>`;
-  o.querySelector('.rpbody').scrollTop=top}
-function rpGo(d){S.rsi+=d;S._k=null;rpDraw();const b=document.querySelector('#rpres .rpbody');if(b)b.scrollTop=0}
-function rpStop(){S.rpres=false;rpDraw();try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+  if(!o){o=document.createElement('div');o.id='rpres';o.className='rpres';document.body.appendChild(o);window.addEventListener('resize',()=>{if(S.rpres)rpFit()})}
+  o.hidden=false;const D=S.rdeck;
+  if(!D){o.innerHTML='<div class="rpld">กำลังเตรียมสไลด์ (โหลดแปลนและรูป)…</div><div class="rpbar"><button class="btn sm" data-a="rpx">✕ ปิด</button></div>';return}
+  S.rsi=Math.max(0,Math.min(D.length-1,S.rsi));
+  o.innerHTML=`<div class="rpstw" data-a="rpnext"><div class="rpst${S._rpan?' an':''}">${xHtml(D[S.rsi])}</div></div><div class="rpbar"><button class="btn sm" data-a="rpprev" aria-label="ก่อนหน้า">‹</button><span class="rpc">${S.rsi+1} / ${D.length}</span><button class="btn sm" data-a="rpnext" aria-label="ถัดไป">›</button><button class="btn sm" data-a="rpexp">ส่งออก</button><button class="btn sm" data-a="rpfs">เต็มจอ</button><button class="btn sm" data-a="rpx" aria-label="ปิด">✕</button></div>`;
+  S._rpan=0;rpFit()}
+function rpGo(d){const D=S.rdeck;if(!D)return;const n=Math.max(0,Math.min(D.length-1,S.rsi+d));if(n===S.rsi)return;S.rsi=n;S._rpan=1;rpDraw()}
+function rpStop(){S.rpres=false;S._rpid=(S._rpid||0)+1;rpDraw();S.rdeck=null;try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
 document.addEventListener('keydown',e=>{if(!S.rpres||!$('#modal').hidden)return;if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();rpGo(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();rpGo(-1)}else if(e.key==='Escape')rpStop()});
+
 function rptAct(a,d){
+  if(a==='rpexp'){rptExportDialog();return true}
   if(a==='rm'){S.rm=d.k;render();return true}
   if(a==='rb'){S.rb=d.b;render();return true}
   if(a==='rwk'){const x=+d.d;S.ra=x===0?null:rptWeek()+x;render();return true}
@@ -1333,7 +1358,9 @@ function rptAct(a,d){
   if(a==='note'){noteForm(d.k,d.t);return true}
   if(a==='snapnow'){snapSave(true).then(()=>toast('บันทึกสถานะวันนี้แล้ว'));return true}
   if(a==='unhide'){const ks=Object.keys(S.rpt).filter(k=>k.slice(0,2)==='h:');(async()=>{for(const k of ks)await rptSet(k,null).catch(()=>{});toast('คืนรายการแล้ว')})();return true}
-  if(a==='rpstart'){S.rpres=true;S.rsi=0;rpDraw();return true}
+  if(a==='rpstart'){rpStart();return true}
+  if(a==='rplan'){S.rplan=S.rplan===false;render();return true}
+  if(a==='rpm'){S.rpm=d.k;render();return true}
   if(a==='rpx'){rpStop();return true}
   if(a==='rpprev'){rpGo(-1);return true}
   if(a==='rpnext'){rpGo(1);return true}
@@ -1341,9 +1368,493 @@ function rptAct(a,d){
   return false}
 document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rws'){S.rws=+t.value;S.ra=null;try{localStorage.setItem('mp_rws',String(S.rws))}catch(err){}render()}});
 
+/* ---------- ส่งออก PDF / PowerPoint (สไลด์ 16:9) ---------- */
+/* merged: replaces the earlier image-based rpExpForm/rpExport export (native editable slides) */
+const XC={blue:'1F1FB5',red:'E0150F',ink:'1B2430',gray:'6B7680',line:'D0D5D9',track:'E3E7EA',soft:'F3F5F7',ms:['E3A82B','2F7FB8','25936A'],up:'25936A',dn:'D64545'};
+const XMC={done:'E3A82B',cm:'2F7FB8',qc2:'25936A'};
+const hx=c=>String(c||'').replace('#','').toUpperCase();
+const lighten=(h,k)=>{h=hx(h);const n=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)||0);return n.map(v=>Math.round(v+(255-v)*k).toString(16).padStart(2,'0')).join('').toUpperCase()};
+const E={R:(x,y,w,h,fill,line,rad)=>({t:'r',x,y,w,h,fill,line,rad}),
+  T:(x,y,w,h,text,o)=>({t:'t',x,y,w,h,text:String(text==null?'':text),...o}),
+  I:(x,y,w,h,data)=>({t:'i',x,y,w,h,data}),
+  TB:(x,y,colW,rows,o)=>({t:'b',x,y,colW,rows,...o})};
+const imgEl=url=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error('img'));im.src=url});
+async function cropTo(url,w,h){const im=await imgEl(url),W=Math.round(w*190),H=Math.round(h*190),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const k=Math.max(W/im.width,H/im.height),dw=im.width*k,dh=im.height*k;x.drawImage(im,(W-dw)/2,(H-dh)/2,dw,dh);return c.toDataURL('image/jpeg',.82)}
+async function fitBox(url,w,h){const im=await imgEl(url),W=Math.round(w*200),H=Math.round(h*200),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const k=Math.min(W/im.width,H/im.height),dw=im.width*k,dh=im.height*k;x.drawImage(im,(W-dw)/2,(H-dh)/2,dw,dh);return c.toDataURL('image/png')}
+async function logoSmall(file){const u=URL.createObjectURL(file);try{const im=await imgEl(u),k=Math.min(1,500/im.width,200/im.height),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  let d=c.toDataURL('image/png');if(d.length>160000)d=c.toDataURL('image/jpeg',.85);return d}finally{URL.revokeObjectURL(u)}}
+async function phReady(ids){for(const p of ids)if(S.db)phLoad(p.id,p.n||1);const t0=Date.now();while(Date.now()-t0<10000&&ids.some(p=>!S.phimg[p.id]))await new Promise(r=>setTimeout(r,150))}
+const xd=d=>d==null?{text:'',color:XC.gray}:Math.abs(d)<.0005?{text:'±0',color:XC.gray}:{text:(d>0?'▲ +':'▼ ')+(Math.abs(d)*100).toFixed(1)+'%',color:d>0?XC.up:XC.dn};
+const xPlanSum=L=>{const m={};for(const it of L)m[it.st.l]=(m[it.st.l]||0)+1;const e=Object.entries(m);return e.length?e.map(([l,n])=>l+' '+n).join(' · '):'–'};
+const xNote=(y,h,label,text)=>[E.R(.5,y,12.33,h,XC.soft,null,.08),E.T(.65,y+.05,12,.3,label,{size:11,bold:1,color:XC.blue}),E.T(.65,y+.35,12,h-.4,text||'–',{size:12,color:XC.ink})];
+
+function xSum(c){
+  const hd=t=>({text:t,bold:1,color:XC.blue,fill:'E8EAF6',align:'c'}),rows=[[hd('ตึก'),hd('เสร็จ'),hd('เปลี่ยน'),hd('CM CLOSE'),hd('เปลี่ยน'),hd('QC2 CLOSE'),hd('เปลี่ยน'),hd('แผนงานสัปดาห์นี้')]];
+  for(const b of c.bs){const t=(c.endv.vals[b]||{}).t||[],p=c.base&&(c.base.vals[b]||{}).t||[],L=c.items.filter(x=>x.b===b&&rpOv(x,c.ws,c.we)),r=[{text:'ตึก '+b,bold:1}];
+    MS.forEach((m,i)=>{const d=xd(dlt(t[i],p[i]));r.push({text:fmt(t[i]),bold:1,color:XC.ms[i],align:'r'},{text:d.text,color:d.color})});r.push({text:xPlanSum(L)});rows.push(r)}
+  const yb=1.7+.55*rows.length+.1;
+  return [E.TB(.5,1.7,[1.3,1.2,1.15,1.3,1.15,1.3,1.15,3.78],rows,{size:12,rowH:.55}),
+    E.T(.5,yb,12.3,.3,c.base?'เทียบกับสถานะวันที่ '+fd(c.base.date):'ยังไม่มีข้อมูลเก็บไว้เทียบ',{size:10,color:XC.gray}),
+    ...xNote(Math.min(5.7,yb+.45),1.25,'สรุปภาพรวมโครงการประจำสัปดาห์',S.rpt['n:'+c.ws+'|*'])]}
+
+async function xBld(b,c,ph){
+  const e=[],t=(c.endv.vals[b]||{}).t||[],p=c.base&&(c.base.vals[b]||{}).t||[];
+  MS.forEach(([k,l],i)=>{const x=.5+i*2.05,d=xd(dlt(t[i],p[i]));e.push(E.R(x,1.85,1.95,1.0,XC.soft,null,.08),E.R(x,1.85,1.95,.07,XC.ms[i]),E.T(x+.1,1.95,1.75,.25,l,{size:10,color:XC.gray}),E.T(x+.1,2.15,1.75,.45,fmt(t[i]),{size:24,bold:1,color:XC.ms[i]}),E.T(x+.1,2.57,1.75,.25,d.text,{size:10,bold:1,color:d.color}))});
+  const cur=(c.endv.vals[b]||{}).w||{},pv=c.base&&(c.base.vals[b]||{}).w||{},ws=worksSorted().filter(w=>cur[w.id]!==undefined).slice(0,9),step=Math.min(.44,2.65/Math.max(1,ws.length));
+  e.push(E.T(.5,2.95,2.2,.28,'% แต่ละงาน',{size:11,bold:1,color:XC.gray}),E.T(3.95,2.95,.85,.28,'เสร็จ',{size:10,bold:1,color:XC.ms[0],align:'c'}),E.T(4.8,2.95,.85,.28,'CM',{size:10,bold:1,color:XC.ms[1],align:'c'}),E.T(5.65,2.95,.85,.28,'QC2',{size:10,bold:1,color:XC.ms[2],align:'c'}));
+  ws.forEach((w,i)=>{const y=3.25+i*step,v=cur[w.id],pw=pcts(w,tally(w,gridsOf(w.id,b))),cell=(x,val,col,bold)=>E.T(x,y,.85,step-.02,fmt(val),{size:bold?12:11,bold:bold?1:0,color:col,align:'c',valign:'m'});
+    e.push(E.T(.5,y,1.6,step-.02,w.name,{size:11,valign:'m'}),E.R(2.15,y+step/2-.1,1.75,.2,XC.track,null,.1));
+    if(v>0)e.push(E.R(2.15,y+step/2-.1,Math.max(.1,1.75*v),.2,XC.ms[0],null,.1));
+    e.push(cell(3.95,v,XC.ink,1),cell(4.8,c.endv.live?pw.cm:null,XC.ms[1]),cell(5.65,c.endv.live?pw.qc2:null,XC.ms[2]))});
+  if(!ws.length)e.push(E.T(.5,3.3,6,.4,'ยังไม่มีข้อมูลงานของตึกนี้',{size:11,color:XC.gray}));
+  e.push(E.T(6.8,1.55,6,.28,'รูปหน้างาน',{size:11,bold:1,color:XC.gray}));
+  const P=ph.slice(0,4);
+  if(!P.length)e.push(E.R(6.8,1.85,6.03,4.13,XC.soft,null,.08),E.T(6.8,1.85,6.03,4.13,'ยังไม่มีรูป',{size:12,color:XC.gray,align:'c',valign:'m'}));
+  else{const one=P.length===1,W=one?6.03:2.95,H=one?4.13:2.0,pos=one?[[6.8,1.85]]:[[6.8,1.85],[9.88,1.85],[6.8,3.98],[9.88,3.98]];
+    for(let i=0;i<P.length;i++){const [x,y]=pos[i];try{e.push(E.I(x,y,W,H,await cropTo(S.phimg[P[i].id],W,H)))}catch(err){continue}
+      if(P[i].c)e.push(E.R(x,y+H-.28,W,.28,'1B2430'),E.T(x+.05,y+H-.28,W-.1,.28,P[i].c,{size:9,color:'FFFFFF',valign:'m'}))}}
+  e.push(...xNote(6.1,.95,'สรุป / ประเด็นประจำสัปดาห์',S.rpt['n:'+c.ws+'|'+b]));return e}
+/* plan figure -> image */
+const XMN={done:'เสร็จ',cm:'CM CLOSE',qc2:'QC2 CLOSE'};
+async function planPng(b,f,m,bw,bh,hl,dpi){
+  let P=planOf(b,f);if(!P)return null;
+  if(P.loading&&P.custom){if(S.db)pimgLoad(P.custom.img,P.custom.n);const t0=Date.now();while(Date.now()-t0<9000&&!S.pimg[P.custom.img])await new Promise(r=>setTimeout(r,150));P=planOf(b,f)}
+  if(!P||!P.img)return null;
+  const RM=roomsOf(b,f),cs=Object.keys(RM).sort(),col='#'+XMC[m],k=Math.min(bw/P.w,bh/P.h),ow=P.w*k,oh=P.h*k,pw=Math.round(ow*(dpi||190)),ph=Math.round(oh*(dpi||190));
+  let sv=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${P.w} ${P.h}" width="${pw}" height="${ph}"><rect width="${P.w}" height="${P.h}" fill="#fff"/><image xlink:href="${P.img}" x="0" y="0" width="${P.w}" height="${P.h}"/>`;
+  for(const c of cs){const pl=RM[c],pc=roomPct(b,+f,c,'ALL',m),cu=isCust(b,f,c),fill=pc==null?'#9bbddb':(pc===0?'#b7bec4':col),fo=pc==null?.15:(pc===0?.5:.35+.6*pc);
+    sv+=`<polygon points="${pl.map(q=>q.map(v=>Math.round(v*10)/10).join(',')).join(' ')}" fill="${fill}" fill-opacity="${fo}" stroke="${hl&&hl[c]?hl[c]:cu?'#e0388a':'#1b2430'}" stroke-opacity="${hl&&hl[c]?1:cu?1:.5}" stroke-width="${(hl&&hl[c]?P.w/230:cu?P.w/450:P.w/1000).toFixed(2)}"/>`;
+    if(pc!=null){const xs=pl.map(q=>q[0]),ys=pl.map(q=>q[1]),bw2=Math.max(...xs)-Math.min(...xs),bh2=Math.max(...ys)-Math.min(...ys),[cx,cy]=centroid(pl),fs=Math.min(bw2/4,bh2/2.3,P.w/45);
+      if(fs>=P.w/170)sv+=`<text x="${cx.toFixed(1)}" y="${cy.toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="${fs.toFixed(1)}" fill="#fff" stroke="#1b2430" stroke-width="${(fs*.24).toFixed(1)}" paint-order="stroke" stroke-linejoin="round">${Math.round(pc*100)}%</text>`}}
+  sv+='</svg>';
+  const url=URL.createObjectURL(new Blob([sv],{type:'image/svg+xml;charset=utf-8'}));
+  try{const im=await imgEl(url),cv=document.createElement('canvas');cv.width=pw;cv.height=ph;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,pw,ph);x.drawImage(im,0,0,pw,ph);return{data:cv.toDataURL('image/jpeg',.88),w:ow,h:oh}}finally{URL.revokeObjectURL(url)}}
+function floorWorks(b,f,m){const RM=roomsOf(b,f),list=[];for(const w of worksSorted()){const v=planSummary(b,+f,RM,w.id,m,false);if(v!=null)list.push({w,v})}return{tot:planSummary(b,+f,RM,'ALL',m,false),list}}
+async function xPlanSlide(b,f,m){
+  const fw=floorWorks(b,f,m);if(fw.tot==null&&!fw.list.length)return null;
+  const fig=await planPng(b,f,m,7.9,4.85);if(!fig)return null;
+  const col=XMC[m],e=[E.R(.5,1.65,8.0,4.95,XC.soft,null,.08),E.I(.5+(8-fig.w)/2,1.65+(4.95-fig.h)/2,fig.w,fig.h,fig.data),
+    E.R(8.75,1.65,4.08,4.95,XC.soft,null,.08),E.R(8.75,1.65,4.08,.07,col),E.T(8.95,1.8,3.7,.3,'ภาพรวมชั้น '+f+' · '+XMN[m],{size:11,color:XC.gray}),E.T(8.95,2.1,3.7,.8,fmt(fw.tot),{size:40,bold:1,color:col,valign:'m'}),
+    E.T(8.95,3.0,3.7,.28,'% แต่ละงานในชั้นนี้',{size:11,bold:1,color:XC.gray})];
+  const L=fw.list.slice(0,8),step=Math.min(.5,3.1/Math.max(1,L.length));
+  L.forEach((o,i)=>{const y=3.35+i*step;e.push(E.T(8.95,y,1.55,step-.02,o.w.name,{size:11,valign:'m'}),E.R(10.55,y+step/2-.09,1.55,.18,XC.track,null,.09));if(o.v>0)e.push(E.R(10.55,y+step/2-.09,Math.max(.09,1.55*o.v),.18,col,null,.09));e.push(E.T(12.15,y,.65,step-.02,fmt(o.v),{size:11,bold:1,valign:'m',align:'r'}))});
+  if(!L.length)e.push(E.T(8.95,3.4,3.7,.4,'ยังไม่มีข้อมูลงานในชั้นนี้',{size:11,color:XC.gray}));
+  e.push(E.T(.5,6.66,.5,.3,'0%',{size:9,color:XC.gray,valign:'m'}));
+  for(let i=0;i<10;i++)e.push(E.R(.95+i*.3,6.74,.3,.14,lighten(col,1-(.35+.6*i/9)*1)));
+  e.push(E.T(4.0,6.66,.6,.3,'100%',{size:9,color:XC.gray,valign:'m'}),E.T(4.8,6.66,6,.3,'สีของห้อง = % '+XMN[m]+' · เทา = ยังไม่เริ่ม',{size:9,color:XC.gray,valign:'m'}));
+  return e}
+async function xCover(c,o,hero){
+  const cfg=o.cfg,bw=cfg._logo?10.2:13.333,e=[E.R(0,0,13.333,7.5,'FFFFFF'),E.R(0,0,bw,.42,XC.blue),E.T(.3,0,bw-.4,.42,cfg.co||'',{size:16,bold:1,color:'FFFFFF',valign:'m'}),E.R(0,.42,bw,.42,XC.red),E.T(.3,.42,bw-.4,.42,cfg.pj||'',{size:14,color:'FFFFFF',valign:'m'})];
+  if(cfg._logo)e.push(E.I(10.45,.03,2.5,.78,cfg._logo));
+  let hd=null;if(hero)try{hd=await cropTo(hero,6.23,3.75)}catch(err){}
+  const tw=hd?5.4:11.6,x0=.5;
+  e.push(E.R(x0,1.55,.1,2.2,XC.red),E.T(x0+.3,1.4,tw,.4,o.content==='3w'?'3W LOOK-AHEAD':'WEEKLY PROGRESS REPORT',{size:12,bold:1,color:XC.red,valign:'m'}),
+    E.T(x0+.3,1.8,tw,1.3,o.content==='3w'?'แผนล่วงหน้า 3 สัปดาห์':'รายงานความก้าวหน้า\nประจำสัปดาห์',{size:hd?30:38,bold:1,color:XC.blue,valign:'m'}),
+    E.T(x0+.3,3.15,tw,.45,(o.content==='3w'?'เริ่มสัปดาห์ ':'สัปดาห์ ')+wkLabel(c.ws),{size:15,color:XC.gray,valign:'m'}));
+  if(hd)e.push(E.I(6.6,1.3,6.23,3.75,hd),E.R(6.6,5.05,6.23,.06,XC.red));
+  const bs=c.bs.slice(0,6),n=bs.length,gap=.2,w=Math.min(2.9,(12.33-gap*(n-1))/Math.max(1,n));
+  bs.forEach((b,i)=>{const x=.5+i*(w+gap),v=((c.endv.vals[b]||{}).t||[])[0];e.push(E.R(x,5.4,w,1.5,XC.soft,null,.08),E.R(x,5.4,w,.07,XC.ms[0]),E.T(x+.15,5.52,w-.3,.3,'ตึก '+b,{size:12,bold:1,color:XC.ink,valign:'m'}),E.T(x+.15,5.8,w-.3,.62,fmt(v),{size:28,bold:1,color:XC.ms[0],valign:'m'}),E.R(x+.15,6.48,w-.3,.12,XC.track,null,.06));
+    if(v>0)e.push(E.R(x+.15,6.48,Math.max(.1,(w-.3)*v),.12,XC.ms[0],null,.06));e.push(E.T(x+.15,6.64,w-.3,.22,'เสร็จเฉลี่ยทั้งตึก',{size:9,color:XC.gray}))});
+  return e}
+async function xPhotos(ph){const e=[],pos=[];for(let r=0;r<2;r++)for(let k=0;k<3;k++)pos.push([.5+k*4.165,1.7+r*2.7]);
+  for(let i=0;i<ph.length;i++){const [x,y]=pos[i];try{e.push(E.I(x,y,4.0,2.5,await cropTo(S.phimg[ph[i].id],4.0,2.5)))}catch(err){continue}
+    e.push(E.R(x,y+2.2,4.0,.3,'1B2430'),E.T(x+.05,y+2.2,3.9,.3,fdn(dnum(ph[i].d))+(ph[i].c?' · '+ph[i].c:''),{size:9,color:'FFFFFF',valign:'m'}))}return e}
+function xPlan(rows){const hd=t=>({text:t,bold:1,color:XC.blue,fill:'E8EAF6',align:'c'}),R=[[hd('งาน'),hd('โซน / ตำแหน่ง'),hd('เริ่ม'),hd('เสร็จ'),hd('สถานะ'),hd('%')]];
+  for(const it of rows)R.push([{text:it.t,bold:1},{text:(it.z?it.z+' · ':'')+(it.f?'ชั้น '+it.f:'ทุกชั้น')+(it.r?' · ห้อง '+it.r:'')},{text:fds(dnum(it.s)),align:'c'},{text:fds(dnum(it.e)),align:'c'},{text:it.st.l,bold:1,color:hx(it.st.c),align:'c'},{text:it.pr!=null?fmt(it.pr):'–',align:'r'}]);
+  return [E.TB(.5,1.7,[3.9,3.6,1.15,1.15,1.5,1.03],R,{size:11,rowH:.38})]}
+function x3w(b,c,L,last){
+  const ws=c.ws,x0=4.2,TW=8.63,dw=TW/21,e=[],y0=2.55,rh=.42,t=todayN();
+  e.push(E.T(.5,1.65,3.6,.75,'งาน / โซน',{size:11,bold:1,color:XC.blue,valign:'m'}));
+  for(let i=0;i<3;i++){e.push(E.R(x0+i*7*dw,1.65,7*dw,.5,'E8EAF6',XC.line),E.T(x0+i*7*dw,1.65,7*dw,.5,'สัปดาห์ '+(i+1)+' · '+fds(ws+i*7)+' – '+fds(ws+i*7+6),{size:10,bold:1,color:XC.blue,align:'c',valign:'m'}));
+    for(let d=0;d<7;d++){const n=ws+i*7+d,wk=(n+4)%7===0||(n+4)%7===6;e.push(E.T(x0+(i*7+d)*dw,2.15,dw,.25,new Date(n*DAY).getUTCDate(),{size:8,color:wk?'A0A7AD':XC.gray,align:'c',valign:'m'}))}}
+  const n=L.length||1;
+  for(let i=1;i<3;i++)e.push(E.R(x0+i*7*dw,2.15,.012,.4+n*rh,XC.line));
+  L.forEach((it,i)=>{const y=y0+i*rh,isL=dnum(it.e)<ws,s=Math.max(dnum(it.s),ws),en=Math.min(dnum(it.e),ws+20),l=isL?x0:x0+(s-ws)*dw,w=isL?dw*3:(en-s+1)*dw,pr=it.pr==null?0:it.pr,col=hx(it.st.c);
+    e.push(E.R(.5,y+rh-.01,12.33,.01,XC.line),E.T(.5,y,3.65,rh,it.t+(it.z||it.f||it.r?'\n'+itZoneP(it):''),{size:10,bold:0,valign:'m'}),
+      E.R(l,y+.08,w,rh-.16,lighten(col,.72),col));
+    if(pr>0)e.push(E.R(l,y+.08,Math.max(.03,w*pr),rh-.16,col));
+    e.push(E.T(l,y+.08,w,rh-.16,(isL?'◀ ค้าง ':'')+(it.pr==null?it.st.l:fmt(it.pr)),{size:9,bold:1,color:pr>.5?'FFFFFF':XC.ink,align:'c',valign:'m'}))});
+  if(!L.length)e.push(E.T(.5,y0,12,rh,'ไม่มีงานตามแผนใน 3 สัปดาห์',{size:11,color:XC.gray,valign:'m'}));
+  if(t>=ws&&t<ws+21)e.push(E.R(x0+(t-ws+.5)*dw-.01,2.4,.025,.15+n*rh,XC.red));
+  if(last)e.push(...xNote(6.15,.9,'ข้อจำกัด / สิ่งที่ต้องเตรียม ตึก '+b,S.rpt['n3:'+ws+'|'+b]));return e}
+const itZoneP=it=>`${it.z?it.z+' · ':''}${it.f?'ชั้น '+it.f:'ทุกชั้น'}${it.r?' · ห้อง '+it.r:''}`;
+
+async function xBuild(o){
+  const c=rptCtx(),S2=[],ph={},m=o.metric||'done';
+  if(o.photos)for(const b of c.bs){let l=phList(b,c.ws,c.we);if(!l.length)l=phList(b);ph[b]=l.slice(0,12)}
+  if(o.photos)await phReady([].concat(...Object.values(ph)));
+  for(const b of c.bs)if(ph[b])ph[b]=ph[b].filter(p=>S.phimg[p.id]);
+  let hero=null;try{const cv=o.cfg.cover;if(cv&&cv.id){await phReady([{id:cv.id,n:cv.n}]);hero=S.phimg[cv.id]||null}else{const l=phList();if(l.length){await phReady([l[0]]);hero=S.phimg[l[0].id]||null}}}catch(err){}
+  S2.push({bare:1,els:await xCover(c,o,hero)});
+  if(o.content!=='3w'){
+    S2.push({title:'สรุปความคืบหน้าประจำสัปดาห์ · '+wkLabel(c.ws),els:xSum(c)});
+    for(const b of c.bs){const P=ph[b]||[];
+      S2.push({title:`ตึก ${b} · ความคืบหน้าประจำสัปดาห์`,els:await xBld(b,c,P)});
+      if(o.plans)for(const f of planFl(b).slice().sort((a,z)=>+a-+z)){let el=null;try{el=await xPlanSlide(b,f,m)}catch(err){console.error(err)}if(el)S2.push({title:`ตึก ${b} · ชั้น ${f} · แปลนความคืบหน้า`,els:el})}
+      const L=c.items.filter(x=>x.b===b&&rpOv(x,c.ws,c.we)).sort((a,z)=>dnum(a.e)-dnum(z.e)),N=c.items.filter(x=>x.b===b&&rpOv(x,c.ws+7,c.we+7)&&!rpOv(x,c.ws,c.we)).sort((a,z)=>dnum(a.s)-dnum(z.s)).map(x=>({...x,t:'(สัปดาห์หน้า) '+x.t})),A=L.concat(N);
+      for(let i=0;i<A.length;i+=12)S2.push({title:`ตึก ${b} · แผนงานสัปดาห์นี้และสัปดาห์ถัดไป${A.length>12?' ('+(i/12+1)+')':''}`,els:xPlan(A.slice(i,i+12))});
+      const ex=P.slice(4);for(let i=0;i<ex.length;i+=6)S2.push({title:`ตึก ${b} · รูปหน้างานเพิ่มเติม`,els:await xPhotos(ex.slice(i,i+6))})}}
+  if(o.content!=='weekly'){let any=false;const ws=c.ws,inWin=it=>dnum(it.e)>=ws&&dnum(it.s)<=ws+20,late=it=>dnum(it.e)<ws&&it.st.k!=='done'&&!(it.pr!=null&&it.pr>=.999);
+    for(const b of c.bs){const L=c.items.filter(x=>x.b===b&&(inWin(x)||late(x))).sort((a,z)=>dnum(a.s)-dnum(z.s)||dnum(a.e)-dnum(z.e));if(!L.length)continue;any=true;
+      for(let i=0;i<L.length;i+=9)S2.push({title:`แผนล่วงหน้า 3 สัปดาห์ (3W) · ตึก ${b}${L.length>9?' ('+(i/9+1)+')':''}`,els:x3w(b,c,L.slice(i,i+9),i+9>=L.length)})}
+    if(!any)S2.push({title:'แผนล่วงหน้า 3 สัปดาห์ (3W)',els:[E.T(.5,2,12,1,'ยังไม่มีแผนงานในช่วง 3 สัปดาห์นี้',{size:16,color:XC.gray})]})}
+  return S2}
+async function xDeck(o){const cfg={...o.cfg};if(cfg.logo)try{cfg._logo=await fitBox(cfg.logo,2.5,.78)}catch(e){}
+  const body=await xBuild({...o,cfg}),n=body.length;return body.map((s,i)=>s.bare?s.els:[...xFrame(cfg,s.title),...s.els,...xFoot(i+1,n)])}
+const xOpts=()=>{const c=S.rpt.cfg||{};return{content:S.rm==='3w'?'3w':'both',photos:true,plans:S.rplan!==false,metric:S.rpm||'done',cfg:{co:c.co!=null?c.co:'Kmit Construction co. ltd',pj:c.pj!=null?c.pj:'Project : '+S.meta.name,logo:c.logo||'',cover:c.cover||null}}};
+function xFrame(cfg,title,pg,n){
+  const bw=cfg._logo?10.2:13.333,e=[E.R(0,0,13.333,7.5,'FFFFFF'),E.R(0,0,bw,.42,XC.blue),E.T(.3,0,bw-.4,.42,cfg.co||'',{size:16,bold:1,color:'FFFFFF',valign:'m'}),E.R(0,.42,bw,.42,XC.red),E.T(.3,.42,bw-.4,.42,cfg.pj||'',{size:14,color:'FFFFFF',valign:'m'})];
+  if(cfg._logo)e.push(E.I(10.45,.03,2.5,.78,cfg._logo));
+  e.push(E.T(.5,.95,12.3,.55,title,{size:20,bold:1,color:XC.blue,valign:'m'}),E.R(.5,1.5,12.33,.02,XC.red));
+  return e}
+const xFoot=(pg,n)=>[E.T(.5,7.12,9,.3,'ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'})+' · '+S.meta.name,{size:9,color:XC.gray}),E.T(11.3,7.12,1.53,.3,pg+' / '+n,{size:9,color:XC.gray,align:'r'})];
+function xHtml(els){const px=v=>(v*96).toFixed(1)+'px',F="font-family:Sarabun,'Noto Sans Thai',Tahoma,sans-serif";
+  const cell=(c,o)=>`<td style="border:1px solid #${XC.line};padding:0 6px;${c.fill?'background:#'+c.fill+';':''}color:#${c.color||XC.ink};font-weight:${c.bold?700:400};text-align:${c.align==='r'?'right':c.align==='c'?'center':'left'};overflow:hidden;white-space:nowrap">${esc(c.text)}</td>`;
+  return `<div style="position:relative;width:1280px;height:720px;overflow:hidden;background:#fff;${F}">`+els.map(e=>{
+    if(e.t==='r')return `<div style="position:absolute;left:${px(e.x)};top:${px(e.y)};width:${px(e.w)};height:${px(e.h)};background:#${e.fill};${e.line?'border:1px solid #'+e.line+';box-sizing:border-box;':''}${e.rad?'border-radius:'+px(e.rad):''}"></div>`;
+    if(e.t==='i')return `<div style="position:absolute;left:${px(e.x)};top:${px(e.y)};width:${px(e.w)};height:${px(e.h)};background:url('${e.data}') center/100% 100% no-repeat"></div>`;
+    if(e.t==='t')return `<div style="position:absolute;left:${px(e.x)};top:${px(e.y)};width:${px(e.w)};height:${px(e.h)};display:flex;align-items:${e.valign==='m'?'center':'flex-start'};overflow:hidden;box-sizing:border-box;padding:0 3px"><div style="width:100%;text-align:${e.align==='c'?'center':e.align==='r'?'right':'left'};font-size:${(e.size*96/72).toFixed(1)}px;font-weight:${e.bold?700:400};color:#${e.color||XC.ink};line-height:1.25;white-space:pre-wrap">${esc(e.text)}</div></div>`;
+    if(e.t==='b')return `<table style="position:absolute;left:${px(e.x)};top:${px(e.y)};width:${px(e.colW.reduce((a,b)=>a+b,0))};border-collapse:collapse;table-layout:fixed;font-size:${(e.size*96/72).toFixed(1)}px;line-height:1.2"><colgroup>${e.colW.map(w=>`<col style="width:${px(w)}">`).join('')}</colgroup>${e.rows.map(r=>`<tr style="height:${px(e.rowH)}">${r.map(cell).join('')}</tr>`).join('')}</table>`;
+    return ''}).join('')+'</div>'}
+async function xPdf(sl){
+  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF))throw new Error('lib');
+  const host=document.createElement('div');host.style.cssText='position:fixed;left:-20000px;top:0;width:1280px;height:720px';document.body.appendChild(host);
+  try{if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'in',format:[13.333,7.5]});
+    for(let i=0;i<sl.length;i++){host.innerHTML=xHtml(sl[i]);const cv=await html2canvas(host.firstChild,{scale:1.5,backgroundColor:'#ffffff',logging:false,useCORS:true});if(i)pdf.addPage([13.333,7.5],'landscape');pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,13.333,7.5)}
+    return pdf.output('blob')}finally{host.remove()}}
+async function xPptx(sl,title){
+  if(!window.PptxGenJS)throw new Error('lib');
+  const pp=new window.PptxGenJS();pp.defineLayout({name:'W169',width:13.333,height:7.5});pp.layout='W169';pp.title=title;
+  const FF='Tahoma',al=a=>a==='c'?'center':a==='r'?'right':'left';
+  for(const els of sl){const s=pp.addSlide();
+    for(const e of els){
+      if(e.t==='r')s.addShape(e.rad?pp.ShapeType.roundRect:pp.ShapeType.rect,{x:e.x,y:e.y,w:e.w,h:e.h,fill:{color:e.fill},line:e.line?{color:e.line,width:.75}:{type:'none'},...(e.rad?{rectRadius:Math.min(e.rad,Math.min(e.w,e.h)/2)}:{})});
+      else if(e.t==='i')s.addImage({data:e.data,x:e.x,y:e.y,w:e.w,h:e.h});
+      else if(e.t==='t')s.addText(e.text,{x:e.x,y:e.y,w:e.w,h:e.h,fontFace:FF,fontSize:e.size,bold:!!e.bold,color:e.color||XC.ink,align:al(e.align),valign:e.valign==='m'?'middle':'top',margin:2,wrap:true,fit:'none'});
+      else if(e.t==='b')s.addTable(e.rows.map(r=>r.map(c=>({text:c.text,options:{bold:!!c.bold,color:c.color||XC.ink,align:al(c.align),fill:c.fill?{color:c.fill}:undefined}}))),{x:e.x,y:e.y,colW:e.colW,rowH:e.rowH,fontFace:FF,fontSize:e.size,valign:'middle',border:{type:'solid',pt:.75,color:XC.line},margin:[0,.06,0,.06]})}}
+  return await pp.write({outputType:'blob'})}
+async function rptExport(o){
+  if(!S.dl)return toast('ส่งออกไฟล์ไม่ได้ในมุมมองนี้');
+  toast('กำลังสร้างไฟล์…');
+  try{const sl=await xDeck(o),n=sl.length,c=rptCtx(),slug=(o.content==='3w'?'3W':'weekly')+'-'+dsn(c.ws);
+    if(o.fmt==='pptx')await S.dl.save({filename:`modeva-${slug}.pptx`,data:await xPptx(sl,rptTitle())});
+    else await S.dl.save({filename:`modeva-${slug}.pdf`,data:await xPdf(sl)});
+    toast('ส่งออกแล้ว ('+n+' สไลด์)')}
+  catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}}
+function rptExportDialog(){
+  const cfg=S.rpt.cfg||{},bs=S.rb==='ALL'?'ทุกตึก':'ตึก '+S.rb;
+  modal(`<h2>ส่งออกสไลด์นำเสนอ</h2><div class="sub">สไลด์ 16:9 · สัปดาห์ ${wkLabel(rptWeek())} · ${esc(bs)}</div>
+   <div class="field"><label for="xe_f">รูปแบบไฟล์</label><select id="xe_f"><option value="pptx">PowerPoint (.pptx) แก้ไขต่อได้</option><option value="pdf">PDF</option></select></div>
+   <div class="field"><label for="xe_c">เนื้อหา</label><select id="xe_c"><option value="both" ${S.rm==='weekly'?'selected':''}>รายสัปดาห์ + แผน 3W</option><option value="weekly">รายสัปดาห์อย่างเดียว</option><option value="3w" ${S.rm==='3w'?'selected':''}>แผน 3W อย่างเดียว</option></select></div>
+   <div class="row"><label class="chk"><input type="checkbox" id="xe_p" checked> ใส่รูปหน้างาน</label><label class="chk"><input type="checkbox" id="xe_pl" ${S.rplan===false?'':'checked'}> ใส่แปลนรายชั้น + % แต่ละงาน</label></div>
+   <div class="field"><label for="xe_m">สีบนแปลน / % แสดงตามขั้นตอน</label><select id="xe_m">${MS.map(([k,l])=>`<option value="${k}" ${(S.rpm||'done')===k?'selected':''}>${l}</option>`).join('')}</select></div>
+   <div class="field"><label for="xe_co">ชื่อบริษัท (แถบน้ำเงิน)</label><input id="xe_co" type="text" value="${esc(cfg.co!=null?cfg.co:'Kmit Construction co. ltd')}"></div>
+   <div class="field"><label for="xe_pj">ชื่อโครงการ (แถบแดง)</label><input id="xe_pj" type="text" value="${esc(cfg.pj!=null?cfg.pj:'Project : '+S.meta.name)}"></div>
+   <div class="field"><label for="xe_l">โลโก้ (ไม่บังคับ${cfg.logo?' · มีโลโก้ที่บันทึกไว้แล้ว':''})</label><input id="xe_l" type="file" accept="image/*">${cfg.logo?'<label class="chk"><input type="checkbox" id="xe_lc"> ลบโลโก้ที่บันทึกไว้</label>':''}</div>
+   <div class="field"><label for="xe_cv">รูปหน้าปก (ไม่บังคับ · ถ้าไม่เลือกจะใช้รูปหน้างานล่าสุด${cfg.cover?' · มีรูปหน้าปกที่บันทึกไว้แล้ว':''})</label><input id="xe_cv" type="file" accept="image/*">${cfg.cover?'<label class="chk"><input type="checkbox" id="xe_cc"> ไม่ใช้รูปหน้าปกที่บันทึกไว้</label>':''}</div>
+   <div class="row"><button class="btn pri" data-ok>ส่งออก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;
+     const cvf=$('#xe_cv').files[0],cvc=$('#xe_cc')&&$('#xe_cc').checked;
+     const fmt0=$('#xe_f').value,content=$('#xe_c').value,photos=$('#xe_p').checked,plans=$('#xe_pl').checked,metric=$('#xe_m').value,co=$('#xe_co').value.trim(),pj=$('#xe_pj').value.trim(),lf=$('#xe_l').files[0],lc=$('#xe_lc')&&$('#xe_lc').checked;
+     closeM();let logo=lc?'':cfg.logo||'';if(lf)try{logo=await logoSmall(lf)}catch(err){toast('อ่านโลโก้ไม่ได้')}
+     let cover=cvc?'':cfg.cover||'';if(cvf){if(S.db&&S.canWrite){try{toast('กำลังอัปโหลดรูปหน้าปก…');const url=await phCompress(cvf),CH=180000,n=Math.ceil(url.length/CH),id='c'+uid();for(let k=0;k<n;k++)await S.db.doc('meta/ph-'+id+'-'+k).set({d:url.slice(k*CH,(k+1)*CH)});S.phimg[id]=url;cover={id,n}}catch(err){toast('อัปโหลดรูปหน้าปกไม่สำเร็จ')}}else toast('ต้องมีสิทธิ์แก้ไขจึงจะบันทึกรูปหน้าปกได้')}
+     const nc={co,pj,logo,cover};S.rpt.cfg=nc;S.rplan=plans;S.rpm=metric;if(S.canWrite&&S.db)rptSet('cfg',nc).catch(()=>{});
+     rptExport({fmt:fmt0,content,photos,plans,metric,cfg:nc})}})}
+
+/* ---------- Action Plan (ผังไซต์ + AREA + ตารางงาน แผน/จริง) ---------- */
+S.apidx=[];S.apl={};S.apc=null;S.apm='map';S.apa=null;S.ape=false;S.apd=null;S._apS={};
+const APCOL=['#2b3cff','#e8322d','#d83ce0','#f2e43a','#2ee04a','#9a9a9a','#ff8a1f','#25d4d4'];
+function apInit(){if(S._apI||!S.db)return;S._apI=1;S.db.doc('meta/apidx').onSnapshot(s=>{S._apX=s.exists;S.apidx=(s.exists&&JSON.parse(JSON.stringify(s.data())).list)||[];render()},()=>{})}
+function apSub(id){if(S._apS[id]||!S.db)return;S._apS[id]=1;S.db.doc('meta/ap-'+id).onSnapshot(s=>{if(s.exists&&!S._drag){S.apl[id]=JSON.parse(JSON.stringify(s.data()));render()}},()=>{})}
+const apSave=id=>{try{return S.db.doc('meta/ap-'+id).set(S.apl[id]).catch(()=>toast('บันทึกไม่สำเร็จ'))}catch(e){}};
+const apIdxSave=()=>{try{const p=S.db.doc('meta/apidx').set({list:S.apidx});S._apX=true;return p}catch(e){}};
+function apDate(t){t=String(t||'').trim();if(!t||t==='-')return '';if(/^\d{4}-\d{2}-\d{2}$/.test(t))return t;const m=t.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);if(!m)return '';let y=+m[3];if(y<100)y+=2000;if(y>2400)y-=543;const d=+m[1],mo=+m[2];if(mo<1||mo>12||d<1||d>31)return '';return y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+const apFd=t=>{const n=dnum(t);if(isNaN(n))return '–';const d=new Date(n*DAY);return String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+String(d.getUTCFullYear()%100).padStart(2,'0')};
+function apCalc(rows){const n=rows.length,out=rows.map((r,i)=>({...r,i,l:+r.l||0,hdr:false}));
+  for(let i=0;i<n;i++){let j=i+1;while(j<n&&out[j].l>out[i].l)j++;out[i].hdr=j>i+1;out[i].end=j}
+  for(const o of out){if(o.hdr)continue;o.pg=Math.max(0,Math.min(100,+o.pg||0));o.days=(!isNaN(dnum(o.s))&&!isNaN(dnum(o.e)))?dnum(o.e)-dnum(o.s)+1:0;o.ad=(!isNaN(dnum(o.as))&&!isNaN(dnum(o.ae)))?dnum(o.ae)-dnum(o.as)+1:0}
+  for(let i=n-1;i>=0;i--){const o=out[i];if(!o.hdr)continue;const L=out.slice(i+1,o.end).filter(x=>!x.hdr),ss=L.map(x=>dnum(x.s)).filter(x=>!isNaN(x)),ee=L.map(x=>dnum(x.e)).filter(x=>!isNaN(x));
+    o.s=ss.length?dsn(Math.min(...ss)):'';o.e=ee.length?dsn(Math.max(...ee)):'';o.days=ss.length&&ee.length?Math.max(...ee)-Math.min(...ss)+1:0;
+    const w=L.reduce((a,x)=>a+(x.days||1),0);o.pg=w?L.reduce((a,x)=>a+x.pg*(x.days||1),0)/w:0;
+    const as=L.map(x=>dnum(x.as)).filter(x=>!isNaN(x)),ae=L.map(x=>dnum(x.ae)).filter(x=>!isNaN(x));o.as=as.length?dsn(Math.min(...as)):'';o.ae=(L.length&&L.every(x=>x.pg>=100)&&ae.length)?dsn(Math.max(...ae)):'';o.ad=(o.as&&o.ae)?dnum(o.ae)-dnum(o.as)+1:0}
+  return out}
+function apStat(pks){const L=[];for(const pk of pks)for(const o of apCalc(pk.rows||[]))if(!o.hdr)L.push(o);
+  const ss=L.map(x=>dnum(x.s)).filter(x=>!isNaN(x)),ee=L.map(x=>dnum(x.e)).filter(x=>!isNaN(x)),w=L.reduce((a,x)=>a+(x.days||1),0);
+  return{s:ss.length?dsn(Math.min(...ss)):'',e:ee.length?dsn(Math.max(...ee)):'',pg:w?L.reduce((a,x)=>a+x.pg*(x.days||1),0)/w:null,n:L.length}}
+const apAreas=pl=>(pl.ord||[]).filter(id=>pl.areas&&pl.areas[id]);
+const apBox=a=>{const p=a.p||[],xs=[],ys=[];for(let i=0;i+1<p.length;i+=2){xs.push(p[i]);ys.push(p[i+1])}if(!xs.length)return{x0:0,y0:0,x1:1,y1:1,cx:.5,cy:.5};const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);return{x0,y0,x1,y1,cx:xs.reduce((a,b)=>a+b,0)/xs.length,cy:ys.reduce((a,b)=>a+b,0)/ys.length}};
+function apPlace(pl){const W=pl.img.w,H=pl.img.h,fs=W/95,used={L:[],R:[]},pos={};
+  for(const id of apAreas(pl)){const a=pl.areas[id],b=apBox(a),side=b.cx<W/2?'L':'R',w=fs*27,h=fs*(3.4+(a.g||[]).length*2.3);
+    if(a.lx!=null&&a.ly!=null){pos[id]={x:a.lx,y:a.ly,w,h,fs};continue}
+    let y=Math.max(fs,Math.min(H-h-fs,b.cy-h/2));const x=side==='L'?fs*1.5:W-w-fs*1.5;
+    for(let t=0;t<40;t++){if(used[side].some(u=>y<u[1]+fs&&y+h>u[0]-fs))y+=h+fs;else break}
+    if(y+h>H)y=Math.max(0,H-h);used[side].push([y,y+h]);pos[id]={x,y,w,h,fs}}
+  return pos}
+function apSvg(pl,o){o=o||{};const I=pl.img,u=S.pimg[I.id];if(!u)return '';const vb=o.vb||[0,0,I.w,I.h],ids=o.only?[o.only]:apAreas(pl),pos=o.labels===false?{}:apPlace(pl),fs0=I.w/95;
+  let s=`<svg ${o.raster?'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+o.raster[0]+'" height="'+o.raster[1]+'"':'id="apsvg" class="apsvg'+(S.apd?' drawing':'')+'" style="aspect-ratio:'+vb[2]+'/'+vb[3]+'"'} viewBox="${vb.join(' ')}" font-family="Sarabun,Tahoma,Arial,sans-serif"><rect x="0" y="0" width="${I.w}" height="${I.h}" fill="#fff"/><image xlink:href="${u}" x="0" y="0" width="${I.w}" height="${I.h}"/>`;
+  for(const id of ids){const a=pl.areas[id],p=a.p||[];if(p.length<6)continue;const pts=[];for(let i=0;i+1<p.length;i+=2)pts.push(p[i]+','+p[i+1]);
+    s+=`<polygon points="${pts.join(' ')}" fill="${a.c}" fill-opacity=".55" stroke="${a.c}" stroke-width="${fs0/5}" stroke-opacity=".95"/>`}
+  for(const id of ids){const a=pl.areas[id],L=pos[id];if(!L)continue;const b=apBox(a),fs=L.fs,cxl=L.x+L.w/2,side=b.cx<L.x+L.w/2?'l':'r',ax=side==='l'?L.x:L.x+L.w,ay=L.y+fs*1.2;
+    s+=`<g class="aplb" data-aid="${esc(id)}" ${S.ape&&!o.raster?'style="cursor:move"':''}><line x1="${ax}" y1="${ay}" x2="${b.cx}" y2="${b.cy}" stroke="#111" stroke-width="${fs/7}"/><circle cx="${b.cx}" cy="${b.cy}" r="${fs*.55}" fill="#e8322d" stroke="#fff" stroke-width="${fs/8}"/>
+      <rect x="${L.x}" y="${L.y}" width="${L.w}" height="${L.h}" fill="#fff" stroke="#111" stroke-width="${fs/9}" fill-opacity=".94"/>
+      <text x="${L.x+fs*.5}" y="${L.y+fs*1.15}" font-size="${fs*.95}" font-weight="700" fill="#111">${esc(a.n)}${a.t?' · '+esc(a.t):''}</text><rect x="${L.x+L.w-fs*3.4}" y="${L.y+fs*.35}" width="${fs*2.9}" height="${fs*1.1}" fill="${a.c}" stroke="#111" stroke-width="${fs/12}"/>`;
+    (a.g||[]).forEach((pk,i)=>{const st=apStat([pk]),y=L.y+fs*(2.5+i*2.3);s+=`<text x="${L.x+fs*.5}" y="${y+fs*.6}" font-size="${fs*.78}" font-weight="600" fill="#111">${esc((pk.t||'').toUpperCase())}</text><text x="${L.x+fs*16.2}" y="${y}" font-size="${fs*.62}" fill="#333">START ${apFd(st.s)}</text><text x="${L.x+fs*16.2}" y="${y+fs*1.05}" font-size="${fs*.62}" fill="#333">FINISH ${apFd(st.e)}</text>`});
+    s+='</g>'}
+  if(S.apd&&!o.raster){const q=S.apd,pt=[];for(let i=0;i+1<q.length;i+=2)pt.push(q[i]+','+q[i+1]);if(pt.length)s+=`<polyline points="${pt.join(' ')}" fill="rgba(232,50,45,.25)" stroke="#e8322d" stroke-width="${fs0/4}"/>`;for(let i=0;i+1<q.length;i+=2)s+=`<circle cx="${q[i]}" cy="${q[i+1]}" r="${fs0/1.6}" fill="#e8322d" stroke="#fff" stroke-width="${fs0/10}"/>`}
+  return s+'</svg>'}
+function apCropVB(pl,aid,ratio){const a=pl.areas[aid],b=apBox(a),W=pl.img.w,H=pl.img.h;let w=(b.x1-b.x0)*1.5,h=(b.y1-b.y0)*1.5;w=Math.max(w,W*.18);h=Math.max(h,H*.18);
+  if(w/h<ratio)w=h*ratio;else h=w/ratio;w=Math.min(w,W);h=Math.min(h,H);if(w/h>ratio)w=h*ratio;else h=w/ratio;
+  const x=Math.max(0,Math.min(W-w,b.cx-w/2)),y=Math.max(0,Math.min(H-h,b.cy-h/2));return[Math.round(x),Math.round(y),Math.round(w),Math.round(h)]}
+function apTableHTML(pk,pl){const R=apCalc(pk.rows||[]),t=todayN(),can=S.canWrite&&S.db;
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${esc(pk.t||'งาน')}</h3>${can?`<div class="row noexp"><button class="btn sm" data-a="aprowadd" data-p="${pk.id}">+ แถวงาน</button><button class="btn sm" data-a="apimp" data-p="${pk.id}">วางจาก Excel</button><button class="btn sm" data-a="appk" data-p="${pk.id}">ตั้งค่าแพ็กเกจ</button></div>`:''}</div>
+   <div class="tw" style="margin-top:8px"><table class="aptb"><thead><tr><th rowspan="2" style="text-align:left">DESCRIPTION</th><th colspan="3" class="apb">ACTION PLANNING</th><th colspan="3" class="apr">ACTUAL</th><th rowspan="2">PROGRESS</th><th rowspan="2">REMARKS</th></tr><tr><th class="apb">START</th><th class="apb">FINISH</th><th class="apb">DAY</th><th class="apr">START</th><th class="apr">FINISH</th><th class="apr">DAY</th></tr></thead><tbody>
+   ${R.length?R.map(o=>{const late=!o.hdr&&o.pg<100&&!isNaN(dnum(o.e))&&t>dnum(o.e);return `<tr class="${o.hdr?'aph':''}" ${can?`data-a="aprow" data-p="${pk.id}" data-i="${o.i}"`:''}><td style="padding-left:${8+o.l*16}px">${esc(o.d)}</td><td class="apb">${apFd(o.s)}</td><td class="apb">${apFd(o.e)}</td><td class="apb">${o.days?o.days+(o.hdr?' days':''):'–'}</td><td class="apr">${apFd(o.as)}</td><td class="apr">${apFd(o.ae)}</td><td class="apr">${o.ad||'–'}</td><td><div class="pc"><div class="bar"><i style="width:${o.pg}%;background:${late?'#d64545':'var(--done)'}"></i></div><span style="${late?'color:#d64545;font-weight:700':''}">${o.pg.toFixed(o.pg%1?1:0)}%</span></div></td><td>${esc(o.r||'')}</td></tr>`}).join(''):'<tr><td colspan="9" class="sub">ยังไม่มีแถวงาน กด “+ แถวงาน” หรือ “วางจาก Excel”</td></tr>'}
+   </tbody></table></div></div>`}
+function vAP(){apInit();
+  const L=S.apidx||[];
+  let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">Action Plan</h1><div class="sub">ผังไซต์แบ่ง AREA พร้อมแผนงานและความคืบหน้าจริงของแต่ละ AREA</div></div>
+   <div class="row noexp">${L.length?'<button class="btn" data-a="apexp">ส่งออก PDF / PowerPoint</button>':''}${S.canWrite&&S.db?'<button class="btn pri" data-a="apnew">+ Action Plan</button>':''}</div></div>`;
+  if(!S.db)return h+'<div class="card empty" style="margin-top:14px">ต้องเชื่อมต่อฐานข้อมูลก่อน</div>';
+  if(!L.length)return h+`<div class="card empty" style="margin-top:14px">ยังไม่มี Action Plan ${S.canWrite?'กด “+ Action Plan” เลือกผังไซต์ (รูปหรือ PDF) แล้ววาด AREA ทับ เช่น ผังสระว่ายน้ำ ถนน รั้ว':''}</div>`;
+  if(!L.some(x=>x.id===S.apc))S.apc=L[0].id;apSub(S.apc);
+  const pl=S.apl[S.apc];
+  h+=`<div class="row" style="margin-top:12px"><div class="chips">${L.map(x=>`<button class="chip" data-a="apsel" data-id="${x.id}" aria-pressed="${x.id===S.apc}">${esc(x.name)}</button>`).join('')}</div></div>`;
+  if(!pl)return h+'<div class="card empty" style="margin-top:14px">กำลังโหลด…</div>';
+  if(pl.img&&!S.pimg[pl.img.id]){pimgLoad(pl.img.id,pl.img.n);return h+'<div class="card empty" style="margin-top:14px">กำลังโหลดผัง…</div>'}
+  const ids=apAreas(pl),can=S.canWrite;
+  const tot=apStat(ids.flatMap(i=>pl.areas[i].g||[]));
+  h+=`<div class="row" style="margin-top:10px;justify-content:space-between"><div class="chips"><button class="chip" data-a="apm" data-k="map" aria-pressed="${S.apm==='map'}">ผังรวม</button><button class="chip" data-a="apm" data-k="area" aria-pressed="${S.apm==='area'}">ตารางงานแต่ละ AREA</button></div>
+   <div class="row"><span class="sub">ความคืบหน้ารวม</span><span class="big">${tot.pg==null?'–':tot.pg.toFixed(1)+'%'}</span><span class="sub">${apFd(tot.s)} – ${apFd(tot.e)}</span></div></div>`;
+  if(S.apm==='map'||!ids.length){
+    h+=(can?`<div class="row noexp" style="margin-top:8px">${S.apd?`<span class="sub">คลิกบนผังเพื่อวางจุดมุมของ AREA (${(S.apd.length/2)|0} จุด)</span><button class="btn pri" data-a="apfin" ${S.apd.length>=6?'':'disabled'}>✓ เสร็จ</button><button class="btn" data-a="apundo">ย้อนจุด</button><button class="btn" data-a="apcancel">ยกเลิก</button>`:`<button class="btn" data-a="apdraw">▭ วาด AREA ใหม่ทับผัง</button><button class="btn ${S.ape?'pri':''}" data-a="apedit">${S.ape?'✓ เสร็จการจัดป้าย':'จัดตำแหน่งป้ายกำกับ (ลากย้าย)'}</button><button class="btn" data-a="apren">เปลี่ยนชื่อ/ลบ Action Plan</button>`}</div>`:'');
+    h+=`<section class="sec"><div class="card plancard" style="padding:8px">${apSvg(pl)}</div></section>
+     <div class="sgrid">${ids.map(i=>{const a=pl.areas[i],st=apStat(a.g||[]);return `<button class="scard" data-a="apar" data-id="${i}"><span class="sbadge" style="background:${a.c};color:#111">${esc(a.n)}</span><b>${st.pg==null?'–':st.pg.toFixed(0)+'%'}</b><span class="sub">${esc(a.t||'')} ${apFd(st.s)}–${apFd(st.e)}</span></button>`}).join('')}</div>`}
+  else{
+    if(!ids.includes(S.apa))S.apa=ids[0];const a=pl.areas[S.apa],vb=apCropVB(pl,S.apa,1.15),st=apStat(a.g||[]);
+    h+=`<div class="row" style="margin-top:8px"><div class="chips">${ids.map(i=>`<button class="chip" data-a="apar" data-id="${i}" aria-pressed="${i===S.apa}"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${pl.areas[i].c};margin-right:5px"></span>${esc(pl.areas[i].n)}</button>`).join('')}</div></div>
+     <div class="row" style="margin-top:8px;justify-content:space-between"><h2 style="font-size:18px">${esc(a.n)}${a.t?' · '+esc(a.t):''}</h2><div class="row"><span class="big">${st.pg==null?'–':st.pg.toFixed(1)+'%'}</span>${can?'<div class="row noexp"><button class="btn sm" data-a="apedarea">แก้ไข AREA</button><button class="btn sm" data-a="apaddpk">+ แพ็กเกจงาน</button><button class="btn sm" data-a="apcopy">คัดลอกงานไป AREA อื่น</button></div>':''}</div></div>
+     <div class="apgrid"><div class="card" style="padding:6px">${apSvg(pl,{vb,only:S.apa,labels:false})}</div><div>${(a.g||[]).map(pk=>apTableHTML(pk,pl)).join('<div style="height:12px"></div>')||'<div class="card empty">ยังไม่มีแพ็กเกจงาน กด “+ แพ็กเกจงาน” เช่น SWIMMING POOL</div>'}</div></div>`}
+  return h}
+
+/* ---- forms ---- */
+async function apImg(f,page,crop){let cv=document.createElement('canvas');
+  if(f.type==='application/pdf'||/\.pdf$/i.test(f.name)){const lib=await loadPdfjs(),pdf=await lib.getDocument({data:await f.arrayBuffer()}).promise,pg=await pdf.getPage(Math.max(1,Math.min(pdf.numPages,page||1))),v0=pg.getViewport({scale:1}),k=2400/Math.max(v0.width,v0.height),v=pg.getViewport({scale:k});
+    cv.width=Math.round(v.width);cv.height=Math.round(v.height);const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);await pg.render({canvasContext:x,viewport:v}).promise}
+  else{const u=URL.createObjectURL(f);try{const im=await imgEl(u),k=Math.min(1,2400/Math.max(im.width,im.height));cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.drawImage(im,0,0,cv.width,cv.height)}finally{URL.revokeObjectURL(u)}}
+  if(crop&&(crop.l||crop.t||crop.r||crop.b)){const sx=Math.round(cv.width*crop.l/100),sy=Math.round(cv.height*crop.t/100),sw=Math.round(cv.width*(1-(crop.l+crop.r)/100)),sh=Math.round(cv.height*(1-(crop.t+crop.b)/100));if(sw>50&&sh>50){const c2=document.createElement('canvas');c2.width=sw;c2.height=sh;c2.getContext('2d').drawImage(cv,sx,sy,sw,sh,0,0,sw,sh);cv=c2}}
+  let q=.85,url='';for(let t=0;t<8;t++){url=cv.toDataURL('image/jpeg',q);if(url.length<=1500000)break;q-=.1;if(q<.45){q=.8;const c2=document.createElement('canvas');c2.width=Math.round(cv.width*.8);c2.height=Math.round(cv.height*.8);c2.getContext('2d').drawImage(cv,0,0,c2.width,c2.height);cv=c2}}
+  return{url,w:cv.width,h:cv.height}}
+function apNewForm(){if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  modal(`<h2>เพิ่ม Action Plan</h2><div class="field"><label for="an_n">ชื่อ (เช่น SWIMMING POOL / ROAD WORK / FENCE)</label><input id="an_n" type="text"></div>
+   <div class="field"><label for="an_f">ไฟล์ผังไซต์ (รูป หรือ PDF)</label><input id="an_f" type="file" accept="image/*,application/pdf,.pdf"></div>
+   <div class="row"><div class="field" style="flex:1;min-width:110px"><label for="an_p">หน้าที่ (PDF)</label><input id="an_p" type="number" min="1" value="1"></div></div>
+   <div class="sub">ตัดขอบทิ้ง % (ถ้า PDF มีกรอบ/ตารางชื่อแบบด้านล่าง):</div>
+   <div class="row"><div class="field" style="flex:1;min-width:70px"><label for="an_cl">ซ้าย</label><input id="an_cl" type="number" min="0" max="45" value="0"></div><div class="field" style="flex:1;min-width:70px"><label for="an_ct">บน</label><input id="an_ct" type="number" min="0" max="45" value="0"></div><div class="field" style="flex:1;min-width:70px"><label for="an_cr">ขวา</label><input id="an_cr" type="number" min="0" max="45" value="0"></div><div class="field" style="flex:1;min-width:70px"><label for="an_cb">ล่าง</label><input id="an_cb" type="number" min="0" max="45" value="0"></div></div>
+   <div class="row"><button class="btn pri" data-ok>สร้าง</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;
+     const name=$('#an_n').value.trim(),f=$('#an_f').files[0],pg=+$('#an_p').value||1,cr={l:+$('#an_cl').value||0,t:+$('#an_ct').value||0,r:+$('#an_cr').value||0,b:+$('#an_cb').value||0};
+     if(!name)return toast('ใส่ชื่อ');if(!f)return toast('เลือกไฟล์ผัง');closeM();toast('กำลังเตรียมผัง…',4000);
+     try{const im=await apImg(f,pg,cr),id='ap'+uid(),iid='ai'+uid(),CH=180000,n=Math.ceil(im.url.length/CH);
+       for(let k=0;k<n;k++)await S.db.doc('meta/pimg-'+iid+'-'+k).set({d:im.url.slice(k*CH,(k+1)*CH)});
+       S.pimg[iid]=im.url;S.apl[id]={name,img:{id:iid,n,w:im.w,h:im.h},areas:{},ord:[]};S._apS[id]=0;await apSave(id);
+       S.apidx=[...S.apidx,{id,name}];await apIdxSave();S.apc=id;S.apm='map';S.view='ap';render();toast('สร้างแล้ว กด “วาด AREA ใหม่ทับผัง” เพื่อเริ่ม')}
+     catch(err){console.error(err);toast('สร้างไม่สำเร็จ: '+((err&&err.message)||err))}}})}
+function apRenForm(){const id=S.apc,pl=S.apl[id];if(!pl)return;
+  modal(`<h2>Action Plan</h2><div class="field"><label for="ar_n">ชื่อ</label><input id="ar_n" type="text" value="${esc(pl.name)}"></div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn danger" data-del>ลบ Action Plan นี้</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     if(b.hasAttribute('data-del')){closeM();return confirmM('ลบ Action Plan นี้ทั้งหมด (AREA และตารางงาน)?',async()=>{const im=pl.img;S.apidx=S.apidx.filter(x=>x.id!==id);await apIdxSave();try{S.db.doc('meta/ap-'+id).delete().catch(()=>{});if(im)for(let k=0;k<im.n;k++)S.db.doc('meta/pimg-'+im.id+'-'+k).delete().catch(()=>{})}catch(err){}delete S.apl[id];S.apc=null;render();toast('ลบแล้ว')})}
+     if(!b.hasAttribute('data-ok'))return;const n=$('#ar_n').value.trim();if(!n)return;closeM();pl.name=n;S.apidx=S.apidx.map(x=>x.id===id?{...x,name:n}:x);await apSave(id);await apIdxSave();render()}})}
+function apAreaForm(aid,pts){if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');const pl=S.apl[S.apc],cur=aid?pl.areas[aid]:null,n0=cur?cur.n:'AREA-'+(apAreas(pl).length+1),c0=cur?cur.c:APCOL[apAreas(pl).length%APCOL.length];
+  modal(`<h2>${cur?'แก้ไข AREA':'AREA ใหม่'}</h2><div class="field"><label for="aa_n">ชื่อ AREA</label><input id="aa_n" type="text" value="${esc(n0)}"></div>
+   <div class="field"><label for="aa_t">ทีม / ผู้รับผิดชอบ (เช่น KMIT, ช่างครุฑ)</label><input id="aa_t" type="text" value="${esc(cur?cur.t||'':'')}"></div>
+   <div class="field"><label>สี</label><div class="chips">${APCOL.map(c=>`<label class="chk"><input type="radio" name="aa_c" value="${c}" ${c===c0?'checked':''}><span style="display:inline-block;width:18px;height:18px;border-radius:4px;background:${c};border:1px solid #0004"></span></label>`).join('')}</div></div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button>${cur?'<button class="btn danger" data-del>ลบ AREA</button><button class="btn" data-redraw>วาดขอบเขตใหม่</button>':''}<button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     if(b.hasAttribute('data-del')){closeM();return confirmM('ลบ AREA นี้พร้อมตารางงาน?',()=>{delete pl.areas[aid];pl.ord=pl.ord.filter(x=>x!==aid);apSave(S.apc);render()})}
+     if(b.hasAttribute('data-redraw')){closeM();S.apm='map';S.apd=[];S._redraw=aid;return render()}
+     if(!b.hasAttribute('data-ok'))return;const n=$('#aa_n').value.trim(),t=$('#aa_t').value.trim(),c=el.querySelector('input[name=aa_c]:checked').value;if(!n)return toast('ใส่ชื่อ');closeM();
+     if(cur){Object.assign(cur,{n,t,c})}else{const id='a'+uid();pl.areas[id]={n,t,c,p:pts,g:[]};pl.ord=[...(pl.ord||[]),id];S.apa=id}
+     await apSave(S.apc);S.apd=null;render()}})}
+function apPkForm(pid){const pl=S.apl[S.apc],a=pl.areas[S.apa],cur=pid?(a.g||[]).find(x=>x.id===pid):null;
+  modal(`<h2>${cur?'แพ็กเกจงาน':'เพิ่มแพ็กเกจงาน'}</h2><div class="field"><label for="ak_t">ชื่อ (เช่น SWIMMING POOL / SUB-DRAINAGE / DECORATIVE WORK)</label><input id="ak_t" type="text" value="${esc(cur?cur.t:'')}"></div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button>${cur?'<button class="btn danger" data-del>ลบแพ็กเกจ</button>':''}<button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     if(b.hasAttribute('data-del')){closeM();return confirmM('ลบแพ็กเกจนี้พร้อมตารางงาน?',()=>{a.g=a.g.filter(x=>x.id!==pid);apSave(S.apc);render()})}
+     if(!b.hasAttribute('data-ok'))return;const t=$('#ak_t').value.trim();if(!t)return toast('ใส่ชื่อ');closeM();
+     if(cur)cur.t=t;else(a.g=a.g||[]).push({id:'k'+uid(),t,rows:[]});await apSave(S.apc);render()}})}
+function apRowForm(pid,i){const pl=S.apl[S.apc],a=pl.areas[S.apa],pk=a.g.find(x=>x.id===pid);if(!pk)return;const isNew=i==null,cur=isNew?{d:'',l:1,s:'',e:'',as:'',ae:'',pg:0,r:''}:pk.rows[i];if(!cur)return;
+  const hdr=!isNew&&apCalc(pk.rows)[i].hdr;
+  modal(`<h2>${isNew?'เพิ่มแถวงาน':'แก้ไขแถวงาน'}</h2><div class="field"><label for="ar_d">รายละเอียดงาน</label><input id="ar_d" type="text" value="${esc(cur.d)}"></div>
+   <div class="field"><label for="ar_l">ระดับ</label><select id="ar_l"><option value="0" ${+cur.l===0?'selected':''}>หัวข้อหลัก (เช่น RC.SLAB.)</option><option value="1" ${+cur.l===1?'selected':''}>งานย่อย ( - )</option><option value="2" ${+cur.l===2?'selected':''}>งานย่อยลึก</option></select></div>
+   ${hdr?'<div class="sub">แถวนี้เป็นหัวข้อที่รวมจากงานย่อย วัน/ความคืบหน้าคำนวณให้อัตโนมัติ</div>':`<div class="row"><div class="field" style="flex:1;min-width:130px"><label for="ar_s">เริ่มตามแผน</label><input id="ar_s" type="date" value="${esc(cur.s)}"></div><div class="field" style="flex:1;min-width:130px"><label for="ar_e">เสร็จตามแผน</label><input id="ar_e" type="date" value="${esc(cur.e)}"></div></div>
+   <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="ar_as">เริ่มจริง</label><input id="ar_as" type="date" value="${esc(cur.as||'')}"></div><div class="field" style="flex:1;min-width:130px"><label for="ar_ae">เสร็จจริง</label><input id="ar_ae" type="date" value="${esc(cur.ae||'')}"></div></div>
+   <div class="field"><label for="ar_p">ความคืบหน้า % (0-100)</label><input id="ar_p" type="number" min="0" max="100" value="${esc(cur.pg||0)}"></div>`}
+   <div class="field"><label for="ar_r">หมายเหตุ</label><input id="ar_r" type="text" value="${esc(cur.r||'')}"></div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button>${isNew?'':'<button class="btn" data-up>▲</button><button class="btn" data-dn>▼</button><button class="btn danger" data-del>ลบแถว</button>'}<button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
+     if(b.hasAttribute('data-del')){closeM();pk.rows.splice(i,1);await apSave(S.apc);return render()}
+     if(b.hasAttribute('data-up')||b.hasAttribute('data-dn')){const j=i+(b.hasAttribute('data-up')?-1:1);if(j<0||j>=pk.rows.length)return;[pk.rows[i],pk.rows[j]]=[pk.rows[j],pk.rows[i]];closeM();await apSave(S.apc);return render()}
+     if(!b.hasAttribute('data-ok'))return;const o={d:$('#ar_d').value.trim(),l:+$('#ar_l').value,r:$('#ar_r').value.trim()};if(!o.d)return toast('ใส่รายละเอียดงาน');
+     if(!hdr){o.s=$('#ar_s').value;o.e=$('#ar_e').value;o.as=$('#ar_as').value;o.ae=$('#ar_ae').value;o.pg=Math.max(0,Math.min(100,+$('#ar_p').value||0));if(o.s&&o.e&&dnum(o.e)<dnum(o.s))return toast('วันเสร็จต้องไม่ก่อนวันเริ่ม')}
+     else Object.assign(o,{s:cur.s||'',e:cur.e||'',as:'',ae:'',pg:0});
+     closeM();if(isNew)pk.rows.push(o);else pk.rows[i]=Object.assign({},cur,o);await apSave(S.apc);render()}})}
+function apImpForm(pid){const pl=S.apl[S.apc],a=pl.areas[S.apa],pk=a.g.find(x=>x.id===pid);if(!pk)return;
+  modal(`<h2>วางตารางงานจาก Excel</h2><div class="sub">คัดลอกจาก Excel หลายแถวมาวาง คอลัมน์: รายละเอียด | เริ่มแผน | เสร็จแผน | เริ่มจริง | เสร็จจริง | % | หมายเหตุ (คั่นด้วยแท็บหรือ | ) · ขึ้นต้นด้วย “-” = งานย่อย, “--” = ย่อยลึก, ไม่มี = หัวข้อหลัก · วันที่แบบ 15/12/25 หรือ 15/12/2568 ก็ได้</div>
+   <div class="field"><textarea id="ai_t" rows="10" style="font:13px monospace;background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px" placeholder="RC.SLAB.\n- Excavation work.\t15/12/25\t20/12/25\n- Pile cuting work.\t15/12/25\t21/12/25"></textarea></div>
+   <label class="chk"><input type="checkbox" id="ai_r"> แทนที่ตารางเดิมทั้งหมด</label>
+   <div class="row"><button class="btn pri" data-ok>นำเข้า</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;
+     const rows=[];for(const ln of $('#ai_t').value.split('\n')){if(!ln.trim())continue;const c=ln.split(/\t|\s\|\s|\|/).map(x=>x.trim());let d=c[0],l=0;const m=d.match(/^(-+)\s*(.*)$/);if(m){l=Math.min(2,m[1].length);d=m[2]}else if(/^\s/.test(ln))l=1;
+       if(!d)continue;rows.push({d,l,s:apDate(c[1]),e:apDate(c[2]),as:apDate(c[3]),ae:apDate(c[4]),pg:Math.max(0,Math.min(100,parseFloat(String(c[5]||'').replace('%',''))||0)),r:c[6]||''})}
+     if(!rows.length)return toast('ไม่พบแถวข้อมูล');const rep=$('#ai_r').checked;closeM();pk.rows=rep?rows:(pk.rows||[]).concat(rows);await apSave(S.apc);render();toast('นำเข้า '+rows.length+' แถว')}})}
+function apCopyForm(){const pl=S.apl[S.apc],src=pl.areas[S.apa],oth=apAreas(pl).filter(i=>i!==S.apa);if(!oth.length)return toast('ต้องมี AREA อื่นก่อน');
+  modal(`<h2>คัดลอกงานจาก ${esc(src.n)}</h2><div class="sub">คัดลอกแพ็กเกจและแถวงานทั้งหมดไปยัง AREA ที่เลือก (วันจริงและ % จะถูกล้าง) พร้อมเลื่อนวันตามแผน</div>
+   <div class="field"><label>AREA ปลายทาง</label><div class="chips">${oth.map(i=>`<label class="chk"><input type="checkbox" class="ac_t" value="${i}"> ${esc(pl.areas[i].n)}</label>`).join('')}</div></div>
+   <div class="field"><label for="ac_d">เลื่อนวันตามแผน (วัน · ลบได้)</label><input id="ac_d" type="number" value="0"></div>
+   <div class="row"><button class="btn pri" data-ok>คัดลอก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;
+     const tg=[...el.querySelectorAll('.ac_t:checked')].map(x=>x.value),sh=+$('#ac_d').value||0;if(!tg.length)return toast('เลือก AREA ปลายทาง');closeM();
+     const mv=t=>{const n=dnum(t);return isNaN(n)?'':dsn(n+sh)};
+     for(const id of tg){pl.areas[id].g=(pl.areas[id].g||[]).concat((src.g||[]).map(pk=>({id:'k'+uid(),t:pk.t,rows:pk.rows.map(r=>({d:r.d,l:r.l,s:mv(r.s),e:mv(r.e),as:'',ae:'',pg:0,r:''}))})))}
+     await apSave(S.apc);render();toast('คัดลอกแล้ว')}})}
+
+/* ---- export ---- */
+async function apRaster(svg,pw,ph){const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));try{const im=await imgEl(url),cv=document.createElement('canvas');cv.width=pw;cv.height=ph;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,pw,ph);x.drawImage(im,0,0,pw,ph);return cv.toDataURL('image/jpeg',.88)}finally{URL.revokeObjectURL(url)}}
+async function apDeck(pl,o){const cfg={...o.cfg};if(cfg.logo)try{cfg._logo=await fitBox(cfg.logo,2.5,.78)}catch(e){}
+  const slides=[],ids=apAreas(pl),I=pl.img,t=pl.name.toUpperCase();
+  {const bw=12.33,bh=4.95,k=Math.min(bw/I.w,bh/I.h),w=I.w*k,h=I.h*k,pw=Math.round(w*190),ph=Math.round(h*190),data=await apRaster(apSvg(pl,{raster:[pw,ph]}),pw,ph);
+   const st=apStat(ids.flatMap(i=>pl.areas[i].g||[])),el=[E.I(.5+(bw-w)/2,1.65,w,h,data),E.T(.5,6.65,12.3,.35,'ความคืบหน้ารวม '+(st.pg==null?'–':st.pg.toFixed(1)+'%')+'  ·  '+apFd(st.s)+' – '+apFd(st.e)+'  ·  อัปเดต '+fd(todayS()),{size:12,bold:1,color:XC.blue})];
+   slides.push({title:'ACTION PLANNING FOR '+t,els:el})}
+  if(o.tables)for(const id of ids){const a=pl.areas[id];
+    for(const pk of a.g||[]){const R=apCalc(pk.rows||[]);const per=24;
+      for(let i=0;i<Math.max(1,R.length);i+=per){const part=R.slice(i,i+per),vbR=4.3/4.85,vb=apCropVB(pl,id,vbR),pw=Math.round(4.3*190),ph=Math.round(4.85*190),data=await apRaster(apSvg(pl,{raster:[pw,ph],vb,only:id,labels:false}),pw,ph);
+        const hd=(x,col)=>({text:x,bold:1,color:col||XC.blue,fill:'E8EAF6',align:'c'}),rows=[[hd('DESCRIPTION'),hd('START'),hd('FINISH'),hd('DAY'),hd('START','C00000'),hd('FINISH','C00000'),hd('DAY','C00000'),hd('PROG.'),hd('REMARKS')]];
+        for(const r of part)rows.push([{text:r.d,bold:r.hdr?1:0},{text:apFd(r.s),color:XC.blue,align:'c'},{text:apFd(r.e),color:XC.blue,align:'c'},{text:r.days?String(r.days):'',color:XC.blue,align:'c'},{text:apFd(r.as),color:'C00000',align:'c'},{text:apFd(r.ae),color:'C00000',align:'c'},{text:r.ad?String(r.ad):'',color:'C00000',align:'c'},{text:r.pg.toFixed(r.pg%1?1:0)+'%',align:'c',bold:r.hdr?1:0},{text:r.r||''}]);
+        slides.push({title:`${t} · ${a.n}${a.t?' ('+a.t+')':''} · ${pk.t}${R.length>per?' ('+(i/per+1)+')':''}`,els:[E.R(.5,1.65,4.3,4.85,XC.soft,null,.05),E.I(.5,1.65,4.3,4.85,data),E.TB(5.0,1.65,[2.8,.72,.72,.45,.72,.72,.45,.55,.7],rows,{size:8,rowH:.2})]})}}}
+  const n=slides.length;return slides.map((s,i)=>[...xFrame(cfg,s.title),...s.els,...xFoot(i+1,n)])}
+function apExpForm(){const pl=S.apl[S.apc];if(!pl)return;
+  modal(`<h2>ส่งออก Action Plan “${esc(pl.name)}”</h2><div class="field"><label for="ax_f">รูปแบบไฟล์</label><select id="ax_f"><option value="pptx">PowerPoint (.pptx)</option><option value="pdf">PDF</option></select></div>
+   <label class="chk"><input type="checkbox" id="ax_t" checked> ใส่หน้าตารางงานแต่ละ AREA / แพ็กเกจ</label><div class="sub">ใช้ชื่อบริษัท/โครงการ/โลโก้เดียวกับสไลด์รายงาน (ตั้งค่าได้ในหน้า “นำเสนอ” → ส่งออก)</div>
+   <div class="row"><button class="btn pri" data-ok>ส่งออก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;const fm=$('#ax_f').value,tb=$('#ax_t').checked;closeM();
+     if(!S.dl)return toast('ส่งออกไฟล์ไม่ได้ในมุมมองนี้');toast('กำลังสร้างไฟล์…',4000);
+     try{const sl=await apDeck(pl,{tables:tb,cfg:xOpts().cfg}),slug='action-plan-'+pl.name.replace(/[^\w฀-๿-]+/g,'_');
+       if(fm==='pptx')await S.dl.save({filename:slug+'.pptx',data:await xPptx(sl,pl.name)});else await S.dl.save({filename:slug+'.pdf',data:await xPdf(sl)});toast('ส่งออกแล้ว ('+sl.length+' สไลด์)')}
+     catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}}})}
+
+/* ---- actions + pointer ---- */
+function apAct(a,d){
+  if(a==='apv'){S.apv=d.k;render();return true}
+  if(a==='apob'){S.aob=d.b;render();return true}
+  if(a==='apof'){S.aof=d.f;render();return true}
+  if(a==='apom'){S.aom=d.k;render();return true}
+  if(a==='apoexp'){apOneExpForm();return true}
+  if(a==='apnew'){apNewForm();return true}
+  if(a==='apsel'){S.apc=d.id;S.apa=null;S.apd=null;S.ape=false;render();return true}
+  if(a==='apm'){S.apm=d.k;S.apd=null;render();return true}
+  if(a==='apar'){S.apa=d.id;S.apm='area';render();return true}
+  if(a==='apdraw'){S.apd=[];S.ape=false;render();return true}
+  if(a==='apundo'){if(S.apd)S.apd.splice(-2,2);render();return true}
+  if(a==='apcancel'){S.apd=null;S._redraw=null;render();return true}
+  if(a==='apfin'){const pts=S.apd.slice();if(S._redraw){const pl=S.apl[S.apc],id=S._redraw;S._redraw=null;pl.areas[id].p=pts;S.apd=null;apSave(S.apc);render();return true}apAreaForm(null,pts);return true}
+  if(a==='apedit'){S.ape=!S.ape;render();return true}
+  if(a==='apren'){apRenForm();return true}
+  if(a==='apedarea'){apAreaForm(S.apa);return true}
+  if(a==='apaddpk'){apPkForm();return true}
+  if(a==='appk'){apPkForm(d.p);return true}
+  if(a==='aprowadd'){apRowForm(d.p,null);return true}
+  if(a==='aprow'){apRowForm(d.p,+d.i);return true}
+  if(a==='apimp'){apImpForm(d.p);return true}
+  if(a==='apcopy'){apCopyForm();return true}
+  if(a==='apexp'){apExpForm();return true}
+  return false}
+document.addEventListener('click',e=>{const sv=e.target.closest&&e.target.closest('#apsvg');if(!sv||!S.apd||e.target.closest('[data-a]'))return;
+  const pl=S.apl[S.apc];if(!pl)return;const r=sv.getBoundingClientRect(),vb=sv.viewBox.baseVal;const x=Math.round(vb.x+(e.clientX-r.left)/r.width*vb.width),y=Math.round(vb.y+(e.clientY-r.top)/r.height*vb.height);S.apd.push(x,y);render()});
+let apDrag=null;
+document.addEventListener('pointerdown',e=>{const g=e.target.closest&&e.target.closest('.aplb');if(!g||!S.ape||S.apd||S.view!=='ap')return;const sv=g.closest('#apsvg'),pl=S.apl[S.apc];if(!sv||!pl)return;
+  const id=g.dataset.aid,pos=apPlace(pl)[id];if(!pos)return;e.preventDefault();S._drag=true;const r=sv.getBoundingClientRect(),vb=sv.viewBox.baseVal,k=vb.width/r.width;apDrag={g,id,x0:e.clientX,y0:e.clientY,k,px:pos.x,py:pos.y,nx:pos.x,ny:pos.y}});
+document.addEventListener('pointermove',e=>{if(!apDrag)return;const dx=(e.clientX-apDrag.x0)*apDrag.k,dy=(e.clientY-apDrag.y0)*apDrag.k;apDrag.nx=apDrag.px+dx;apDrag.ny=apDrag.py+dy;apDrag.g.setAttribute('transform',`translate(${dx} ${dy})`)});
+document.addEventListener('pointerup',()=>{if(!apDrag)return;const d=apDrag;apDrag=null;S._drag=false;const pl=S.apl[S.apc];if(pl&&pl.areas[d.id]){pl.areas[d.id].lx=Math.round(d.nx);pl.areas[d.id].ly=Math.round(d.ny);apSave(S.apc)}render()});
+
+/* ---------- Action Plan หน้าเดียว: แปลน + progress + แผนงาน ---------- */
+S.apv='one';S.aob=null;S.aof=null;S.aom='done';S._aoc={};
+const APIC=['#2b3cff','#e8322d','#d83ce0','#e0a800','#14a83a','#ff8a1f','#12a8b8','#7b4fd6'];
+function vAP2(){return `<div class="chips noexp" style="margin-bottom:12px"><button class="chip" data-a="apv" data-k="one" aria-pressed="${S.apv!=='site'}">หน้าเดียวจากแปลน + แผนงาน</button><button class="chip" data-a="apv" data-k="site" aria-pressed="${S.apv==='site'}">ผังไซต์กำหนดเอง</button></div>`+(S.apv==='site'?vAP():vApOne())}
+function apOnePlan(b,f,m,W,H,hl){const pi=planOf(b,f);const k=[b,f,m,Math.round(W),Math.round(H),JSON.stringify(hl||{}),pi&&pi.img?pi.img.length:0,JSON.stringify((S.planov||{})[b+'-'+f]||{}).length].join('|');
+  const c=S._aoc[k];if(c)return c.pend?{pend:1}:c;
+  const ks=Object.keys(S._aoc);if(ks.length>40)delete S._aoc[ks[0]];
+  S._aoc[k]={pend:1};planPng(b,f,m,W/96,H/96,hl,192).then(r=>{S._aoc[k]=r||{err:1};render()}).catch(()=>{S._aoc[k]={err:1};render()});return {pend:1}}
+function apRoomCentroids(b,f,codes){const RM=roomsOf(b,f),a=[];for(const c of codes)if(RM[c])a.push(centroid(RM[c]));return a}
+function apOneSheet(b,f,m){
+  const cfg=xOpts().cfg,W=1400,H=990,all=f==='ALL',MCOL={done:'#E3A82B',cm:'#2F7FB8',qc2:'#25936A'},mc=MCOL[m],mn=XMN[m];let pending=false;
+  const items=rptItems().filter(x=>x.b===b&&(all||(()=>{const fl=schedFloors(x.f);return !fl||fl.has(String(f))})())).sort((a,z)=>dnum(a.s)-dnum(z.s)||dnum(a.e)-dnum(z.e));
+  const col=i=>APIC[i%APIC.length];
+  let left='',tot=null;
+  if(!all){
+    const P=planOf(b,f),RM=roomsOf(b,f),codes=Object.keys(RM),hl={},cen=[];
+    items.forEach((it,i)=>{const rs=schedRooms(it.r);let cs=[];if(rs&&it.link){cs=codes.filter(c=>rs.has(c));for(const c of cs)if(!hl[c])hl[c]=col(i)}cen[i]=cs.length?apRoomCentroids(b,f,cs):null});
+    const allc=codes.length?apRoomCentroids(b,f,codes):[[P.w/2,P.h/2]],mid=[allc.reduce((a,q)=>a+q[0],0)/allc.length,allc.reduce((a,q)=>a+q[1],0)/allc.length];
+    const cp=items.slice(0,14).map((it,i)=>{const c=cen[i]?[cen[i].reduce((a,q)=>a+q[0],0)/cen[i].length,cen[i].reduce((a,q)=>a+q[1],0)/cen[i].length]:[mid[0]+(i%3-1)*P.w*.12,mid[1]+((i/3|0)%3-1)*P.h*.12];return{it,i,c}});
+    const sideOf=q=>q.c[0]<mid[0]?'L':'R',useL=cp.some(q=>sideOf(q)==='L'),useR=cp.some(q=>sideOf(q)==='R'),gl=useL?168:0,gr=useR?168:0,BW=880,BH=780,iw=BW-gl-gr;
+    const fig=apOnePlan(b,f,m,iw,BH-8,hl);if(fig.pend)pending=true;
+    tot=planSummary(b,+f,RM,'ALL',m,false);
+    left=`<div class="aobox" style="left:24px;top:100px;width:${BW}px;height:${BH}px">`;
+    if(fig.data){const pw=fig.w*96,ph=fig.h*96,ix=gl+(iw-pw)/2,iy=(BH-ph)/2;left+=`<img src="${fig.data}" style="position:absolute;left:${ix}px;top:${iy}px;width:${pw}px;height:${ph}px">`;
+      const lay={L:[],R:[]};for(const q of cp){const X=ix+q.c[0]/P.w*pw,Y=iy+q.c[1]/P.h*ph;q.X=X;q.Y=Y;lay[sideOf(q)].push(q)}
+      let lines='',boxes='';for(const sd of ['L','R']){const A=lay[sd].sort((a,z)=>a.Y-z.Y),h=98;let y0=-1e9;for(const q of A){q.y=Math.max(y0+6,Math.min(BH-h-4,q.Y-h/2));y0=q.y+h}for(let j=A.length-1,lim=BH-4;j>=0;j--){if(A[j].y+h>lim)A[j].y=lim-h;lim=A[j].y-6}
+        for(const q of A){const it=q.it,c=col(q.i),x=sd==='L'?4:BW-164,ex=sd==='L'?x+160:x;lines+=`<line x1="${ex}" y1="${q.y+h/2}" x2="${q.X}" y2="${q.Y}" stroke="#111" stroke-width="1.6"/><circle cx="${q.X}" cy="${q.Y}" r="6" fill="#e8322d" stroke="#fff" stroke-width="2"/>`;
+          boxes+=`<div class="aoc" style="left:${x}px;top:${q.y}px;border-color:${c}"><b><i style="background:${c}"></i>${esc(it.z||it.t)}</b>${it.z?`<span>${esc(it.t)}</span>`:''}<span>START ${apFd(it.s)}</span><span>FINISH ${apFd(it.e)}</span><span class="aop" style="color:${it.st.c}">${it.pr!=null?fmt(it.pr)+' · ':''}${esc(it.st.l)}</span></div>`}}
+      left+=`<svg class="aosv" viewBox="0 0 ${BW} ${BH}" width="${BW}" height="${BH}">${lines}</svg>${boxes}`}
+    left+='</div>'}
+  else{
+    const fl=planFl(b).slice().sort((a,z)=>+a-+z).slice(0,8),n=fl.length,cols=n<=2?n:n<=4?2:n<=6?3:4,rows=Math.ceil(n/cols),BW=880,BH=780,cw=Math.floor((BW-(cols-1)*10)/cols),ch=Math.floor((BH-(rows-1)*10)/rows);tot=overall(b)[m];
+    left=`<div class="aobox" style="left:24px;top:100px;width:${BW}px;height:${BH}px">`+fl.map((x,i)=>{const fig=apOnePlan(b,x,m,cw-12,ch-34,{});if(fig.pend)pending=true;const RM=roomsOf(b,x),t=planSummary(b,+x,RM,'ALL',m,false);
+      return `<div class="aomini" style="left:${(i%cols)*(cw+10)}px;top:${((i/cols)|0)*(ch+10)}px;width:${cw}px;height:${ch}px"><div class="aomh"><b>ชั้น ${esc(x)}</b><span style="color:${mc}">${fmt(t)}</span></div>${fig.data?`<img src="${fig.data}" style="display:block;margin:2px auto 0;width:${fig.w*96}px;height:${fig.h*96}px">`:''}</div>`}).join('')+'</div>'}
+  /* right panel */
+  const RMf=all?null:roomsOf(b,f);
+  const wk=worksSorted().map(w=>{if(all){const tl=tally(w,gridsOf(w.id,b));return tl.n?{w,v:pcts(w,tl)}:null}const v={};let any=false;for(const [k] of MS){v[k]=planSummary(b,+f,RMf,w.id,k,false);if(v[k]!=null)any=true}return any?{w,v}:null}).filter(Boolean);
+  let right=`<div class="aopn" style="left:924px;top:100px;width:452px;height:${780}px"><div class="aoh2">${all?'ภาพรวมตึก '+esc(b):'ตึก '+esc(b)+' ชั้น '+esc(f)}<span style="color:${mc}">${fmt(tot)}</span></div><div class="aosub">${esc(mn)}</div>
+   <table class="aot2"><colgroup><col style="width:46%"><col><col><col></colgroup><thead><tr><th style="text-align:left">ความคืบหน้าแต่ละงาน</th><th>เสร็จ</th><th>CM</th><th>QC2</th></tr></thead><tbody>${wk.slice(0,9).map(o=>`<tr><td style="text-align:left">${esc(o.w.name)}</td>${MS.map(([k],i)=>`<td style="color:${Object.values(MCOL)[i]};font-weight:${k===m?800:600}">${fmt(o.v[k])}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="4" class="aosub">ยังไม่มีข้อมูล</td></tr>'}</tbody></table>
+   <table class="aot2" style="margin-top:12px"><colgroup><col style="width:22px"><col><col style="width:70px"><col style="width:70px"><col style="width:32px"><col style="width:80px"></colgroup><thead><tr><th></th><th style="text-align:left">แผนงาน (โซน / งาน)</th><th>START</th><th>FINISH</th><th>DAY</th><th>PROGRESS</th></tr></thead><tbody>
+   ${items.length?items.slice(0,13).map((it,i)=>`<tr><td><i class="aosw" style="background:${col(i)}"></i></td><td style="text-align:left"><b>${esc(it.z||it.t)}</b>${it.z?`<div class="aosub">${esc(it.t)}</div>`:''}<div class="aosub">${all?(it.f?'ชั้น '+esc(it.f):'ทุกชั้น'):''}</div></td><td class="aob">${apFd(it.s)}</td><td class="aob">${apFd(it.e)}</td><td class="aob">${dnum(it.e)-dnum(it.s)+1}</td><td><div class="aopb"><i style="width:${it.pr==null?0:it.pr*100}%;background:${it.st.c}"></i></div><span style="color:${it.st.c};font-weight:700">${it.pr!=null?fmt(it.pr):esc(it.st.l)}</span></td></tr>`).join('')+(items.length>13?`<tr><td colspan="6" class="aosub">และอีก ${items.length-13} รายการ</td></tr>`:''):'<tr><td colspan="6" class="aosub">ยังไม่มีแผนงานของ'+(all?'ตึกนี้':'ชั้นนี้')+' เพิ่มได้ที่แท็บ “แผนงาน”</td></tr>'}
+   </tbody></table></div>`;
+  const head=`<div class="aohd"><div><div class="aot">ACTION PLANNING</div><div class="aos">${esc(cfg.pj)} · ตึก ${esc(b)} ${all?'(ทุกชั้น)':'ชั้น '+esc(f)}</div></div><div class="aoco">${cfg.logo?`<img src="${cfg.logo}" alt="">`:''}<span>${esc(cfg.co)}</span></div></div>`;
+  const lg=`<div class="aolg"><span>สีของห้อง = % ${esc(mn)}</span><span class="k">0%<i style="background:linear-gradient(90deg,#b7bec4,${mc})"></i>100%</span><span>เทา = ยังไม่เริ่ม · กรอบสี = ห้องในแผนงาน</span></div><div class="aoup">UPDATE : ${apFd(todayS())}</div>`;
+  return{html:head+left+right+lg,pending}}
+function vApOne(){
+  const bs=planBs().filter(b=>planFl(b).length);if(!bs.length)return '<div class="card empty">ยังไม่มีแปลน ไปที่แท็บ “แปลน” เพื่อเพิ่มแปลนก่อน แล้วกลับมาสร้าง Action Plan</div>';
+  const b=bs.includes(S.aob)?S.aob:bs[0];S.aob=b;const fl=planFl(b).slice().sort((x,y)=>+x-+y),f=(S.aof==='ALL'||fl.includes(String(S.aof)))?String(S.aof):fl[0];S.aof=f;const m=S.aom||'done';
+  for(const x of f==='ALL'?fl:[f]){const P=planOf(b,x);if(P&&P.loading&&P.custom)pimgLoad(P.custom.img,P.custom.n)}
+  const sh=apOneSheet(b,f,m);
+  return `<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">Action Plan · หน้าเดียว</h1><div class="sub">ดึงแปลน ความคืบหน้า และแผนงานมารวมเป็นหน้าเดียว · ส่งออกเป็นรูปหรือ PDF</div></div><div class="row noexp"><button class="btn pri" data-a="apoexp">ส่งออก รูป / PDF</button></div></div>
+   <div class="row noexp" style="margin-top:12px"><div class="chips">${bs.map(x=>`<button class="chip" data-a="apob" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}</div><div class="chips">${fl.map(x=>`<button class="chip" data-a="apof" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}<button class="chip" data-a="apof" data-f="ALL" aria-pressed="${f==='ALL'}">ทุกชั้น</button></div></div>
+   <div class="row noexp" style="margin-top:8px"><div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="apom" data-k="${k}" aria-pressed="${m===k}">สี: ${l}</button>`).join('')}</div><span class="sub">แผนงานจาก:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">แท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มในหน้านำเสนอ</button></div></div>
+   <section class="sec"><div class="apone-w" id="aow"><div class="apone" id="aosheet">${sh.html}</div></div>${sh.pending?'<div class="sub">กำลังประมวลผลแปลน…</div>':''}</section>`}
+function apFit(){const w=document.getElementById('aow'),s=document.getElementById('aosheet');if(!w||!s)return;const k=Math.min(1,w.clientWidth/1400);s.style.transform='scale('+k+')';w.style.height=(990*k)+'px'}
+function apOneExpForm(){
+  modal(`<h2>ส่งออก Action Plan หน้าเดียว</h2><div class="field"><label for="ao_f">รูปแบบ</label><select id="ao_f"><option value="pdf">PDF</option><option value="png">รูปภาพ PNG</option></select></div>
+   <div class="field" data-pdf><label for="ao_s">ขนาดกระดาษ</label><select id="ao_s"><option value="a3">A3 (แนวนอน)</option><option value="a4">A4 (แนวนอน)</option></select></div>
+   <div class="row"><button class="btn pri" data-ok>ส่งออก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   const sync=()=>el.querySelectorAll('[data-pdf]').forEach(e=>e.hidden=$('#ao_f').value!=='pdf');el.onchange=sync;
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;const fm=$('#ao_f').value,sz=$('#ao_s').value;closeM();apOneExport(fm,sz)}})}
+async function apOneExport(kind,size){
+  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF))return toast('โหลดตัวช่วยส่งออกไม่สำเร็จ ลองรีเฟรชหน้า');if(!S.dl)return toast('ส่งออกไฟล์ไม่ได้ในมุมมองนี้');
+  toast('กำลังสร้างไฟล์…',4000);const b=S.aob,f=S.aof,m=S.aom||'done';let host;
+  try{let r;for(let i=0;i<100;i++){r=apOneSheet(b,f,m);if(!r.pending)break;await new Promise(x=>setTimeout(x,150))}
+    host=document.createElement('div');host.style.cssText='position:fixed;left:-20000px;top:0;width:1400px;height:990px';host.innerHTML=`<div class="apone" style="position:relative;transform:none">${r.html}</div>`;document.body.appendChild(host);
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;await new Promise(x=>setTimeout(x,200));
+    const cv=await html2canvas(host.firstChild,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}),slug=`action-plan-${b}-${f==='ALL'?'all':f}-${todayS()}`;
+    if(kind==='png')await S.dl.save({filename:slug+'.png',data:await new Promise(x=>cv.toBlob(x,'image/png'))});
+    else{const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:size||'a3'}),W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight();pdf.addImage(cv.toDataURL('image/jpeg',.93),'JPEG',0,0,W,H);await S.dl.save({filename:slug+'.pdf',data:pdf.output('blob')})}
+    toast('ส่งออกแล้ว')}
+  catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}finally{if(host)host.remove()}}
 /* ---------- render ---------- */
 function renderTabs(){const t=$('#tabs');
-  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">แปลน</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">แผนงาน</button><button class="tab" role="tab" data-a="go" data-v="report" aria-selected="${S.view==='report'}">นำเสนอ</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">QC2</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
+  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">แปลน</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">แผนงาน</button><button class="tab" role="tab" data-a="go" data-v="report" aria-selected="${S.view==='report'}">นำเสนอ</button><button class="tab" role="tab" data-a="go" data-v="ap" aria-selected="${S.view==='ap'}">Action Plan</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">QC2</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
 let raf=0;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
 function doRender(){
   if(S._drag){S._pend=true;return}
@@ -1357,6 +1868,7 @@ function doRender(){
   if(S.view==='plan')h+=vPlan();
   else if(S.view==='sched')h+=vSched();
   else if(S.view==='report')h+=vReport();
+  else if(S.view==='ap')h+=vAP2();
   else if(S.view==='qc2')h+=vQC2();
   else if(S.view!=='overview'&&w)h+=vWork({id:S.view,...w});else{S.view='overview';h+=vOverview()}
   const key=S.view+'|'+S.pb+'|'+S.pf+'|'+S.pw+'|'+S.pm+'|'+S.bld+'|'+S.obld+'|'+S.qw+'|'+S.qb;const ent=key!==S._k;S._k=key;
@@ -1364,7 +1876,7 @@ function doRender(){
   if(ent&&S.view==='plan'){app.querySelectorAll('[data-v]').forEach(e=>{if(!e.matches('.prp,#ptot'))return;const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const step=n=>{const k=Math.min(1,(n-t0)/900),x=t*(1-Math.pow(1-k,3));e.textContent=fmt(x);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
   if(S.view==='plan'){planApply(ent);setTimeout(planLead,480);const ck=app.querySelector('.callout');const k=ck?ck.dataset.ck:'';if(k&&k!==S._ck){app.querySelectorAll('.cop').forEach(e=>{const v=e.dataset.v;if(v==='')return;const t=+v,t0=performance.now();const st=n=>{const q=Math.min(1,(n-t0)/800);e.textContent=fmt(t*(1-Math.pow(1-q,3)));if(q<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}S._ck=k}
   if(ent){void app.offsetWidth;app.classList.add('enter');clearTimeout(S._et);S._et=setTimeout(()=>app.classList.remove('enter'),1400);window.scrollTo({top:0})}
-  app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]});rptTick();if(S.rpres)rpDraw()}
+  app.querySelectorAll('[data-gw]').forEach(e=>{if(sc[e.dataset.gw])e.scrollLeft=sc[e.dataset.gw]});rptTick();apFit()}
 
 /* ---------- writes ---------- */
 const queue={};
@@ -1573,6 +2085,7 @@ document.addEventListener('click',async e=>{
   const el=e.target.closest('[data-a]');if(!el||el.closest('#modal'))return;const a=el.dataset.a,d=el.dataset;
   const W=S.works[S.view]&&{id:S.view,...S.works[S.view]};
   if(rptAct(a,d))return;
+  if(apAct(a,d))return;
   if(a==='go'){planStop();S.pe=false;S.view=d.v;S.brush=null;window.scrollTo(0,0);render()}
   else if(a==='open'){S.view=d.w;S.bld=d.b||'ALL';S.brush=null;window.scrollTo(0,0);render()}
   else if(a==='obld'){S.obld=d.b;render()}
