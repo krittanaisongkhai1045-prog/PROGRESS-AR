@@ -772,7 +772,7 @@ function vPlan(){
   if(P.loading){const c=P.custom;pimgLoad(c.img,c.n);}
   const RM=roomsOf(b,f),tot=planSummary(b,+f,RM,wid,m,S.pcf),ncu=Object.keys(RM).filter(c=>isCust(b,f,c)).length;
   let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">แปลนตึก ${esc(b)} ชั้น ${esc(f)}</h1><div class="sub">สีของแต่ละห้อง = % งานที่ไปถึงขั้นที่เลือก · กดห้องเพื่อดูรายละเอียด</div></div>
-   <div class="row"><span class="sub">${S.pcf?'รวมห้องลูกค้า':'รวมชั้นนี้'}</span><span class="big" id="ptot" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>
+   <div class="row"><button class="btn noexp" data-a="exp">ส่งออก PDF / ภาพ</button><span class="sub">${S.pcf?'รวมห้องลูกค้า':'รวมชั้นนี้'}</span><span class="big" id="ptot" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>
    <div class="row" style="margin-top:12px"><div class="chips">${bs.map(x=>`<button class="chip" data-a="pb" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}${S.canWrite?'<button class="chip noexp" data-a="addb">+ ตึก</button>':''}</div>
     <div class="chips">${fl.map(x=>`<button class="chip" data-a="pf" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}</div></div>
    <div class="row" style="margin-top:8px"><div class="chips"><button class="chip" data-a="pw" data-w="ALL" aria-pressed="${wid==='ALL'}">รวมทุกงาน</button>${ws.map(w=>`<button class="chip" data-a="pw" data-w="${w.id}" aria-pressed="${wid===w.id}">${esc(w.name)}</button>`).join('')}</div>
@@ -1177,7 +1177,7 @@ function rptItems(){const out=[];
   if(S.rsrc.man)for(const [k,v] of Object.entries(S.rpt)){if(k.slice(0,2)!=='l:'||!v||!v.b||isNaN(dnum(v.s))||isNaN(dnum(v.e)))continue;
     const link=!!(v.w&&S.works[v.w]);let pr=(v.p===''||v.p==null)?null:Math.max(0,Math.min(1,v.p/100)),st;
     if(link){pr=schedProg(v);st=schedState(v,pr)}else{const m=MST[v.st]||MST.plan;st={k:v.st||'plan',l:m[0],c:m[1]}}
-    out.push({k:k.slice(2),src:'man',b:v.b,z:v.z,t:v.t||(link?S.works[v.w].name:'(ไม่มีชื่อ)'),f:v.f,r:v.r,s:v.s,e:v.e,n:v.n,pr,st,link})}
+    out.push({k:k.slice(2),src:'man',b:v.b,z:v.z,t:v.t||(link?S.works[v.w].name:'(ไม่มีชื่อ)'),f:v.f,r:v.r,s:v.s,e:v.e,n:v.n,pr,st,link,poly:(v.poly&&v.poly.length>=6)?v.poly:null,g:v.g,id:k.slice(2)})}
   return out}
 const itZone=it=>`${it.z?esc(it.z)+' · ':''}${it.f?'ชั้น '+esc(it.f):'ทุกชั้น'}${it.r?' · ห้อง '+esc(it.r):''}`;
 
@@ -1261,6 +1261,7 @@ function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมี
      if(!web&&!t)return toast('ใส่ชื่อแผน');
      const pv=$('#lk_p').value,o={t,b:$('#lk_b').value,z:$('#lk_z').value.trim(),s:s0,e:e0,n:$('#lk_n').value.trim(),
        w:web?$('#lk_w').value:'',f:web?f:'',r:web?$('#lk_r').value.trim():'',st:web?'':$('#lk_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0))};
+     if(cur)for(const q of ['poly','pw','ph','g'])if(cur[q]!=null)o[q]=cur[q];
      closeM();try{await rptSet('l:'+(id||'m'+uid()),o);toast('บันทึกแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
 function itemOpen(src,k){const it=rptItems().find(x=>x.src===src&&x.k===k);if(!it)return;
   modal(`<h2>${esc(it.t)}</h2><div class="sub">ตึก ${esc(it.b)} · ${itZone(it)}</div>
@@ -1749,8 +1750,15 @@ function apExpForm(){const pl=S.apl[S.apc];if(!pl)return;
 /* ---- actions + pointer ---- */
 function apAct(a,d){
   if(a==='apv'){S.apv=d.k;render();return true}
-  if(a==='apob'){S.aob=d.b;render();return true}
-  if(a==='apof'){S.aof=d.f;render();return true}
+  if(a==='apob'){S.aob=d.b;S.aod=null;render();return true}
+  if(a==='apof'){S.aof=d.f;S.aod=null;render();return true}
+  if(a==='aodraw'){S.aod=[];render();return true}
+  if(a==='aodundo'){if(S.aod)S.aod.splice(-2,2);render();return true}
+  if(a==='aodcan'){S.aod=null;render();return true}
+  if(a==='aodfin'){aoFinish();return true}
+  if(a==='aoz'){lookForm(d.k,S.aob);return true}
+  if(a==='aocopy'){aoCopyForm();return true}
+  if(a==='apoo'){S.aoo=d.k==='plan';render();return true}
   if(a==='apom'){S.aom=d.k;render();return true}
   if(a==='apoexp'){apOneExpForm();return true}
   if(a==='apnew'){apNewForm();return true}
@@ -1781,7 +1789,7 @@ document.addEventListener('pointermove',e=>{if(!apDrag)return;const dx=(e.client
 document.addEventListener('pointerup',()=>{if(!apDrag)return;const d=apDrag;apDrag=null;S._drag=false;const pl=S.apl[S.apc];if(pl&&pl.areas[d.id]){pl.areas[d.id].lx=Math.round(d.nx);pl.areas[d.id].ly=Math.round(d.ny);apSave(S.apc)}render()});
 
 /* ---------- Action Plan หน้าเดียว: แปลน + progress + แผนงาน ---------- */
-S.apv='one';S.aob=null;S.aof=null;S.aom='done';S._aoc={};
+S.apv='one';S.aod=null;S.aoo=false;S.aob=null;S.aof=null;S.aom='done';S._aoc={};
 const APIC=['#2b3cff','#e8322d','#d83ce0','#e0a800','#14a83a','#ff8a1f','#12a8b8','#7b4fd6'];
 function vAP2(){return `<div class="chips noexp" style="margin-bottom:12px"><button class="chip" data-a="apv" data-k="one" aria-pressed="${S.apv!=='site'}">หน้าเดียวจากแปลน + แผนงาน</button><button class="chip" data-a="apv" data-k="site" aria-pressed="${S.apv==='site'}">ผังไซต์กำหนดเอง</button></div>`+(S.apv==='site'?vAP():vApOne())}
 function apOnePlan(b,f,m,W,H,hl){const pi=planOf(b,f);const k=[b,f,m,Math.round(W),Math.round(H),JSON.stringify(hl||{}),pi&&pi.img?pi.img.length:0,JSON.stringify((S.planov||{})[b+'-'+f]||{}).length].join('|');
@@ -1789,17 +1797,18 @@ function apOnePlan(b,f,m,W,H,hl){const pi=planOf(b,f);const k=[b,f,m,Math.round(
   const ks=Object.keys(S._aoc);if(ks.length>40)delete S._aoc[ks[0]];
   S._aoc[k]={pend:1};planPng(b,f,m,W/96,H/96,hl,192).then(r=>{S._aoc[k]=r||{err:1};render()}).catch(()=>{S._aoc[k]={err:1};render()});return {pend:1}}
 function apRoomCentroids(b,f,codes){const RM=roomsOf(b,f),a=[];for(const c of codes)if(RM[c])a.push(centroid(RM[c]));return a}
-function apOneSheet(b,f,m){
+function apOneSheet(b,f,m,ui){
+  const po=!!S.aoo;
   const cfg=xOpts().cfg,W=1400,H=990,all=f==='ALL',MCOL={done:'#E3A82B',cm:'#2F7FB8',qc2:'#25936A'},mc=MCOL[m],mn=XMN[m];let pending=false;
   const items=rptItems().filter(x=>x.b===b&&(all||(()=>{const fl=schedFloors(x.f);return !fl||fl.has(String(f))})())).sort((a,z)=>dnum(a.s)-dnum(z.s)||dnum(a.e)-dnum(z.e));
   const col=i=>APIC[i%APIC.length];
   let left='',tot=null;
   if(!all){
     const P=planOf(b,f),RM=roomsOf(b,f),codes=Object.keys(RM),hl={},cen=[];
-    items.forEach((it,i)=>{const rs=schedRooms(it.r);let cs=[];if(rs&&it.link){cs=codes.filter(c=>rs.has(c));for(const c of cs)if(!hl[c])hl[c]=col(i)}cen[i]=cs.length?apRoomCentroids(b,f,cs):null});
+    items.forEach((it,i)=>{const rs=schedRooms(it.r);let cs=[];if(rs&&it.link){cs=codes.filter(c=>rs.has(c));for(const c of cs)if(!hl[c])hl[c]=col(i)}cen[i]=cs.length?apRoomCentroids(b,f,cs):null;if(it.poly){const pp=[];for(let j=0;j+1<it.poly.length;j+=2)pp.push([it.poly[j],it.poly[j+1]]);cen[i]=[centroid(pp)]}});
     const allc=codes.length?apRoomCentroids(b,f,codes):[[P.w/2,P.h/2]],mid=[allc.reduce((a,q)=>a+q[0],0)/allc.length,allc.reduce((a,q)=>a+q[1],0)/allc.length];
     const cp=items.slice(0,14).map((it,i)=>{const c=cen[i]?[cen[i].reduce((a,q)=>a+q[0],0)/cen[i].length,cen[i].reduce((a,q)=>a+q[1],0)/cen[i].length]:[mid[0]+(i%3-1)*P.w*.12,mid[1]+((i/3|0)%3-1)*P.h*.12];return{it,i,c}});
-    const sideOf=q=>q.c[0]<mid[0]?'L':'R',useL=cp.some(q=>sideOf(q)==='L'),useR=cp.some(q=>sideOf(q)==='R'),gl=useL?168:0,gr=useR?168:0,BW=880,BH=780,iw=BW-gl-gr;
+    const sideOf=q=>q.c[0]<mid[0]?'L':'R',useL=cp.some(q=>sideOf(q)==='L'),useR=cp.some(q=>sideOf(q)==='R'),gl=useL?168:0,gr=useR?168:0,BW=po?1352:880,BH=780,iw=BW-gl-gr;
     const fig=apOnePlan(b,f,m,iw,BH-8,hl);if(fig.pend)pending=true;
     tot=planSummary(b,+f,RM,'ALL',m,false);
     left=`<div class="aobox" style="left:24px;top:100px;width:${BW}px;height:${BH}px">`;
@@ -1808,10 +1817,11 @@ function apOneSheet(b,f,m){
       let lines='',boxes='';for(const sd of ['L','R']){const A=lay[sd].sort((a,z)=>a.Y-z.Y),h=98;let y0=-1e9;for(const q of A){q.y=Math.max(y0+6,Math.min(BH-h-4,q.Y-h/2));y0=q.y+h}for(let j=A.length-1,lim=BH-4;j>=0;j--){if(A[j].y+h>lim)A[j].y=lim-h;lim=A[j].y-6}
         for(const q of A){const it=q.it,c=col(q.i),x=sd==='L'?4:BW-164,ex=sd==='L'?x+160:x;lines+=`<line x1="${ex}" y1="${q.y+h/2}" x2="${q.X}" y2="${q.Y}" stroke="#111" stroke-width="1.6"/><circle cx="${q.X}" cy="${q.Y}" r="6" fill="#e8322d" stroke="#fff" stroke-width="2"/>`;
           boxes+=`<div class="aoc" style="left:${x}px;top:${q.y}px;border-color:${c}"><b><i style="background:${c}"></i>${esc(it.z||it.t)}</b>${it.z?`<span>${esc(it.t)}</span>`:''}<span>START ${apFd(it.s)}</span><span>FINISH ${apFd(it.e)}</span><span class="aop" style="color:${it.st.c}">${it.pr!=null?fmt(it.pr)+' · ':''}${esc(it.st.l)}</span></div>`}}
-      left+=`<svg class="aosv" viewBox="0 0 ${BW} ${BH}" width="${BW}" height="${BH}">${lines}</svg>${boxes}`}
+      let polys='';for(const q of cp){if(!q.it.poly)continue;const c=col(q.i),pt=[];for(let j=0;j+1<q.it.poly.length;j+=2)pt.push((ix+q.it.poly[j]/P.w*pw).toFixed(1)+','+(iy+q.it.poly[j+1]/P.h*ph).toFixed(1));polys+=`<polygon points="${pt.join(' ')}" fill="${c}" fill-opacity=".16" stroke="${c}" stroke-width="3" stroke-dasharray="9 5" stroke-linejoin="round"/>`}
+      left+=`<svg class="aosv" viewBox="0 0 ${BW} ${BH}" width="${BW}" height="${BH}">${polys}${lines}</svg>${boxes}${(ui&&S.aod)?aoOverlay(ix,iy,pw,ph,P):''}`}
     left+='</div>'}
   else{
-    const fl=planFl(b).slice().sort((a,z)=>+a-+z).slice(0,8),n=fl.length,cols=n<=2?n:n<=4?2:n<=6?3:4,rows=Math.ceil(n/cols),BW=880,BH=780,cw=Math.floor((BW-(cols-1)*10)/cols),ch=Math.floor((BH-(rows-1)*10)/rows);tot=overall(b)[m];
+    const fl=planFl(b).slice().sort((a,z)=>+a-+z).slice(0,8),n=fl.length,cols=n<=2?n:n<=4?2:n<=6?3:4,rows=Math.ceil(n/cols),BW=po?1352:880,BH=780,cw=Math.floor((BW-(cols-1)*10)/cols),ch=Math.floor((BH-(rows-1)*10)/rows);tot=overall(b)[m];
     left=`<div class="aobox" style="left:24px;top:100px;width:${BW}px;height:${BH}px">`+fl.map((x,i)=>{const fig=apOnePlan(b,x,m,cw-12,ch-34,{});if(fig.pend)pending=true;const RM=roomsOf(b,x),t=planSummary(b,+x,RM,'ALL',m,false);
       return `<div class="aomini" style="left:${(i%cols)*(cw+10)}px;top:${((i/cols)|0)*(ch+10)}px;width:${cw}px;height:${ch}px"><div class="aomh"><b>ชั้น ${esc(x)}</b><span style="color:${mc}">${fmt(t)}</span></div>${fig.data?`<img src="${fig.data}" style="display:block;margin:2px auto 0;width:${fig.w*96}px;height:${fig.h*96}px">`:''}</div>`}).join('')+'</div>'}
   /* right panel */
@@ -1824,24 +1834,74 @@ function apOneSheet(b,f,m){
    </tbody></table></div>`;
   const head=`<div class="aohd"><div><div class="aot">ACTION PLANNING</div><div class="aos">${esc(cfg.pj)} · ตึก ${esc(b)} ${all?'(ทุกชั้น)':'ชั้น '+esc(f)}</div></div><div class="aoco">${cfg.logo?`<img src="${cfg.logo}" alt="">`:''}<span>${esc(cfg.co)}</span></div></div>`;
   const lg=`<div class="aolg"><span>สีของห้อง = % ${esc(mn)}</span><span class="k">0%<i style="background:linear-gradient(90deg,#b7bec4,${mc})"></i>100%</span><span>เทา = ยังไม่เริ่ม · กรอบสี = ห้องในแผนงาน</span></div><div class="aoup">UPDATE : ${apFd(todayS())}</div>`;
-  return{html:head+left+right+lg,pending}}
+  return{html:head+left+(po?'':right)+lg,pending}}
 function vApOne(){
   const bs=planBs().filter(b=>planFl(b).length);if(!bs.length)return '<div class="card empty">ยังไม่มีแปลน ไปที่แท็บ “แปลน” เพื่อเพิ่มแปลนก่อน แล้วกลับมาสร้าง Action Plan</div>';
   const b=bs.includes(S.aob)?S.aob:bs[0];S.aob=b;const fl=planFl(b).slice().sort((x,y)=>+x-+y),f=(S.aof==='ALL'||fl.includes(String(S.aof)))?String(S.aof):fl[0];S.aof=f;const m=S.aom||'done';
   for(const x of f==='ALL'?fl:[f]){const P=planOf(b,x);if(P&&P.loading&&P.custom)pimgLoad(P.custom.img,P.custom.n)}
-  const sh=apOneSheet(b,f,m);
+  const sh=apOneSheet(b,f,m,true);
   return `<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">Action Plan · หน้าเดียว</h1><div class="sub">ดึงแปลน ความคืบหน้า และแผนงานมารวมเป็นหน้าเดียว · ส่งออกเป็นรูปหรือ PDF</div></div><div class="row noexp"><button class="btn pri" data-a="apoexp">ส่งออก รูป / PDF</button></div></div>
    <div class="row noexp" style="margin-top:12px"><div class="chips">${bs.map(x=>`<button class="chip" data-a="apob" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}</div><div class="chips">${fl.map(x=>`<button class="chip" data-a="apof" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}<button class="chip" data-a="apof" data-f="ALL" aria-pressed="${f==='ALL'}">ทุกชั้น</button></div></div>
    <div class="row noexp" style="margin-top:8px"><div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="apom" data-k="${k}" aria-pressed="${m===k}">สี: ${l}</button>`).join('')}</div><span class="sub">แผนงานจาก:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">แท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มในหน้านำเสนอ</button></div></div>
+   <div class="row noexp" style="margin-top:8px">${(()=>{const dz=rptItems().filter(x=>x.b===b&&x.poly&&(f==='ALL'||String(x.f)===f)),cd=S.canWrite&&S.db;if(f==='ALL')return '<span class="sub">เลือกชั้นใดชั้นหนึ่งเพื่อวาดโซนบนแปลน</span>';if(!cd)return '';
+     return (S.aod?`<button class="btn pri" data-a="aodfin">✓ จบรูป (${S.aod.length/2} จุด)</button><button class="btn" data-a="aodundo">↶ ลบจุดล่าสุด</button><button class="btn" data-a="aodcan">ยกเลิก</button><span class="sub">คลิกบนแปลนเพื่อวางมุมทีละจุด · คลิกจุดแรกหรือ Enter เพื่อปิดรูป · Backspace ลบจุด · Esc ยกเลิก</span>`:`<button class="btn pri" data-a="aodraw">✎ วาดโซนบนแปลน (คลิก)</button>`)+(!S.aod&&dz.length?'<button class="btn" data-a="aocopy">⎘ คัดลอกโซนไปชั้นอื่น</button>':'')+(!S.aod?dz.map(x=>`<button class="chip" data-a="aoz" data-k="${esc(x.id)}">✎ ${esc(x.z||x.t)}</button>`).join(''):'')})()}
+    <span class="sub">แสดง:</span><div class="chips"><button class="chip" data-a="apoo" data-k="full" aria-pressed="${!S.aoo}">หน้าเต็ม</button><button class="chip" data-a="apoo" data-k="plan" aria-pressed="${!!S.aoo}">เฉพาะแปลน</button></div></div>
    <section class="sec"><div class="apone-w" id="aow"><div class="apone" id="aosheet">${sh.html}</div></div>${sh.pending?'<div class="sub">กำลังประมวลผลแปลน…</div>':''}</section>`}
+const aoPip=(x,y,a)=>{let c=false;const n=a.length/2;for(let i=0,j=n-1;i<n;j=i++){const xi=a[2*i],yi=a[2*i+1],xj=a[2*j],yj=a[2*j+1];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c};
+const aoRooms=(b,f,poly)=>{const o=[];for(const [c,p] of Object.entries(roomsOf(b,f))){const q=centroid(p);if(aoPip(q[0],q[1],poly))o.push(c)}return o.sort((a,z)=>a.localeCompare(z,undefined,{numeric:true}))};
+const aoScale=(poly,P0,P1)=>poly.map((v,i)=>Math.round(v*(i%2?P1.h/P0.h:P1.w/P0.w)));
+function aoOverlay(ix,iy,pw,ph,P){const d=S.aod,k=P.w/pw,pt=[];for(let i=0;i+1<d.length;i+=2)pt.push(d[i]+','+d[i+1]);
+  return `<svg id="aodraw" viewBox="0 0 ${P.w} ${P.h}" style="position:absolute;left:${ix}px;top:${iy}px;width:${pw}px;height:${ph}px;cursor:crosshair;pointer-events:auto;background:rgba(255,200,46,.07)">${pt.length>=3?`<polygon points="${pt.join(' ')}" fill="rgba(232,50,45,.22)" stroke="#e8322d" stroke-width="${3*k}" stroke-dasharray="${9*k} ${5*k}"/>`:pt.length?`<polyline points="${pt.join(' ')}" fill="none" stroke="#e8322d" stroke-width="${3*k}"/>`:''}${pt.map((q,i)=>{const [x,y]=q.split(',');return `<circle cx="${x}" cy="${y}" r="${(i?6:9)*k}" fill="${i?'#fff':'#e8322d'}" stroke="#e8322d" stroke-width="${2.5*k}"/>`}).join('')}</svg>`}
+document.addEventListener('click',e=>{const sv=e.target.closest&&e.target.closest('#aodraw');if(!sv||!S.aod)return;const r=sv.getBoundingClientRect(),vb=sv.viewBox.baseVal,x=Math.round((e.clientX-r.left)/r.width*vb.width),y=Math.round((e.clientY-r.top)/r.height*vb.height),d=S.aod;
+  if(d.length>=6&&Math.hypot(x-d[0],y-d[1])<vb.width/r.width*14){aoFinish();return}d.push(x,y);render()});
+document.addEventListener('keydown',e=>{if(S.view!=='ap'||!S.aod||/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||''))return;
+  if(e.key==='Enter')aoFinish();else if(e.key==='Backspace'){e.preventDefault();S.aod.splice(-2,2);render()}else if(e.key==='Escape'){S.aod=null;render()}});
+function aoFinish(){const d=S.aod;if(!d||d.length<6)return toast('ต้องมีอย่างน้อย 3 จุด');S.aod=null;render();aoZoneForm(d.slice())}
+async function aoPut(b,tf,base,poly,P0,id,keep){const P1=planOf(b,tf);if(!P1)return false;const pl=aoScale(poly,P0,P1),rm=aoRooms(b,tf,pl),link=!!(base.w&&S.works[base.w]);
+  const o=Object.assign({},keep||base,{b,f:String(tf),r:rm.join(',')||(link?'-':''),poly:pl,pw:Math.round(P1.w),ph:Math.round(P1.h),g:base.g});await rptSet('l:'+id,o);return true}
+function aoZoneForm(poly){const b=S.aob,f=String(S.aof),P=planOf(b,f),rm=aoRooms(b,f,poly),ws=worksSorted(),t0=todayS(),others=planFl(b).filter(x=>String(x)!==f).sort((x,y)=>+x-+y);
+  modal(`<h2>โซนใหม่บนแปลน ตึก ${esc(b)} ชั้น ${esc(f)}</h2><div class="sub">ห้องที่อยู่ในโซนนี้: ${rm.length?esc(rm.join(', '))+' ('+rm.length+' ห้อง)':'ไม่พบห้อง (ยังไม่ได้วาดโซนห้องในแปลนนี้) — ใส่ % เอง'}</div>
+   <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="az_z">ชื่อโซน (แสดงบนแปลน)</label><input id="az_z" type="text" placeholder="เช่น ZONE A / โถงลิฟต์"></div><div class="field" style="flex:1;min-width:130px"><label for="az_t">หัวข้องาน</label><input id="az_t" type="text" placeholder="เช่น ปูกระเบื้อง"></div></div>
+   <div class="field"><label>ที่มาของสถานะ</label><div class="chips"><label class="chk"><input type="radio" name="az_m" value="web" ${rm.length?'checked':''}> ดึง % จากตารางความคืบหน้า</label><label class="chk"><input type="radio" name="az_m" value="man" ${rm.length?'':'checked'}> กรอกเอง</label></div></div>
+   <div data-m="web" ${rm.length?'':'hidden'}><div class="field"><label for="az_w">งาน</label><select id="az_w">${ws.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('')}</select></div></div>
+   <div data-m="man" ${rm.length?'hidden':''}><div class="row"><div class="field" style="flex:1;min-width:130px"><label for="az_st">สถานะ</label><select id="az_st">${Object.entries(MST).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select></div><div class="field" style="flex:1;min-width:130px"><label for="az_p">ความคืบหน้า %</label><input id="az_p" type="number" min="0" max="100"></div></div></div>
+   <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="az_s">วันเริ่มตามแผน</label><input id="az_s" type="date" value="${t0}"></div><div class="field" style="flex:1;min-width:130px"><label for="az_e">กำหนดเสร็จ</label><input id="az_e" type="date"></div></div>
+   <div class="field"><label for="az_n">หมายเหตุ</label><input id="az_n" type="text"></div>
+   ${others.length?`<div class="field"><label>คัดลอกโซนนี้ (ตำแหน่งเดียวกัน) ไปยังชั้น</label><div class="chips">${others.map(x=>`<label class="chk"><input type="checkbox" name="az_f" value="${esc(x)}"> ชั้น ${esc(x)}</label>`).join('')}</div><div class="row" style="margin-top:6px"><button class="btn" data-up>ชั้นที่สูงกว่าทั้งหมด</button><button class="btn" data-all>ทุกชั้น</button><button class="btn" data-none>ล้าง</button></div></div>`:''}
+   <div class="row"><button class="btn pri" data-ok>บันทึกโซน</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onchange=e=>{if(e.target.name==='az_m'){const v=e.target.value;el.querySelectorAll('[data-m]').forEach(x=>x.hidden=x.dataset.m!==v)}};
+   el.onclick=async e=>{const bt=e.target.closest('button');if(!bt)return;if(bt.hasAttribute('data-x'))return closeM();
+     const cbs=[...el.querySelectorAll('input[name=az_f]')];
+     if(bt.hasAttribute('data-all')){cbs.forEach(c=>c.checked=true);return}if(bt.hasAttribute('data-none')){cbs.forEach(c=>c.checked=false);return}if(bt.hasAttribute('data-up')){cbs.forEach(c=>c.checked=+c.value>+f);return}
+     if(!bt.hasAttribute('data-ok'))return;
+     const web=el.querySelector('input[name=az_m]:checked').value==='web',s0=$('#az_s').value,e0=$('#az_e').value;
+     if(isNaN(dnum(s0))||isNaN(dnum(e0)))return toast('ระบุวันเริ่มและวันเสร็จ');if(dnum(e0)<dnum(s0))return toast('กำหนดเสร็จต้องไม่ก่อนวันเริ่ม');
+     const z=$('#az_z').value.trim(),w=web?$('#az_w').value:'',t=$('#az_t').value.trim()||(w?S.works[w].name:z);if(!t)return toast('ใส่ชื่อโซนหรือหัวข้องาน');
+     const pv=web?'':$('#az_p').value,id='m'+uid(),base={t,z,s:s0,e:e0,n:$('#az_n').value.trim(),w,st:web?'':$('#az_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0)),g:id},tg=cbs.filter(c=>c.checked).map(c=>c.value);
+     closeM();try{await aoPut(b,f,base,poly,P,id);for(const tf of tg)await aoPut(b,tf,base,poly,P,'m'+uid());toast(tg.length?'บันทึกโซนและคัดลอกไป '+tg.length+' ชั้นแล้ว':'บันทึกโซนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
+function aoCopyForm(){const b=S.aob,f=String(S.aof),P=planOf(b,f),dz=rptItems().filter(x=>x.b===b&&x.poly&&String(x.f)===f),others=planFl(b).filter(x=>String(x)!==f).sort((x,y)=>+x-+y);
+  if(!dz.length)return toast('ชั้นนี้ยังไม่มีโซนที่วาด');if(!others.length)return toast('ไม่มีชั้นอื่นให้คัดลอก');
+  modal(`<h2>คัดลอกโซนไปชั้นอื่น</h2><div class="sub">คัดลอกตำแหน่งโซนบนแปลนตึก ${esc(b)} ชั้น ${esc(f)} ไปยังชั้นที่เลือก แล้วคำนวณ % จากห้องของแต่ละชั้นใหม่ ถ้าชั้นนั้นเคยคัดลอกโซนนี้แล้ว จะอัปเดตตำแหน่งและคงวันที่/สถานะเดิมไว้</div>
+   <div class="field"><label>โซนที่จะคัดลอก</label><div class="chips">${dz.map(x=>`<label class="chk"><input type="checkbox" name="ac_z" value="${esc(x.id)}" checked> ${esc(x.z||x.t)}</label>`).join('')}</div></div>
+   <div class="field"><label>ไปยังชั้น</label><div class="chips">${others.map(x=>`<label class="chk"><input type="checkbox" name="ac_f" value="${esc(x)}" ${+x>+f?'checked':''}> ชั้น ${esc(x)}</label>`).join('')}</div><div class="row" style="margin-top:6px"><button class="btn" data-up>ชั้นที่สูงกว่าทั้งหมด</button><button class="btn" data-all>ทุกชั้น</button><button class="btn" data-none>ล้าง</button></div></div>
+   <div class="row"><button class="btn pri" data-ok>คัดลอก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   el.onclick=async e=>{const bt=e.target.closest('button');if(!bt)return;if(bt.hasAttribute('data-x'))return closeM();const cbs=[...el.querySelectorAll('input[name=ac_f]')];
+     if(bt.hasAttribute('data-all')){cbs.forEach(c=>c.checked=true);return}if(bt.hasAttribute('data-none')){cbs.forEach(c=>c.checked=false);return}if(bt.hasAttribute('data-up')){cbs.forEach(c=>c.checked=+c.value>+f);return}
+     if(!bt.hasAttribute('data-ok'))return;const zs=[...el.querySelectorAll('input[name=ac_z]:checked')].map(c=>c.value),tg=cbs.filter(c=>c.checked).map(c=>c.value);
+     if(!zs.length||!tg.length)return toast('เลือกโซนและชั้นปลายทาง');closeM();let n=0;
+     try{for(const zid of zs){const src=S.rpt['l:'+zid];if(!src)continue;let g=src.g;if(!g){g=zid;await rptSet('l:'+zid,Object.assign({},src,{g}))}const base=Object.assign({},S.rpt['l:'+zid]);
+       for(const tf of tg){const ex=Object.entries(S.rpt).find(([k,v])=>k.slice(0,2)==='l:'&&v&&v.g===g&&v.b===b&&String(v.f)===String(tf)&&k.slice(2)!==zid);
+         if(await aoPut(b,tf,base,src.poly,P,ex?ex[0].slice(2):'m'+uid(),ex?ex[1]:null))n++}}
+       toast('คัดลอกแล้ว '+n+' โซน')}catch(err){toast('คัดลอกไม่สำเร็จ')}}})}
 function apFit(){const w=document.getElementById('aow'),s=document.getElementById('aosheet');if(!w||!s)return;const k=Math.min(1,w.clientWidth/1400);s.style.transform='scale('+k+')';w.style.height=(990*k)+'px'}
 function apOneExpForm(){
   modal(`<h2>ส่งออก Action Plan หน้าเดียว</h2><div class="field"><label for="ao_f">รูปแบบ</label><select id="ao_f"><option value="pdf">PDF</option><option value="png">รูปภาพ PNG</option></select></div>
+   <div class="field"><label for="ao_p">ส่วนที่ส่งออก</label><select id="ao_p"><option value="full" ${S.aoo?'':'selected'}>หน้าเต็ม (แปลน + ตาราง)</option><option value="plan" ${S.aoo?'selected':''}>เฉพาะแปลน</option></select></div>
    <div class="field" data-pdf><label for="ao_s">ขนาดกระดาษ</label><select id="ao_s"><option value="a3">A3 (แนวนอน)</option><option value="a4">A4 (แนวนอน)</option></select></div>
    <div class="row"><button class="btn pri" data-ok>ส่งออก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
    const sync=()=>el.querySelectorAll('[data-pdf]').forEach(e=>e.hidden=$('#ao_f').value!=='pdf');el.onchange=sync;
-   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;const fm=$('#ao_f').value,sz=$('#ao_s').value;closeM();apOneExport(fm,sz)}})}
-async function apOneExport(kind,size){
+   el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;const fm=$('#ao_f').value,sz=$('#ao_s').value,po=$('#ao_p').value==='plan';closeM();apOneExport(fm,sz,po)}})}
+async function apOneExport(kind,size,po){const so=S.aoo;if(po!=null)S.aoo=po;
   if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF))return toast('โหลดตัวช่วยส่งออกไม่สำเร็จ ลองรีเฟรชหน้า');if(!S.dl)return toast('ส่งออกไฟล์ไม่ได้ในมุมมองนี้');
   toast('กำลังสร้างไฟล์…',4000);const b=S.aob,f=S.aof,m=S.aom||'done';let host;
   try{let r;for(let i=0;i<100;i++){r=apOneSheet(b,f,m);if(!r.pending)break;await new Promise(x=>setTimeout(x,150))}
@@ -1851,7 +1911,7 @@ async function apOneExport(kind,size){
     if(kind==='png')await S.dl.save({filename:slug+'.png',data:await new Promise(x=>cv.toBlob(x,'image/png'))});
     else{const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:size||'a3'}),W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight();pdf.addImage(cv.toDataURL('image/jpeg',.93),'JPEG',0,0,W,H);await S.dl.save({filename:slug+'.pdf',data:pdf.output('blob')})}
     toast('ส่งออกแล้ว')}
-  catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}finally{if(host)host.remove()}}
+  catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}finally{S.aoo=so;if(host)host.remove()}}
 /* ---------- render ---------- */
 function renderTabs(){const t=$('#tabs');
   t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">ภาพรวม</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">แปลน</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">แผนงาน</button><button class="tab" role="tab" data-a="go" data-v="report" aria-selected="${S.view==='report'}">นำเสนอ</button><button class="tab" role="tab" data-a="go" data-v="ap" aria-selected="${S.view==='ap'}">Action Plan</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">QC2</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
@@ -2141,7 +2201,7 @@ document.addEventListener('click',async e=>{
   else if(a==='colset'&&W&&S.canWrite){const g=S.grids[d.g];pickFor(g,`ห้อง ${d.c} ทุกชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const f of g.floors){const k=f+'-'+d.c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
   else if(a==='addb')addBuilding();
   else if(a==='gh')ghDialog();else if(a==='mgb')manageBuildings();else if(a==='levels')levelsDialog();
-  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='sched'?'แผนงาน':S.view==='report'?rptTitle():S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
+  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='sched'?'แผนงาน':S.view==='report'?rptTitle():S.view==='plan'?`แปลนตึก ${S.pb} ชั้น ${S.pf}`:S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
