@@ -1244,7 +1244,7 @@ function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมี
    <div class="field"><label>ที่มาของสถานะ</label><div class="chips"><label class="chk"><input type="radio" name="lk_m" value="web" ${lk?'checked':''}> ดึงจากข้อมูลในเว็บ</label><label class="chk"><input type="radio" name="lk_m" value="man" ${lk?'':'checked'}> กรอกเอง</label></div></div>
    <div data-m="web" ${lk?'':'hidden'}><div class="field"><label for="lk_w">งาน (ดึง % จากตารางความคืบหน้า)</label><select id="lk_w">${ws.map(w=>`<option value="${w.id}" ${cur&&cur.w===w.id?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>
     <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_f">ชั้น (ว่าง = ทุกชั้น)</label><input id="lk_f" type="text" value="${esc(cur?cur.f||'':'')}"></div>
-    <div class="field" style="flex:1;min-width:130px"><label for="lk_r">ห้อง/จุด (ว่าง = ทั้งหมด)</label><input id="lk_r" type="text" value="${esc(cur?cur.r||'':'')}"></div></div></div>
+    <div class="field" style="flex:1;min-width:130px"><label for="lk_r">ห้อง/จุด (ว่าง = ทั้งหมด)</label><input id="lk_r" type="text" value="${esc(cur?cur.r||'':'')}"></div></div>${cur&&cur.poly?aoRoomsBlk(cur):''}</div>
    <div data-m="man" ${lk?'hidden':''}><div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_st">สถานะ</label><select id="lk_st">${Object.entries(MST).map(([k,v])=>`<option value="${k}" ${cur&&cur.st===k?'selected':''}>${v[0]}</option>`).join('')}</select></div>
     <div class="field" style="flex:1;min-width:130px"><label for="lk_p">ความคืบหน้า % (0-100)</label><input id="lk_p" type="number" min="0" max="100" value="${cur&&cur.p!==''&&cur.p!=null?esc(cur.p):''}"></div></div></div>
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_s">วันเริ่มตามแผน</label><input id="lk_s" type="date" value="${esc(cur?cur.s:t0)}"></div>
@@ -1254,6 +1254,9 @@ function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมี
    el.onchange=e=>{if(e.target.name==='lk_m'){const v=e.target.value;el.querySelectorAll('[data-m]').forEach(x=>x.hidden=x.dataset.m!==v)}};
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
      if(b.hasAttribute('data-del')){closeM();try{await rptSet('l:'+id,null);toast('ลบแล้ว')}catch(err){}return}
+     const rcs=[...el.querySelectorAll('input[name=lk_rc]')];
+     if(b.hasAttribute('data-rall')){rcs.forEach(c=>c.checked=true);return}if(b.hasAttribute('data-rnone')){rcs.forEach(c=>c.checked=false);return}
+     if(b.hasAttribute('data-auto')){const a=new Set(aoRooms(cur.b,cur.f,cur.poly));if(!a.size)return toast('ไม่พบห้องในตำแหน่งโซนนี้ ติ๊กเลือกเอง');rcs.forEach(c=>c.checked=a.has(c.value));return}
      if(!b.hasAttribute('data-ok'))return;
      const web=el.querySelector('input[name=lk_m]:checked').value==='web',s0=$('#lk_s').value,e0=$('#lk_e').value,f=$('#lk_f').value.trim(),t=$('#lk_t').value.trim();
      if(isNaN(dnum(s0))||isNaN(dnum(e0)))return toast('ระบุวันเริ่มและวันเสร็จ');if(dnum(e0)<dnum(s0))return toast('กำหนดเสร็จต้องไม่ก่อนวันเริ่ม');
@@ -1262,6 +1265,7 @@ function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมี
      const pv=$('#lk_p').value,o={t,b:$('#lk_b').value,z:$('#lk_z').value.trim(),s:s0,e:e0,n:$('#lk_n').value.trim(),
        w:web?$('#lk_w').value:'',f:web?f:'',r:web?$('#lk_r').value.trim():'',st:web?'':$('#lk_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0))};
      if(cur)for(const q of ['poly','pw','ph','g'])if(cur[q]!=null)o[q]=cur[q];
+     if(cur&&cur.poly&&el.querySelector('input[name=lk_rc]'))o.r=[...el.querySelectorAll('input[name=lk_rc]:checked')].map(c=>c.value).join(',')||(web?'-':'');
      closeM();try{await rptSet('l:'+(id||'m'+uid()),o);toast('บันทึกแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
 function itemOpen(src,k){const it=rptItems().find(x=>x.src===src&&x.k===k);if(!it)return;
   modal(`<h2>${esc(it.t)}</h2><div class="sub">ตึก ${esc(it.b)} · ${itZone(it)}</div>
@@ -1849,6 +1853,9 @@ function vApOne(){
    <section class="sec"><div class="apone-w" id="aow"><div class="apone" id="aosheet">${sh.html}</div></div>${sh.pending?'<div class="sub">กำลังประมวลผลแปลน…</div>':''}</section>`}
 const aoPip=(x,y,a)=>{let c=false;const n=a.length/2;for(let i=0,j=n-1;i<n;j=i++){const xi=a[2*i],yi=a[2*i+1],xj=a[2*j],yj=a[2*j+1];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c};
 const aoRooms=(b,f,poly)=>{const o=[];for(const [c,p] of Object.entries(roomsOf(b,f))){const q=centroid(p);if(aoPip(q[0],q[1],poly))o.push(c)}return o.sort((a,z)=>a.localeCompare(z,undefined,{numeric:true}))};
+function aoCodes(b,f){const o=new Set(planOf(b,f)?Object.keys(roomsOf(b,f)):[]);for(const w of worksSorted())for(const g of gridsOf(w.id,b)){if(g.rowLabel)continue;for(const k of Object.keys(g.cells||{})){const i=k.indexOf('-');if(k.slice(0,i)===String(f))o.add(k.slice(i+1))}}return [...o].sort((a,z)=>a.localeCompare(z,undefined,{numeric:true}))}
+function aoRoomsBlk(cur){const codes=aoCodes(cur.b,cur.f),sel=schedRooms(cur.r)||new Set();
+  return `<div class="field"><label>ห้องของโซนนี้ (ชั้น ${esc(cur.f)}) — เลือกว่าข้อมูลเป็นของห้องไหน</label><div class="chips">${codes.map(c=>`<label class="chk"><input type="checkbox" name="lk_rc" value="${esc(c)}" ${sel.has(c)?'checked':''}> ${esc(c)}</label>`).join('')||'<span class="sub">ยังไม่มีข้อมูลห้องของชั้นนี้</span>'}</div><div class="row" style="margin-top:6px"><button class="btn" data-auto>เลือกจากตำแหน่งโซน</button><button class="btn" data-rall>ทุกห้อง</button><button class="btn" data-rnone>ล้าง</button></div></div>`}
 const aoScale=(poly,P0,P1)=>poly.map((v,i)=>Math.round(v*(i%2?P1.h/P0.h:P1.w/P0.w)));
 function aoOverlay(ix,iy,pw,ph,P){const d=S.aod,k=P.w/pw,pt=[];for(let i=0;i+1<d.length;i+=2)pt.push(d[i]+','+d[i+1]);
   return `<svg id="aodraw" viewBox="0 0 ${P.w} ${P.h}" style="position:absolute;left:${ix}px;top:${iy}px;width:${pw}px;height:${ph}px;cursor:crosshair;pointer-events:auto;background:rgba(255,200,46,.07)">${pt.length>=3?`<polygon points="${pt.join(' ')}" fill="rgba(232,50,45,.22)" stroke="#e8322d" stroke-width="${3*k}" stroke-dasharray="${9*k} ${5*k}"/>`:pt.length?`<polyline points="${pt.join(' ')}" fill="none" stroke="#e8322d" stroke-width="${3*k}"/>`:''}${pt.map((q,i)=>{const [x,y]=q.split(',');return `<circle cx="${x}" cy="${y}" r="${(i?6:9)*k}" fill="${i?'#fff':'#e8322d'}" stroke="#e8322d" stroke-width="${2.5*k}"/>`}).join('')}</svg>`}
@@ -1857,10 +1864,10 @@ document.addEventListener('click',e=>{const sv=e.target.closest&&e.target.closes
 document.addEventListener('keydown',e=>{if(S.view!=='ap'||!S.aod||/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||''))return;
   if(e.key==='Enter')aoFinish();else if(e.key==='Backspace'){e.preventDefault();S.aod.splice(-2,2);render()}else if(e.key==='Escape'){S.aod=null;render()}});
 function aoFinish(){const d=S.aod;if(!d||d.length<6)return toast('ต้องมีอย่างน้อย 3 จุด');S.aod=null;render();aoZoneForm(d.slice())}
-async function aoPut(b,tf,base,poly,P0,id,keep){const P1=planOf(b,tf);if(!P1)return false;const pl=aoScale(poly,P0,P1),rm=aoRooms(b,tf,pl),link=!!(base.w&&S.works[base.w]);
-  const o=Object.assign({},keep||base,{b,f:String(tf),r:rm.join(',')||(link?'-':''),poly:pl,pw:Math.round(P1.w),ph:Math.round(P1.h),g:base.g});await rptSet('l:'+id,o);return true}
+async function aoPut(b,tf,base,poly,P0,id,keep){const P1=planOf(b,tf);if(!P1)return false;const pl=aoScale(poly,P0,P1),rm0=aoRooms(b,tf,pl),sr=schedRooms(base.r),rm=rm0.length?rm0:(sr?[...sr].filter(x=>x!=='-'):[]),link=!!(base.w&&S.works[base.w]);
+  const o=Object.assign({},keep||base,{b,f:String(tf),r:(keep&&keep.r&&keep.r!=='-')?keep.r:(rm.join(',')||(link?'-':'')),poly:pl,pw:Math.round(P1.w),ph:Math.round(P1.h),g:base.g});await rptSet('l:'+id,o);return true}
 function aoZoneForm(poly){const b=S.aob,f=String(S.aof),P=planOf(b,f),rm=aoRooms(b,f,poly),ws=worksSorted(),t0=todayS(),others=planFl(b).filter(x=>String(x)!==f).sort((x,y)=>+x-+y);
-  modal(`<h2>โซนใหม่บนแปลน ตึก ${esc(b)} ชั้น ${esc(f)}</h2><div class="sub">ห้องที่อยู่ในโซนนี้: ${rm.length?esc(rm.join(', '))+' ('+rm.length+' ห้อง)':'ไม่พบห้อง (ยังไม่ได้วาดโซนห้องในแปลนนี้) — ใส่ % เอง'}</div>
+  modal(`<h2>โซนใหม่บนแปลน ตึก ${esc(b)} ชั้น ${esc(f)}</h2><div class="sub">ห้องที่อยู่ในโซนนี้: ${rm.length?esc(rm.join(', '))+' ('+rm.length+' ห้อง)':'ไม่พบห้อง (ยังไม่ได้วาดโซนห้องในแปลนนี้) — ใส่ % เอง'}<br>ชั้นที่คัดลอกไป ถ้าไม่พบห้องตามตำแหน่ง จะใช้รหัสห้องเดียวกับชั้นนี้ และเลือกห้องใหม่ได้ภายหลัง (กดชื่อโซนที่แถบปุ่ม)</div>
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="az_z">ชื่อโซน (แสดงบนแปลน)</label><input id="az_z" type="text" placeholder="เช่น ZONE A / โถงลิฟต์"></div><div class="field" style="flex:1;min-width:130px"><label for="az_t">หัวข้องาน</label><input id="az_t" type="text" placeholder="เช่น ปูกระเบื้อง"></div></div>
    <div class="field"><label>ที่มาของสถานะ</label><div class="chips"><label class="chk"><input type="radio" name="az_m" value="web" ${rm.length?'checked':''}> ดึง % จากตารางความคืบหน้า</label><label class="chk"><input type="radio" name="az_m" value="man" ${rm.length?'':'checked'}> กรอกเอง</label></div></div>
    <div data-m="web" ${rm.length?'':'hidden'}><div class="field"><label for="az_w">งาน</label><select id="az_w">${ws.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('')}</select></div></div>
@@ -1877,7 +1884,7 @@ function aoZoneForm(poly){const b=S.aob,f=String(S.aof),P=planOf(b,f),rm=aoRooms
      const web=el.querySelector('input[name=az_m]:checked').value==='web',s0=$('#az_s').value,e0=$('#az_e').value;
      if(isNaN(dnum(s0))||isNaN(dnum(e0)))return toast('ระบุวันเริ่มและวันเสร็จ');if(dnum(e0)<dnum(s0))return toast('กำหนดเสร็จต้องไม่ก่อนวันเริ่ม');
      const z=$('#az_z').value.trim(),w=web?$('#az_w').value:'',t=$('#az_t').value.trim()||(w?S.works[w].name:z);if(!t)return toast('ใส่ชื่อโซนหรือหัวข้องาน');
-     const pv=web?'':$('#az_p').value,id='m'+uid(),base={t,z,s:s0,e:e0,n:$('#az_n').value.trim(),w,st:web?'':$('#az_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0)),g:id},tg=cbs.filter(c=>c.checked).map(c=>c.value);
+     const pv=web?'':$('#az_p').value,id='m'+uid(),base={r:rm.join(','),t,z,s:s0,e:e0,n:$('#az_n').value.trim(),w,st:web?'':$('#az_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0)),g:id},tg=cbs.filter(c=>c.checked).map(c=>c.value);
      closeM();try{await aoPut(b,f,base,poly,P,id);for(const tf of tg)await aoPut(b,tf,base,poly,P,'m'+uid());toast(tg.length?'บันทึกโซนและคัดลอกไป '+tg.length+' ชั้นแล้ว':'บันทึกโซนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
 function aoCopyForm(){const b=S.aob,f=String(S.aof),P=planOf(b,f),dz=rptItems().filter(x=>x.b===b&&x.poly&&String(x.f)===f),others=planFl(b).filter(x=>String(x)!==f).sort((x,y)=>+x-+y);
   if(!dz.length)return toast('ชั้นนี้ยังไม่มีโซนที่วาด');if(!others.length)return toast('ไม่มีชั้นอื่นให้คัดลอก');
