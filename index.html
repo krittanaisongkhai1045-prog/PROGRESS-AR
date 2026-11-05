@@ -146,7 +146,7 @@ tbody tr:last-child td{border-bottom:0}
 .pa_prev canvas{max-width:100%;max-height:260px;width:auto;height:auto}
 .wrow{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
 .ir{justify-content:space-between;flex-wrap:nowrap;padding:3px 0 3px 10px;font-size:13.5px}
-.cust{box-shadow:0 0 0 2px #ff4fa3 inset}
+.cust{position:relative}.g.cm-ring .cust,.g.cm-focus .cust{box-shadow:0 0 0 2px #ff4fa3 inset}.g.cm-dot .cust::after{content:'';position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:#ff4fa3;box-shadow:0 0 0 1.5px rgba(0,0,0,.6)}.g.cm-focus .c:not(.cust):not(.none){opacity:.2}
 .custtag{display:inline-flex;align-items:center;gap:6px;background:#ff4fa3;color:#1a0610;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700}
 .prk{font:700 22px var(--f-display);fill:#ff4fa3;text-anchor:middle;paint-order:stroke;stroke:#000;stroke-width:4px;pointer-events:none}
 .pr.cu polygon{stroke:#ff4fa3;stroke-width:4;stroke-dasharray:10 6}
@@ -1180,6 +1180,7 @@ function vWork(w){
   h+=floorTable(w,gs);
   if(S.canWrite&&gs.some(g=>g.kind!=='percent')){h+=`<div class="sec noexp"><div class="brush"><span class="lbl">แปรงสถานะ</span>${(w.statuses||[]).map(s=>`<button class="bchip" data-a="brush" data-s="${esc(s.name)}" aria-pressed="${S.brush===s.name}" style="background:${sc(s.color)};color:${fg(sc(s.color))}">${esc(s.name)}</button>`).join('')}<button class="bchip" data-a="brush" data-s="" aria-pressed="${S.brush==null}" style="background:var(--surface2)">เลือกทีละช่อง</button></div></div>`}
   if(!gs.length)h+=`<div class="card empty" style="margin-top:16px">ยังไม่มีรายการ${b==='ALL'?'':'ในตึก '+esc(b)} ${S.canWrite?'กด “+ เพิ่มรายการ” เพื่อสร้างตารางชั้น × ห้อง':''}</div>`;
+  if(Object.keys(S.clients||{}).length&&gs.some(g=>g.kind!=='percent'))h+=`<div class="row noexp" style="margin-top:14px"><span class="sub">ห้องลูกค้า / ห้องตัวอย่าง:</span><div class="chips">${[['dot','จุดชมพูเล็ก (เบา)'],['focus','เน้นเฉพาะห้องลูกค้า'],['ring','กรอบชมพู'],['off','ซ่อนเครื่องหมาย']].map(([k,l])=>`<button class="chip" data-a="cmk" data-k="${k}" aria-pressed="${S.cmk===k}">${l}</button>`).join('')}</div></div>`;
   for(const g of gs)h+=gridCard(w,g,b==='ALL');
   return h}
 function pctColor(v){const a=hex3(dim()),b=[37,147,106],t=v/100;return '#'+a.map((x,i)=>Math.round(x+(b[i]-x)*t).toString(16).padStart(2,'0')).join('')}
@@ -1188,7 +1189,7 @@ function gridCard(w,g,showB){
   let h=`<section class="card item sec" style="margin-top:16px"><div class="hd"><h3>${showB?`<span class="sub" style="margin-right:6px">ตึก ${esc(g.building)}</span>`:''}${esc(g.item)}</h3>
    <span class="sub">${MS.map(([k,l])=>p[k]==null?'':`${l} <b style="color:var(--ink)">${fmt(p[k])}</b>`).filter(Boolean).join(' · ')}</span>
    <span class="row noexp" style="gap:6px"><button class="btn sm" data-a="exp" data-g="${g.id}">ส่งออก</button>${S.canWrite?`<button class="btn sm" data-a="gmenu" data-g="${g.id}">จัดการ</button>`:''}</span></div>
-   <div class="gw" data-gw="${g.id}"><div class="g" style="grid-template-columns:${g.rowLabel||g.struct?'84px':'34px'} repeat(${cols.length},${g.cw||32}px)"><span></span>${cols.map(c=>`<button class="gh" data-a="colset" data-g="${g.id}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}`;
+   <div class="gw" data-gw="${g.id}"><div class="g cm-${S.cmk}" style="grid-template-columns:${g.rowLabel||g.struct?'84px':'34px'} repeat(${cols.length},${g.cw||32}px)"><span></span>${cols.map(c=>`<button class="gh" data-a="colset" data-g="${g.id}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}`;
   for(const f of fl){h+=`<button class="gf" data-a="floorset" data-g="${g.id}" data-f="${f}">${esc(g.rowLabel||(g.struct?fname(f):'ชั้น '+f))}</button>`;
     for(const c of cols){const k=f+'-'+c,v=(g.cells||{})[k];
       if(!has(v))h+=`<button class="c none" data-a="cell" data-g="${g.id}" data-k="${esc(k)}" aria-label="ไม่มีห้อง ${esc(c)} ชั้น ${f}"></button>`;
@@ -1846,7 +1847,7 @@ document.addEventListener('pointermove',e=>{if(!apDrag)return;const dx=(e.client
 document.addEventListener('pointerup',()=>{if(!apDrag)return;const d=apDrag;apDrag=null;S._drag=false;const pl=S.apl[S.apc];if(pl&&pl.areas[d.id]){pl.areas[d.id].lx=Math.round(d.nx);pl.areas[d.id].ly=Math.round(d.ny);apSave(S.apc)}render()});
 
 /* ---------- Action Plan หน้าเดียว: แปลน + progress + แผนงาน ---------- */
-S.aos=Object.assign({},{c:'auto',d:'dash',w:3,o:16,so:100,sh:true},(()=>{try{return JSON.parse(localStorage.getItem('mp_aos')||'{}')}catch(e){return{}}})());S.ast=(()=>{try{return localStorage.getItem('mp_ast')||'minimal'}catch(e){return'minimal'}})();S.aols=(()=>{try{return localStorage.getItem('mp_aols')||'str'}catch(e){return'str'}})();S.aoe=false;S.apv='one';S.aod=null;S.aoo=false;S.aob=null;S.aof=null;S.aom='done';S._aoc={};
+S.aos=Object.assign({},{c:'auto',d:'dash',w:3,o:16,so:100,sh:true},(()=>{try{return JSON.parse(localStorage.getItem('mp_aos')||'{}')}catch(e){return{}}})());S.ast=(()=>{try{return localStorage.getItem('mp_ast')||'minimal'}catch(e){return'minimal'}})();S.cmk=(()=>{try{return localStorage.getItem('mp_cmk')||'dot'}catch(e){return'dot'}})();S.aols=(()=>{try{return localStorage.getItem('mp_aols')||'str'}catch(e){return'str'}})();S.aoe=false;S.apv='one';S.aod=null;S.aoo=false;S.aob=null;S.aof=null;S.aom='done';S._aoc={};
 const APIC=['#2b3cff','#e8322d','#d83ce0','#e0a800','#14a83a','#ff8a1f','#12a8b8','#7b4fd6'];
 const AST=[['classic','คลาสสิก'],['modern','โมเดิร์น'],['dark','บลูพริ้นต์ (เข้ม)'],['minimal','มินิมอล'],['site','ไซต์งาน (เหลือง-ดำ)']];
 function vAP2(){return `<div class="chips noexp" style="margin-bottom:12px"><button class="chip" data-a="apv" data-k="one" aria-pressed="${S.apv!=='site'}">หน้าเดียวจากแปลน + แผนงาน</button><button class="chip" data-a="apv" data-k="site" aria-pressed="${S.apv==='site'}">ผังไซต์กำหนดเอง</button></div>`+(S.apv==='site'?vAP():vApOne())}
@@ -2258,6 +2259,7 @@ document.addEventListener('click',async e=>{
   else if(a==='pw'){S.pw=d.w;render()}
   else if(a==='pm'){S.pm=d.k;render()}
   else if(a==='proom'){if(S.pe){if(S.pd==='poly')return;S.pes=d.c;render()}else{planStop();S.ps=d.c;render()}}
+  else if(a==='cmk'){S.cmk=d.k;try{localStorage.setItem('mp_cmk',d.k)}catch(e){}render()}
   else if(a==='pedit'){planStop();S.pe=!S.pe;S.ps=null;S.pes=null;S.pd=false;S.pv=null;S._pp=null;S._drag=false;render()}
   else if(a==='pdraw'){S._pp=null;S._drag=false;S.pd=S.pd===true?false:true;render()}
   else if(a==='ppoly'){S._pp=null;S._drag=false;S.pd=S.pd==='poly'?false:'poly';render()}
