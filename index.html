@@ -406,7 +406,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 .apone-w{position:relative;width:100%;overflow:hidden;border-radius:6px;border:1px solid var(--line)}.apone{position:absolute;left:0;top:0;width:1400px;height:990px;transform-origin:0 0;background:#fff;color:#111;font-family:Sarabun,Tahoma,Arial,sans-serif;font-size:13px;line-height:1.3;border:2px solid #b86ad0;box-sizing:border-box}.apone *{box-sizing:border-box}
 .aohd{position:absolute;left:24px;top:14px;right:24px;height:80px;display:flex;justify-content:space-between;align-items:center}.aot{font:700 38px/1.1 Georgia,'Times New Roman',serif;color:#1f2fe0;letter-spacing:.5px}.aos{font-size:17px;color:#333;margin-top:2px}.aoco{display:flex;align-items:center;gap:12px;font-weight:700;color:#1f1fb5;font-size:16px}.aoco img{height:64px;max-width:220px;object-fit:contain}
 .apone table{width:100%;table-layout:fixed;border-collapse:collapse;min-width:0}.apone td,.apone th{color:#111;background:none;white-space:normal;word-break:break-word}.aobox{position:absolute;border:1px solid #cfd4d8;background:#fff;overflow:hidden}.aosv{position:absolute;left:0;top:0;pointer-events:none}
-.aoc{position:absolute;width:160px;height:98px;background:#fff;border:2.5px solid;padding:4px 6px;font-size:11.5px;line-height:1.28;overflow:hidden}.aoc b{display:flex;align-items:center;gap:5px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aoc i{display:inline-block;width:16px;height:10px;flex:none;border:1px solid #111}.aoc span{display:block;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aoc .aop{font-weight:700}
+.aoc{position:absolute;width:190px;background:#fff;border:2.5px solid;padding:4px 6px;font-size:11.5px;line-height:1.28;overflow:hidden}.aoc b{display:flex;align-items:flex-start;gap:5px;font-size:12.5px;line-height:1.3;white-space:normal;word-break:break-word}.aoc i{display:inline-block;width:16px;height:10px;flex:none;border:1px solid #111;margin-top:3px}.aoc span{display:block;color:#333;white-space:normal;word-break:break-word}.aoc .aop{font-weight:700}
 .aomini{position:absolute;background:#fff;border:1px solid #cfd4d8;overflow:hidden}.aomh{display:flex;justify-content:space-between;padding:3px 8px;font-size:14px;background:#eef0ff}
 .aopn{position:absolute;border:1px solid #cfd4d8;padding:10px 12px;overflow:hidden;background:#fff}.aoh2{display:flex;justify-content:space-between;align-items:baseline;font:700 22px/1.2 Georgia,serif;color:#1f2fe0}.aoh2 span{font:800 40px/1 Sarabun,Arial,sans-serif}.aosub{font-size:11px;color:#666}
 .aot2{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}.aot2 th,.aot2 td{border:1px solid #cfd4d8;padding:3px 5px;text-align:center;vertical-align:middle}.apone .aot2 th{background:#eef0ff;color:#1f2fe0;font-size:11px}.apone .aot2 .aob{color:#1f2fe0;font-weight:600;white-space:nowrap;font-size:11.5px}.aosw{display:inline-block;width:14px;height:14px;border:1px solid #111}
@@ -1196,7 +1196,7 @@ function rptItems(){const out=[];
   if(S.rsrc.man)for(const [k,v] of Object.entries(S.rpt)){if(k.slice(0,2)!=='l:'||!v||!v.b||isNaN(dnum(v.s))||isNaN(dnum(v.e)))continue;
     const link=!!(v.w&&S.works[v.w]);let pr=(v.p===''||v.p==null)?null:Math.max(0,Math.min(1,v.p/100)),st;
     if(link){pr=schedProg(v);st=schedState(v,pr)}else{const m=MST[v.st]||MST.plan;st={k:v.st||'plan',l:m[0],c:m[1]}}
-    out.push({k:k.slice(2),src:'man',b:v.b,z:v.z,t:v.t||(link?S.works[v.w].name:'(ไม่มีชื่อ)'),f:v.f,r:v.r,s:v.s,e:v.e,n:v.n,pr,st,link,poly:(v.poly&&v.poly.length>=6)?v.poly:null,g:v.g,id:k.slice(2)})}
+    out.push({k:k.slice(2),src:'man',b:v.b,z:v.z,t:v.t||(link?S.works[v.w].name:'(ไม่มีชื่อ)'),f:v.f,r:v.r,s:v.s,e:v.e,n:v.n,pr,st,link,poly:(v.poly&&v.poly.length>=6)?v.poly:null,zc:v.zc||'',g:v.g,id:k.slice(2)})}
   return out}
 const itZone=it=>`${it.z?esc(it.z)+' · ':''}${it.f?'ชั้น '+esc(it.f):'ทุกชั้น'}${it.r?' · ห้อง '+esc(it.r):''}`;
 
@@ -1268,7 +1268,7 @@ function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมี
     <div class="field" style="flex:1;min-width:130px"><label for="lk_p">ความคืบหน้า % (0-100)</label><input id="lk_p" type="number" min="0" max="100" value="${cur&&cur.p!==''&&cur.p!=null?esc(cur.p):''}"></div></div></div>
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="lk_s">วันเริ่มตามแผน</label><input id="lk_s" type="date" value="${esc(cur?cur.s:t0)}"></div>
     <div class="field" style="flex:1;min-width:130px"><label for="lk_e">กำหนดเสร็จ</label><input id="lk_e" type="date" value="${esc(cur?cur.e:'')}"></div></div>
-   <div class="field"><label for="lk_n">หมายเหตุ</label><input id="lk_n" type="text" value="${esc(cur?cur.n||'':'')}"></div>
+   <div class="field"><label for="lk_n">หมายเหตุ</label><input id="lk_n" type="text" value="${esc(cur?cur.n||'':'')}"></div>${cur&&cur.poly?aoColorBlk(cur):''}
    <div class="row"><button class="btn pri" data-ok>บันทึก</button>${cur?'<button class="btn danger" data-del>ลบ</button>':''}<button class="btn" data-x>ยกเลิก</button></div>`,el=>{
    el.onchange=e=>{if(e.target.name==='lk_m'){const v=e.target.value;el.querySelectorAll('[data-m]').forEach(x=>x.hidden=x.dataset.m!==v)}};
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
@@ -1284,6 +1284,7 @@ function lookForm(id,b0){if(!(S.canWrite&&S.db))return toast('ต้องมี
      const pv=$('#lk_p').value,o={t,b:$('#lk_b').value,z:$('#lk_z').value.trim(),s:s0,e:e0,n:$('#lk_n').value.trim(),
        w:web?$('#lk_w').value:'',f:web?f:'',r:web?$('#lk_r').value.trim():'',st:web?'':$('#lk_st').value,p:web||pv===''?'':Math.max(0,Math.min(100,+pv||0))};
      if(cur)for(const q of ['poly','pw','ph','g'])if(cur[q]!=null)o[q]=cur[q];
+     if(cur&&cur.poly)o.zc=$('#lk_zca').checked?'':$('#lk_zc').value;
      if(cur&&cur.poly&&el.querySelector('input[name=lk_rc]'))o.r=[...el.querySelectorAll('input[name=lk_rc]:checked')].map(c=>c.value).join(',')||(web?'-':'');
      closeM();try{await rptSet('l:'+(id||'m'+uid()),o);toast('บันทึกแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
 function itemOpen(src,k){const it=rptItems().find(x=>x.src===src&&x.k===k);if(!it)return;
@@ -1781,6 +1782,7 @@ function apAct(a,d){
   if(a==='aodfin'){aoFinish();return true}
   if(a==='aoz'){lookForm(d.k,S.aob);return true}
   if(a==='aocopy'){aoCopyForm();return true}
+  if(a==='aostyle'){aoStyleForm();return true}
   if(a==='apoo'){S.aoo=d.k==='plan';render();return true}
   if(a==='apom'){S.aom=d.k;render();return true}
   if(a==='apoexp'){apOneExpForm();return true}
@@ -1812,7 +1814,7 @@ document.addEventListener('pointermove',e=>{if(!apDrag)return;const dx=(e.client
 document.addEventListener('pointerup',()=>{if(!apDrag)return;const d=apDrag;apDrag=null;S._drag=false;const pl=S.apl[S.apc];if(pl&&pl.areas[d.id]){pl.areas[d.id].lx=Math.round(d.nx);pl.areas[d.id].ly=Math.round(d.ny);apSave(S.apc)}render()});
 
 /* ---------- Action Plan หน้าเดียว: แปลน + progress + แผนงาน ---------- */
-S.apv='one';S.aod=null;S.aoo=false;S.aob=null;S.aof=null;S.aom='done';S._aoc={};
+S.aos=Object.assign({},{c:'auto',d:'dash',w:3,o:16,so:100,sh:true},(()=>{try{return JSON.parse(localStorage.getItem('mp_aos')||'{}')}catch(e){return{}}})());S.apv='one';S.aod=null;S.aoo=false;S.aob=null;S.aof=null;S.aom='done';S._aoc={};
 const APIC=['#2b3cff','#e8322d','#d83ce0','#e0a800','#14a83a','#ff8a1f','#12a8b8','#7b4fd6'];
 function vAP2(){return `<div class="chips noexp" style="margin-bottom:12px"><button class="chip" data-a="apv" data-k="one" aria-pressed="${S.apv!=='site'}">หน้าเดียวจากแปลน + แผนงาน</button><button class="chip" data-a="apv" data-k="site" aria-pressed="${S.apv==='site'}">ผังไซต์กำหนดเอง</button></div>`+(S.apv==='site'?vAP():vApOne())}
 function apOnePlan(b,f,m,W,H,hl){const pi=planOf(b,f);const k=[b,f,m,Math.round(W),Math.round(H),JSON.stringify(hl||{}),pi&&pi.img?pi.img.length:0,JSON.stringify((S.planov||{})[b+'-'+f]||{}).length].join('|');
@@ -1824,29 +1826,31 @@ function apOneSheet(b,f,m,ui){
   const po=!!S.aoo;
   const cfg=xOpts().cfg,W=1400,H=990,all=f==='ALL',MCOL={done:'#E3A82B',cm:'#2F7FB8',qc2:'#25936A'},mc=MCOL[m],mn=XMN[m];let pending=false;
   const items=rptItems().filter(x=>x.b===b&&(all||(()=>{const fl=schedFloors(x.f);return !fl||fl.has(String(f))})())).sort((a,z)=>dnum(a.s)-dnum(z.s)||dnum(a.e)-dnum(z.e));
-  const col=i=>APIC[i%APIC.length];
+  const st0=S.aos,col=i=>{const it=items[i];return it&&it.zc?it.zc:(it&&it.poly&&st0.c!=='auto')?st0.c:APIC[i%APIC.length]};
+  const zpoly=(c,pt,k)=>`<polygon points="${pt.join(' ')}" fill="${c}" fill-opacity="${st0.o/100}" stroke="${c}" stroke-opacity="${st0.so/100}" stroke-width="${st0.w*k}" ${st0.d==='solid'?'':`stroke-dasharray="${st0.d==='dot'?(0.1*k)+' '+(st0.w*2.2*k):(st0.w*3*k)+' '+(st0.w*1.7*k)}"`} stroke-linecap="round" stroke-linejoin="round"/>`;
   let left='',tot=null;
   if(!all){
     const P=planOf(b,f),RM=roomsOf(b,f),codes=Object.keys(RM),hl={},cen=[];
     items.forEach((it,i)=>{const rs=schedRooms(it.r);let cs=[];if(rs&&it.link){cs=codes.filter(c=>rs.has(c));for(const c of cs)if(!hl[c])hl[c]=col(i)}cen[i]=cs.length?apRoomCentroids(b,f,cs):null;if(it.poly){const pp=[];for(let j=0;j+1<it.poly.length;j+=2)pp.push([it.poly[j],it.poly[j+1]]);cen[i]=[centroid(pp)]}});
     const allc=codes.length?apRoomCentroids(b,f,codes):[[P.w/2,P.h/2]],mid=[allc.reduce((a,q)=>a+q[0],0)/allc.length,allc.reduce((a,q)=>a+q[1],0)/allc.length];
     const cp=items.slice(0,14).map((it,i)=>{const c=cen[i]?[cen[i].reduce((a,q)=>a+q[0],0)/cen[i].length,cen[i].reduce((a,q)=>a+q[1],0)/cen[i].length]:[mid[0]+(i%3-1)*P.w*.12,mid[1]+((i/3|0)%3-1)*P.h*.12];return{it,i,c}});
-    const sideOf=q=>q.c[0]<mid[0]?'L':'R',useL=cp.some(q=>sideOf(q)==='L'),useR=cp.some(q=>sideOf(q)==='R'),gl=useL?168:0,gr=useR?168:0,BW=po?1352:880,BH=780,iw=BW-gl-gr;
+    const sideOf=q=>q.c[0]<mid[0]?'L':'R',useL=cp.some(q=>sideOf(q)==='L'),useR=cp.some(q=>sideOf(q)==='R'),gl=useL?198:0,gr=useR?198:0,BW=po?1352:880,BH=780,iw=BW-gl-gr;
     const fig=apOnePlan(b,f,m,iw,BH-8,hl);if(fig.pend)pending=true;
     tot=planSummary(b,+f,RM,'ALL',m,false);
     left=`<div class="aobox" style="left:24px;top:100px;width:${BW}px;height:${BH}px">`;
     if(fig.data){const pw=fig.w*96,ph=fig.h*96,ix=gl+(iw-pw)/2,iy=(BH-ph)/2;left+=`<img src="${fig.data}" style="position:absolute;left:${ix}px;top:${iy}px;width:${pw}px;height:${ph}px">`;
       const lay={L:[],R:[]};for(const q of cp){const X=ix+q.c[0]/P.w*pw,Y=iy+q.c[1]/P.h*ph;q.X=X;q.Y=Y;lay[sideOf(q)].push(q)}
-      let lines='',boxes='';for(const sd of ['L','R']){const A=lay[sd].sort((a,z)=>a.Y-z.Y),h=98;let y0=-1e9;for(const q of A){q.y=Math.max(y0+6,Math.min(BH-h-4,q.Y-h/2));y0=q.y+h}for(let j=A.length-1,lim=BH-4;j>=0;j--){if(A[j].y+h>lim)A[j].y=lim-h;lim=A[j].y-6}
-        for(const q of A){const it=q.it,c=col(q.i),x=sd==='L'?4:BW-164,ex=sd==='L'?x+160:x;lines+=`<line x1="${ex}" y1="${q.y+h/2}" x2="${q.X}" y2="${q.Y}" stroke="#111" stroke-width="1.6"/><circle cx="${q.X}" cy="${q.Y}" r="6" fill="#e8322d" stroke="#fff" stroke-width="2"/>`;
-          boxes+=`<div class="aoc" style="left:${x}px;top:${q.y}px;border-color:${c}"><b><i style="background:${c}"></i>${esc(it.z||it.t)}</b>${it.z?`<span>${esc(it.t)}</span>`:''}<span>START ${apFd(it.s)}</span><span>FINISH ${apFd(it.e)}</span><span class="aop" style="color:${it.st.c}">${it.pr!=null?fmt(it.pr)+' · ':''}${esc(it.st.l)}</span></div>`}}
-      let polys='';for(const q of cp){if(!q.it.poly)continue;const c=col(q.i),pt=[];for(let j=0;j+1<q.it.poly.length;j+=2)pt.push((ix+q.it.poly[j]/P.w*pw).toFixed(1)+','+(iy+q.it.poly[j+1]/P.h*ph).toFixed(1));polys+=`<polygon points="${pt.join(' ')}" fill="${c}" fill-opacity=".16" stroke="${c}" stroke-width="3" stroke-dasharray="9 5" stroke-linejoin="round"/>`}
+      const hOf=it=>Math.ceil(14+Math.min(3,Math.ceil((it.z||it.t).length/19))*16.5+(it.z?Math.min(3,Math.ceil(it.t.length/25))*14.8:0)+3*14.8+((it.pr!=null?fmt(it.pr)+' · ':'')+it.st.l).length/26*14.8);
+      let lines='',boxes='';for(const sd of ['L','R']){const A=lay[sd].sort((a,z)=>a.Y-z.Y);for(const q of A)q.h=hOf(q.it);let y0=-1e9;for(const q of A){q.y=Math.max(y0+6,Math.min(BH-q.h-4,q.Y-q.h/2));y0=q.y+q.h}for(let j=A.length-1,lim=BH-4;j>=0;j--){if(A[j].y+A[j].h>lim)A[j].y=lim-A[j].h;lim=A[j].y-6}
+        for(const q of A){const it=q.it,c=col(q.i),h=q.h,x=sd==='L'?4:BW-194,ex=sd==='L'?x+190:x;lines+=`<line x1="${ex}" y1="${q.y+h/2}" x2="${q.X}" y2="${q.Y}" stroke="#111" stroke-width="1.6"/><circle cx="${q.X}" cy="${q.Y}" r="6" fill="#e8322d" stroke="#fff" stroke-width="2"/>`;
+          boxes+=`<div class="aoc" style="left:${x}px;top:${q.y}px;height:${h}px;border-color:${c}"><b><i style="background:${c}"></i><em style="font-style:normal">${esc(it.z||it.t)}</em></b>${it.z?`<span>${esc(it.t)}</span>`:''}<span>START ${apFd(it.s)}</span><span>FINISH ${apFd(it.e)}</span><span class="aop" style="color:${it.st.c}">${it.pr!=null?fmt(it.pr)+' · ':''}${esc(it.st.l)}</span></div>`}}
+      let polys='';if(st0.sh)for(const q of cp){if(!q.it.poly)continue;const c=col(q.i),pt=[];for(let j=0;j+1<q.it.poly.length;j+=2)pt.push((ix+q.it.poly[j]/P.w*pw).toFixed(1)+','+(iy+q.it.poly[j+1]/P.h*ph).toFixed(1));polys+=zpoly(c,pt,1)}
       left+=`<svg class="aosv" viewBox="0 0 ${BW} ${BH}" width="${BW}" height="${BH}">${polys}${lines}</svg>${boxes}${(ui&&S.aod)?aoOverlay(ix,iy,pw,ph,P):''}`}
     left+='</div>'}
   else{
     const fl=planFl(b).slice().sort((a,z)=>+a-+z).slice(0,8),n=fl.length,cols=n<=2?n:n<=4?2:n<=6?3:4,rows=Math.ceil(n/cols),BW=po?1352:880,BH=780,cw=Math.floor((BW-(cols-1)*10)/cols),ch=Math.floor((BH-(rows-1)*10)/rows);tot=overall(b)[m];
     left=`<div class="aobox" style="left:24px;top:100px;width:${BW}px;height:${BH}px">`+fl.map((x,i)=>{const fig=apOnePlan(b,x,m,cw-12,ch-34,{});if(fig.pend)pending=true;const RM=roomsOf(b,x),t=planSummary(b,+x,RM,'ALL',m,false);
-      return `<div class="aomini" style="left:${(i%cols)*(cw+10)}px;top:${((i/cols)|0)*(ch+10)}px;width:${cw}px;height:${ch}px"><div class="aomh"><b>ชั้น ${esc(x)}</b><span style="color:${mc}">${fmt(t)}</span></div>${fig.data?`<img src="${fig.data}" style="display:block;margin:2px auto 0;width:${fig.w*96}px;height:${fig.h*96}px">`:''}</div>`}).join('')+'</div>'}
+      return `<div class="aomini" style="left:${(i%cols)*(cw+10)}px;top:${((i/cols)|0)*(ch+10)}px;width:${cw}px;height:${ch}px"><div class="aomh"><b>ชั้น ${esc(x)}</b><span style="color:${mc}">${fmt(t)}</span></div>${fig.data?`<div style="position:relative;margin:2px auto 0;width:${fig.w*96}px;height:${fig.h*96}px"><img src="${fig.data}" style="display:block;width:100%;height:100%">${st0.sh?aoMiniSvg(items,x,b,fig.w*96,zpoly,col):''}</div>`:''}</div>`}).join('')+'</div>'}
   /* right panel */
   const RMf=all?null:roomsOf(b,f);
   const wk=worksSorted().map(w=>{if(all){const tl=tally(w,gridsOf(w.id,b));return tl.n?{w,v:pcts(w,tl)}:null}const v={};let any=false;for(const [k] of MS){v[k]=planSummary(b,+f,RMf,w.id,k,false);if(v[k]!=null)any=true}return any?{w,v}:null}).filter(Boolean);
@@ -1868,10 +1872,26 @@ function vApOne(){
    <div class="row noexp" style="margin-top:8px"><div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="apom" data-k="${k}" aria-pressed="${m===k}">สี: ${l}</button>`).join('')}</div><span class="sub">แผนงานจาก:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">แท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มในหน้านำเสนอ</button></div></div>
    <div class="row noexp" style="margin-top:8px">${(()=>{const dz=rptItems().filter(x=>x.b===b&&x.poly&&(f==='ALL'||String(x.f)===f)),cd=S.canWrite&&S.db;if(f==='ALL')return '<span class="sub">เลือกชั้นใดชั้นหนึ่งเพื่อวาดโซนบนแปลน</span>';if(!cd)return '';
      return (S.aod?`<button class="btn pri" data-a="aodfin">✓ จบรูป (${S.aod.length/2} จุด)</button><button class="btn" data-a="aodundo">↶ ลบจุดล่าสุด</button><button class="btn" data-a="aodcan">ยกเลิก</button><span class="sub">คลิกบนแปลนเพื่อวางมุมทีละจุด · คลิกจุดแรกหรือ Enter เพื่อปิดรูป · Backspace ลบจุด · Esc ยกเลิก</span>`:`<button class="btn pri" data-a="aodraw">✎ วาดโซนบนแปลน (คลิก)</button>`)+(!S.aod&&dz.length?'<button class="btn" data-a="aocopy">⎘ คัดลอกโซนไปชั้นอื่น</button>':'')+(!S.aod?dz.map(x=>`<button class="chip" data-a="aoz" data-k="${esc(x.id)}">✎ ${esc(x.z||x.t)}</button>`).join(''):'')})()}
-    <span class="sub">แสดง:</span><div class="chips"><button class="chip" data-a="apoo" data-k="full" aria-pressed="${!S.aoo}">หน้าเต็ม</button><button class="chip" data-a="apoo" data-k="plan" aria-pressed="${!!S.aoo}">เฉพาะแปลน</button></div></div>
+     <button class="btn" data-a="aostyle">🎨 สไตล์โซน (สี / เส้นประ / ความทึบ)</button><span class="sub">แสดง:</span><div class="chips"><button class="chip" data-a="apoo" data-k="full" aria-pressed="${!S.aoo}">หน้าเต็ม</button><button class="chip" data-a="apoo" data-k="plan" aria-pressed="${!!S.aoo}">เฉพาะแปลน</button></div></div>
    <section class="sec"><div class="apone-w" id="aow"><div class="apone" id="aosheet">${sh.html}</div></div>${sh.pending?'<div class="sub">กำลังประมวลผลแปลน…</div>':''}</section>`}
 const aoPip=(x,y,a)=>{let c=false;const n=a.length/2;for(let i=0,j=n-1;i<n;j=i++){const xi=a[2*i],yi=a[2*i+1],xj=a[2*j],yj=a[2*j+1];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c};
 const aoRooms=(b,f,poly)=>{const o=[];for(const [c,p] of Object.entries(roomsOf(b,f))){const q=centroid(p);if(aoPip(q[0],q[1],poly))o.push(c)}return o.sort((a,z)=>a.localeCompare(z,undefined,{numeric:true}))};
+function aoMiniSvg(items,x,b,wpx,zpoly,col){const P=planOf(b,x);if(!P)return '';const k=P.w/wpx;let o='';items.forEach((it,i)=>{if(!it.poly||String(it.f)!==String(x))return;const pt=[];for(let j=0;j+1<it.poly.length;j+=2)pt.push(it.poly[j]+','+it.poly[j+1]);o+=zpoly(col(i),pt,k)});
+  return o?`<svg viewBox="0 0 ${P.w} ${P.h}" style="position:absolute;left:0;top:0;width:100%;height:100%">${o}</svg>`:''}
+const AOS0={c:'auto',d:'dash',w:3,o:16,so:100,sh:true};
+function aoStyleHtml(){const t=S.aos,r=(n,v,l,ck)=>`<label class="chk"><input type="radio" name="${n}" value="${v}" ${ck?'checked':''}> ${l}</label>`;
+  return `<div class="field"><label>สีโซน</label><div class="chips">${r('as_c','auto','สีอัตโนมัติ (ตามกรอบข้อมูล)',t.c==='auto')}${r('as_c','fix','สีเดียว',t.c!=='auto')}<input type="color" id="as_cc" aria-label="เลือกสี" value="${t.c==='auto'?'#e8322d':t.c}" style="width:46px;height:32px;padding:0"></div></div>
+   <div class="field"><label>ลักษณะเส้นขอบ</label><div class="chips">${r('as_d','solid','เส้นทึบ',t.d==='solid')}${r('as_d','dash','เส้นประ',t.d==='dash')}${r('as_d','dot','เส้นจุด',t.d==='dot')}</div></div>
+   <div class="field"><label for="as_w">ความหนาเส้น <b id="as_wv">${t.w}</b></label><input id="as_w" type="range" min="1" max="10" step="0.5" value="${t.w}"></div>
+   <div class="field"><label for="as_o">ความทึบแสงสีพื้น <b id="as_ov">${t.o}</b>%</label><input id="as_o" type="range" min="0" max="80" step="2" value="${t.o}"></div>
+   <div class="field"><label for="as_so">ความทึบแสงเส้นขอบ <b id="as_sov">${t.so}</b>%</label><input id="as_so" type="range" min="20" max="100" step="5" value="${t.so}"></div>
+   <label class="chk"><input type="checkbox" id="as_sh" ${t.sh?'checked':''}> แสดงโซนที่วาดบนแปลนและในไฟล์ส่งออก</label>`}
+function aoStyleApply(el){const g=n=>{const x=el.querySelector('input[name='+n+']:checked');return x?x.value:''},q=i=>el.querySelector('#'+i);
+  S.aos={c:g('as_c')==='fix'?q('as_cc').value:'auto',d:g('as_d')||'dash',w:+q('as_w').value,o:+q('as_o').value,so:+q('as_so').value,sh:q('as_sh').checked};
+  q('as_wv').textContent=S.aos.w;q('as_ov').textContent=S.aos.o;q('as_sov').textContent=S.aos.so;try{localStorage.setItem('mp_aos',JSON.stringify(S.aos))}catch(e){}render()}
+function aoStyleForm(){modal(`<h2>สไตล์โซนที่วาด</h2><div class="sub">ใช้ทั้งบนหน้าจอและตอนส่งออก PDF / รูป · ปรับแล้วเห็นผลทันทีบนแปลน</div>${aoStyleHtml()}<div class="row"><button class="btn pri" data-x>เสร็จ</button><button class="btn" data-reset>คืนค่าเริ่มต้น</button></div>`,el=>{
+  el.oninput=el.onchange=()=>aoStyleApply(el);el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-reset')){S.aos=Object.assign({},AOS0);try{localStorage.removeItem('mp_aos')}catch(x){}closeM();render();return aoStyleForm()}if(b.hasAttribute('data-x'))closeM()}})}
+function aoColorBlk(cur){return `<div class="field"><label>สีของโซนนี้</label><div class="chips"><label class="chk"><input type="checkbox" id="lk_zca" ${cur.zc?'':'checked'}> ใช้สีตามการตั้งค่าสไตล์โซน</label><input type="color" id="lk_zc" aria-label="สีโซน" value="${esc(cur.zc||'#e8322d')}" style="width:46px;height:32px;padding:0"></div></div>`}
 function aoCodes(b,f){const o=new Set(planOf(b,f)?Object.keys(roomsOf(b,f)):[]);for(const w of worksSorted())for(const g of gridsOf(w.id,b)){if(g.rowLabel)continue;for(const k of Object.keys(g.cells||{})){const i=k.indexOf('-');if(k.slice(0,i)===String(f))o.add(k.slice(i+1))}}return [...o].sort((a,z)=>a.localeCompare(z,undefined,{numeric:true}))}
 function aoRoomsBlk(cur){const codes=aoCodes(cur.b,cur.f),sel=schedRooms(cur.r)||new Set();
   return `<div class="field"><label>ห้องของโซนนี้ (ชั้น ${esc(cur.f)}) — เลือกว่าข้อมูลเป็นของห้องไหน</label><div class="chips">${codes.map(c=>`<label class="chk"><input type="checkbox" name="lk_rc" value="${esc(c)}" ${sel.has(c)?'checked':''}> ${esc(c)}</label>`).join('')||'<span class="sub">ยังไม่มีข้อมูลห้องของชั้นนี้</span>'}</div><div class="row" style="margin-top:6px"><button class="btn" data-auto>เลือกจากตำแหน่งโซน</button><button class="btn" data-rall>ทุกห้อง</button><button class="btn" data-rnone>ล้าง</button></div></div>`}
@@ -1924,8 +1944,9 @@ function apOneExpForm(){
   modal(`<h2>ส่งออก Action Plan หน้าเดียว</h2><div class="field"><label for="ao_f">รูปแบบ</label><select id="ao_f"><option value="pdf">PDF</option><option value="png">รูปภาพ PNG</option></select></div>
    <div class="field"><label for="ao_p">ส่วนที่ส่งออก</label><select id="ao_p"><option value="full" ${S.aoo?'':'selected'}>หน้าเต็ม (แปลน + ตาราง)</option><option value="plan" ${S.aoo?'selected':''}>เฉพาะแปลน</option></select></div>
    <div class="field" data-pdf><label for="ao_s">ขนาดกระดาษ</label><select id="ao_s"><option value="a3">A3 (แนวนอน)</option><option value="a4">A4 (แนวนอน)</option></select></div>
+   <details style="margin:8px 0"><summary>🎨 สไตล์โซนที่วาด (สี / เส้นประ / ความทึบ)</summary>${aoStyleHtml()}</details>
    <div class="row"><button class="btn pri" data-ok>ส่งออก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
-   const sync=()=>el.querySelectorAll('[data-pdf]').forEach(e=>e.hidden=$('#ao_f').value!=='pdf');el.onchange=sync;
+   const sync=()=>el.querySelectorAll('[data-pdf]').forEach(e=>e.hidden=$('#ao_f').value!=='pdf');el.onchange=el.oninput=e=>{sync();if(e&&e.target&&/^as_/.test(e.target.name||e.target.id))aoStyleApply(el)};
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();if(!b.hasAttribute('data-ok'))return;const fm=$('#ao_f').value,sz=$('#ao_s').value,po=$('#ao_p').value==='plan';closeM();apOneExport(fm,sz,po)}})}
 async function apOneExport(kind,size,po){const so=S.aoo;if(po!=null)S.aoo=po;
   if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF))return toast('โหลดตัวช่วยส่งออกไม่สำเร็จ ลองรีเฟรชหน้า');if(!S.dl)return toast('ส่งออกไฟล์ไม่ได้ในมุมมองนี้');
