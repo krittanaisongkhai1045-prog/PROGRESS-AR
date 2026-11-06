@@ -563,11 +563,12 @@ function levelsDialog(){
      closeM();try{await metaSave({levels:o});toast('บันทึกชื่อชั้นแล้ว')}catch(e){}}})}
 function manageBuildings(){
   const bs=S.meta.buildings;
-  modal(`<h2>จัดการอาคาร</h2>${bs.map(b=>{const n=Object.values(S.grids).filter(g=>g.building===b).length;return `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span><b>ตึก ${esc(b)}</b> <span class="sub">${n} รายการ</span></span><span class="row" style="gap:6px"><button class="btn sm" data-ren="${esc(b)}">เปลี่ยนชื่อ</button><button class="btn sm" data-del="${esc(b)}" style="color:var(--warn)">ลบ</button></span></div>`}).join('')}
+  modal(`<h2>จัดการอาคาร</h2>${bs.map(b=>{const n=Object.values(S.grids).filter(g=>g.building===b).length;return `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span><b>ตึก ${esc(b)}</b> <span class="sub">${n} รายการ</span></span><span class="row" style="gap:6px"><button class="btn sm" data-lay="${esc(b)}">ชั้น / ห้อง</button><button class="btn sm" data-ren="${esc(b)}">เปลี่ยนชื่อ</button><button class="btn sm" data-del="${esc(b)}" style="color:var(--warn)">ลบ</button></span></div>`}).join('')}
    <div class="row"><button class="btn pri" data-add>+ เพิ่มตึก</button><button class="btn" data-x>ปิด</button></div>`,el=>{
    el.onclick=e=>{const b=e.target.closest('button');if(!b)return;
      if(b.hasAttribute('data-x'))return closeM();
      if(b.hasAttribute('data-add')){closeM();return addBuilding()}
+     if(b.dataset.lay){const o=b.dataset.lay;closeM();return layoutForm(o,S.works[S.view]||null,null)}
      if(b.dataset.ren){const o=b.dataset.ren;closeM();return renameBuilding(o)}
      if(b.dataset.del){const o=b.dataset.del;closeM();return deleteBuilding(o)}}})}
 function renameBuilding(o){
@@ -2024,8 +2025,8 @@ function doRender(){
   const sc={};app.querySelectorAll('[data-gw]').forEach(e=>sc[e.dataset.gw]=e.scrollLeft);
   renderTabs();
   let h='';
-  if(S.loadErr)h+=`<div class="banner">โหลดข้อมูลไม่สำเร็จ: ${esc(S.loadErr)}</div>`;
-  else if(!S.canWrite)h+=`<div class="banner">โหมดดูอย่างเดียว กด “เข้าสู่ระบบ / ตั้งค่า” ที่มุมขวาบนเพื่อเข้าสู่ระบบและแก้ไขข้อมูล</div>`;
+  if(!S.db)h+=`<div class="banner">ยังไม่ได้เชื่อมต่อฐานข้อมูล กรุณาเข้าสู่ระบบ claude.ai เพื่อดูและแก้ไขข้อมูล</div>`;
+  else if(!S.canWrite)h+=window.MP_GH?`<div class="banner row" style="justify-content:space-between;gap:10px"><span>โหมดดูอย่างเดียว · ทีมงานที่มีบัญชีเข้าสู่ระบบเพื่ออัปเดตข้อมูลได้</span><button class="btn pri sm" data-a="gh">เข้าสู่ระบบเพื่อแก้ไข</button></div>`:`<div class="banner">โหมดดูอย่างเดียว ถ้าต้องการอัปเดตข้อมูล ให้เจ้าของแชร์สิทธิ์ผู้ร่วมแก้ไข (Contributor ขึ้นไป)</div>`;
   const w=S.works[S.view];
   if(S.view==='plan')h+=vPlan();
   else if(S.view==='sched')h+=vSched();
@@ -2110,13 +2111,58 @@ function addItemForm(w){
     closeM();
     try{for(const bb of bl)await setDoc('grids/'+w.id+'__'+bb+'__'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),{work:w.id,building:bb,item:name,order:ord,floors,cols,cells,...(kind==='percent'?{kind:'percent'}:{})});toast('เพิ่มรายการแล้ว')}catch(e){}}})}
 
+
+/* ---------- จัดการชั้น / จำนวนห้อง ---------- */
+function layoutForm(b,w,g0){
+  if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
+  const all=Object.entries(S.grids).map(([id,g])=>({...g,id})).filter(g=>g.building===b&&!g.rowLabel&&!g.struct);
+  if(!all.length)return toast('ตึก '+b+' ยังไม่มีรายการแบบชั้น × ห้อง กด “+ เพิ่มรายการ” ในหน้างานก่อน');
+  if(g0)g0=all.find(x=>x.id===g0.id)||g0;
+  const scopeOf=v=>v==='one'&&g0?[g0]:v==='work'&&w?all.filter(g=>g.work===w.id):all;
+  let sc=g0?'one':w&&all.some(g=>g.work===w.id)?'work':'all',rows=[];
+  const cnt=(g,f)=>(g.cols||[]).filter(c=>has((g.cells||{})[f+'-'+c])).length;
+  const load=()=>{const g=scopeOf(sc)[0]||all[0];rows=(g.floors||[]).slice().sort((x,y)=>y-x).map(f=>({f,n:cnt(g,f),o:cnt(g,f),del:false}))};load();
+  const tbl=()=>rows.map(r=>`<div class="row" style="flex-wrap:nowrap;gap:8px;align-items:center;margin:4px 0${r.del?';opacity:.45':''}"><b style="width:64px;${r.del?'text-decoration:line-through':''}">ชั้น ${esc(r.f)}</b><input class="ly_n" data-f="${r.f}" type="number" min="0" max="80" value="${r.n}" ${r.del?'disabled':''} style="width:90px" aria-label="จำนวนห้องชั้น ${esc(r.f)}"><span class="sub">ห้อง${r.n!==r.o&&!r.isNew?' (เดิม '+r.o+')':''}${r.isNew?' · ชั้นใหม่':''}</span><button class="btn sm" data-delf="${r.f}">${r.del?'↺ ไม่ลบ':'ลบชั้น'}</button></div>`).join('')||'<div class="sub">ยังไม่มีชั้น</div>';
+  modal(`<h2>จัดการชั้นและจำนวนห้อง · ตึก ${esc(b)}</h2><div class="sub">เพิ่ม/ลบชั้น และกำหนดจำนวนห้องของแต่ละชั้น (ห้องที่เพิ่มจะเริ่มเป็นสถานะแรก ห้องที่ลดจะถูกเอาออกพร้อมข้อมูลของห้องนั้น)</div>
+   <div class="field"><label>ใช้กับ</label><div class="chips">${g0?`<label class="chk"><input type="radio" name="ly_s" value="one" ${sc==='one'?'checked':''}> รายการนี้ (${esc(g0.item)})</label>`:''}${w&&all.some(g=>g.work===w.id)?`<label class="chk"><input type="radio" name="ly_s" value="work" ${sc==='work'?'checked':''}> ทุกรายการของงาน ${esc(w.name)}</label>`:''}<label class="chk"><input type="radio" name="ly_s" value="all" ${sc==='all'?'checked':''}> ทุกงานในตึกนี้</label></div></div>
+   <div class="row" style="align-items:flex-end"><div class="field" style="width:120px"><label for="ly_nf">เพิ่มชั้นเลขที่</label><input id="ly_nf" type="number" min="0" max="99"></div><div class="field" style="width:120px"><label for="ly_nn">จำนวนห้อง</label><input id="ly_nn" type="number" min="0" max="80" value="16"></div><button class="btn" data-addf>+ เพิ่มชั้น</button>
+    <div class="field" style="width:150px"><label for="ly_all">ตั้งทุกชั้นเท่ากัน</label><input id="ly_all" type="number" min="0" max="80"></div><button class="btn" data-setall>ตั้งทุกชั้น</button></div>
+   <div id="ly_t" style="max-height:44vh;overflow:auto;margin-top:6px">${tbl()}</div>
+   <div class="row"><button class="btn pri" data-ok>บันทึก</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   const paint=()=>{el.querySelector('#ly_t').innerHTML=tbl()};
+   el.onchange=e=>{if(e.target.name==='ly_s'){sc=e.target.value;load();paint()}};
+   el.oninput=e=>{if(e.target.classList.contains('ly_n')){const r=rows.find(x=>String(x.f)===e.target.dataset.f);if(r)r.n=Math.max(0,Math.min(80,Math.round(+e.target.value||0)))}};
+   el.onclick=e=>{const bt=e.target.closest('button');if(!bt)return;if(bt.hasAttribute('data-x'))return closeM();
+     if(bt.hasAttribute('data-addf')){const f=Math.round(+$('#ly_nf').value),n=Math.max(0,Math.min(80,Math.round(+$('#ly_nn').value||0)));if(isNaN(f)||$('#ly_nf').value===''||f<0||f>99)return toast('ใส่เลขชั้น 0–99');if(rows.some(r=>r.f===f))return toast('มีชั้น '+f+' อยู่แล้ว');rows.push({f,n,o:0,del:false,isNew:true});rows.sort((x,y)=>y.f-x.f);paint();return}
+     if(bt.hasAttribute('data-setall')){const n=Math.max(0,Math.min(80,Math.round(+$('#ly_all').value)));if($('#ly_all').value==='')return toast('ใส่จำนวนห้อง');rows.forEach(r=>{if(!r.del)r.n=n});paint();return}
+     if(bt.dataset.delf!=null){const r=rows.find(x=>String(x.f)===bt.dataset.delf);if(r){if(r.isNew)rows.splice(rows.indexOf(r),1);else r.del=!r.del}paint();return}
+     if(!bt.hasAttribute('data-ok'))return;
+     const gs=scopeOf(sc),del=rows.filter(r=>r.del).map(r=>r.f),keep=rows.filter(r=>!r.del),shrink=keep.some(r=>!r.isNew&&r.n<r.o);
+     if(!keep.length)return toast('ต้องเหลืออย่างน้อย 1 ชั้น');
+     closeM();const run=()=>layApply(gs,keep,del);
+     if(del.length||shrink)confirmM(`จะลบ ${del.length?'ชั้น '+del.join(', ')+' ':''}${shrink?'และลดจำนวนห้องบางชั้น ':''}ของ ${gs.length} รายการ ข้อมูลสถานะของห้องที่ถูกเอาออกจะหายไป ยืนยันไหม`,run);else run()}})}
+async function layApply(gs,keep,del){
+  try{for(const g of gs){const w=S.works[g.work],def=g.kind==='percent'?0:((w&&w.statuses&&w.statuses[0])?w.statuses[0].name:''),cur=g.cells||{},fl=new Set((g.floors||[]).map(String));
+    let cols=(g.cols||[]).slice();const need=Math.max(cols.length,...keep.map(r=>r.n));
+    if(need>cols.length){const nums=cols.filter(c=>/^\d+$/.test(c)),wd=nums.length?Math.max(...nums.map(c=>c.length)):2;let nx=nums.length?Math.max(...nums.map(Number))+1:1;
+      while(cols.length<need){let c=String(nx++).padStart(wd,'0');if(!cols.includes(c))cols.push(c)}}
+    const patch={};
+    for(const f of del)for(const c of cols){const k=f+'-'+c;if(has(cur[k]))patch[k]='-'}
+    for(const r of keep){const isNew=!fl.has(String(r.f));if(!isNew&&r.n===r.o)continue;
+      cols.forEach((c,i)=>{const k=r.f+'-'+c,v=cur[k];if(i<r.n){if(!has(v))patch[k]=def}else if(has(v))patch[k]='-'})}
+    const floors=[...new Set([...(g.floors||[]).filter(f=>!del.includes(f)),...keep.filter(r=>!fl.has(String(r.f))).map(r=>r.f)])].sort((x,y)=>y-x);
+    await S.db.doc('grids/'+g.id).update({floors,cols,cells:patch})}
+    toast('อัปเดตชั้น/ห้องแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ');console.error(err)}}
+
 function gridMenu(g,w){
   modal(`<h2>${esc(g.item)} · ตึก ${esc(g.building)}</h2>
    <button class="opt" data-a2="all">ตั้งทุกช่องเป็นสถานะเดียวกัน</button>
    ${g.struct?'':`<button class="opt" data-a2="kind">${g.kind==='percent'?'เปลี่ยนเป็นแบบสถานะ':'เปลี่ยนเป็นแบบ % (0–100)'}</button>`}
+   <button class="opt" data-a2="lay">จัดการชั้นและจำนวนห้อง</button>
    <button class="opt" data-a2="ren">เปลี่ยนชื่อรายการ (ทุกตึก)</button>
    <button class="opt" data-a2="del">ลบรายการนี้ (ตึก ${esc(g.building)})</button><button class="btn" data-x>ปิด</button>`,el=>{
    el.onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a2;if(b.hasAttribute('data-x'))return closeM();
+    if(a==='lay'){closeM();return layoutForm(g.building,w,g)}
     if(a==='all'){closeM();pickFor(g,'ตั้งทุกช่อง','ช่องที่ไม่มีห้องจะไม่ถูกเปลี่ยน',w,v=>{const p={};for(const [k,x] of Object.entries(g.cells||{}))if(has(x))p[k]=v;patchCells(g.id,p)})}
     if(a==='kind'){closeM();const toP=g.kind!=='percent',di=msIdx(w,'done')??1,cells={};
       for(const [k,x] of Object.entries(g.cells||{})){if(!has(x)){cells[k]=x;continue}
@@ -2311,6 +2357,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
 /* ---------- boot ---------- */
 /* ---------- data layer: Supabase table "docs" or data.json in a GitHub repo ---------- */
+window.MP_GH=true;
 const GH={cfg:{mode:'github',owner:'',repo:'',branch:'main',token:'',path:'data.json',sbUrl:'',sbKey:''},data:{works:{},grids:{},meta:{}},sha:null,ops:[],ls:[],timer:null,busy:false,emT:0};
 let SB=null,SBUSER=null,SBCH=null;
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -2401,14 +2448,12 @@ async function importSeed(){
   catch(e){toast('นำเข้าไม่สำเร็จ: '+(e&&e.message||e))}}
 function connDialog(){const c=GH.cfg;
   modal(`<h2>การเชื่อมต่อข้อมูล</h2>
-   <div class="field"><label for="c_m">เก็บข้อมูลที่</label><select id="c_m"><option value="supabase">Supabase (แนะนำ ซิงก์ทันทีหลายเครื่อง)</option><option value="github">GitHub (ไฟล์ data.json)</option></select></div>
    <div data-m="supabase" style="display:flex;flex-direction:column;gap:12px">
-     <div class="field"><label for="c_su">Project URL</label><input id="c_su" type="text" value="${esc(c.sbUrl)}" placeholder="https://xxxx.supabase.co"></div>
-     <div class="field"><label for="c_sk">anon public key</label><input id="c_sk" type="text" value="${esc(c.sbKey)}" autocomplete="off"></div>
-     <div class="field"><label for="c_se">อีเมลผู้ใช้ (สร้างใน Supabase → Authentication → Users)</label><input id="c_se" type="text" value="${esc((SBUSER&&SBUSER.email)||'')}" autocomplete="username"></div>
-     <div class="field"><label for="c_sp">รหัสผ่าน</label><input id="c_sp" type="text" autocomplete="off" style="-webkit-text-security:disc" placeholder="${SBUSER?'เข้าสู่ระบบอยู่แล้ว':''}"></div>
-     <div class="row"><button class="btn pri" data-a2="login">เชื่อมต่อและเข้าสู่ระบบ</button>${SBUSER?'<button class="btn" data-a2="logout">ออกจากระบบ</button><button class="btn" data-a2="import">นำเข้า data.json</button>':''}</div>
-     <div class="sub">anon key เป็นกุญแจสาธารณะ ใส่ในหน้าเว็บได้ สิทธิ์เขียนถูกจำกัดด้วย RLS ให้เฉพาะผู้ใช้ที่เข้าสู่ระบบ</div>
+     ${SBUSER?`<div class="sub">เข้าสู่ระบบอยู่ในชื่อ <b>${esc(SBUSER.email||'')}</b> · แก้ไขข้อมูลได้</div>`:'<div class="sub">เข้าสู่ระบบด้วยอีเมลและรหัสผ่านที่ผู้ดูแลสร้างให้ เพื่ออัปเดตข้อมูลของโครงการ</div>'}
+     <div class="field"><label for="c_se">อีเมล</label><input id="c_se" type="email" value="${esc((SBUSER&&SBUSER.email)||'')}" autocomplete="username"></div>
+     <div class="field"><label for="c_sp">รหัสผ่าน</label><input id="c_sp" type="password" autocomplete="current-password" placeholder="${SBUSER?'เข้าสู่ระบบอยู่แล้ว':''}"></div>
+     <div class="row"><button class="btn pri" data-a2="login">${SBUSER?'เชื่อมต่อใหม่':'เข้าสู่ระบบ'}</button>${SBUSER?'<button class="btn" data-a2="logout">ออกจากระบบ</button>':''}</div>
+     ${SBUSER?`<div class="field"><label for="c_np">เปลี่ยนรหัสผ่านของฉัน (อย่างน้อย 6 ตัว)</label><div class="row" style="flex-wrap:nowrap"><input id="c_np" type="password" autocomplete="new-password" style="flex:1"><button class="btn" data-a2="chpw">เปลี่ยนรหัสผ่าน</button></div></div>`:''}
    </div>
    <div data-m="github" style="display:flex;flex-direction:column;gap:12px">
      <div class="field"><label for="g_o">GitHub username หรือ organization</label><input id="g_o" type="text" value="${esc(c.owner)}"></div>
@@ -2417,8 +2462,15 @@ function connDialog(){const c=GH.cfg;
      <div class="field"><label for="g_t">Personal access token (Contents: Read and write เฉพาะ repo นี้)</label><input id="g_t" type="text" autocomplete="off" value="${esc(c.token)}" placeholder="github_pat_…"></div>
      <div class="row"><button class="btn pri" data-a2="ghsave">บันทึก</button><button class="btn danger" data-a2="ghclr">ล้าง token</button></div>
    </div>
+   <details ${(c.sbUrl&&c.sbKey)?'':'open'} style="margin:10px 0"><summary>ตั้งค่าเซิร์ฟเวอร์และเพิ่มสมาชิกทีม (สำหรับผู้ดูแล)</summary><div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
+    <div class="field"><label for="c_m">เก็บข้อมูลที่</label><select id="c_m"><option value="supabase">Supabase (แนะนำ ซิงก์ทันทีหลายเครื่อง)</option><option value="github">GitHub (ไฟล์ data.json)</option></select></div>
+    <div data-m="supabase" style="display:flex;flex-direction:column;gap:12px">
+     <div class="field"><label for="c_su">Project URL</label><input id="c_su" type="text" value="${esc(c.sbUrl)}" placeholder="https://xxxx.supabase.co"></div>
+     <div class="field"><label for="c_sk">anon public key</label><input id="c_sk" type="text" value="${esc(c.sbKey)}" autocomplete="off"></div>
+     ${SBUSER?'<button class="btn" data-a2="import">นำเข้า data.json (ครั้งแรกเท่านั้น)</button>':''}
+     <div class="sub"><b>เพิ่มสมาชิกทีม:</b> Supabase → Authentication → Users → Add user → Create new user → ใส่อีเมลและรหัสผ่าน ติ๊ก Auto Confirm User แล้วส่งอีเมล/รหัสผ่านให้เขา เขาเข้าสู่ระบบจากปุ่มนี้และเปลี่ยนรหัสผ่านเองได้ · ถอนสิทธิ์: ลบผู้ใช้คนนั้นในหน้าเดียวกัน<br>anon key เป็นกุญแจสาธารณะ ใส่ในหน้าเว็บได้ สิทธิ์เขียนถูกจำกัดด้วย RLS ให้เฉพาะผู้ใช้ที่เข้าสู่ระบบ</div></div></div></details>
    <button class="btn" data-x>ปิด</button>`,el=>{
-   $('#c_m').value=c.mode;
+   $('#c_m').value=c.mode;el.onkeydown=e=>{if(e.key==='Enter'&&(e.target.id==='c_sp'||e.target.id==='c_se')){e.preventDefault();const bt=el.querySelector('[data-a2=login]');if(bt)bt.click()}};
    const sync=()=>el.querySelectorAll('[data-m]').forEach(e=>e.style.display=e.dataset.m===$('#c_m').value?'flex':'none');sync();
    el.onchange=e=>{if(e.target.id==='c_m')sync()};
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();const a=b.dataset.a2;
@@ -2431,6 +2483,7 @@ function connDialog(){const c=GH.cfg;
       const em=$('#c_se').value.trim(),pw=$('#c_sp').value;
       if(em&&pw){const {error}=await SB.auth.signInWithPassword({email:em,password:pw});if(error)return toast('เข้าสู่ระบบไม่สำเร็จ: '+error.message)}
       closeM();await load();toast(em&&pw?'เข้าสู่ระบบแล้ว':'ตั้งค่าแล้ว (ดูอย่างเดียว ถ้ายังไม่ได้เข้าสู่ระบบ)')}
+    else if(a==='chpw'){const np=$('#c_np').value;if(np.length<6)return toast('รหัสผ่านอย่างน้อย 6 ตัว');const {error}=await SB.auth.updateUser({password:np});if(error)return toast('เปลี่ยนไม่สำเร็จ: '+error.message);$('#c_np').value='';toast('เปลี่ยนรหัสผ่านแล้ว')}
     else if(a==='logout'){await SB.auth.signOut();closeM();await load()}
     else if(a==='import'){closeM();importSeed()}
     else if(a==='ghsave'){Object.assign(GH.cfg,{owner:$('#g_o').value.trim(),repo:$('#g_r').value.trim(),branch:$('#g_b').value.trim()||'main',token:$('#g_t').value.trim()});saveCfg();closeM();load()}
