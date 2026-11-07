@@ -2365,7 +2365,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 /* ---------- boot ---------- */
 /* ---------- data layer: Supabase table "docs" or data.json in a GitHub repo ---------- */
 window.MP_GH=true;
-const GH={cfg:{mode:'github',owner:'',repo:'',branch:'main',token:'',path:'data.json',sbUrl:'',sbKey:''},data:{works:{},grids:{},meta:{}},sha:null,ops:[],ls:[],timer:null,busy:false,emT:0};
+const GH={cfg:{mode:'github',owner:'',repo:'',branch:'main',token:'',path:'data.json',sbUrl:'',sbKey:''},data:{works:{},grids:{},meta:{}},sha:null,ops:[],lz:{},ls:[],timer:null,busy:false,emT:0};
 let SB=null,SBUSER=null,SBCH=null;
 const clone=x=>JSON.parse(JSON.stringify(x));
 const isSb=()=>GH.cfg.mode==='supabase';
@@ -2382,17 +2382,20 @@ function sbInit(){
   SB.auth.onAuthStateChange((ev,sess)=>{SBUSER=sess?sess.user:null;S.canWrite=ghReady();updBtn();render()});
   SB.auth.getSession().then(({data})=>{if(data&&data.session)SBUSER=data.session.user;S.canWrite=ghReady();updBtn();render()}).catch(()=>{});
   sbRealtime()}
+let SBOK=false,SBSEEN=false;
+const HEAVY=/^(ph|pimg)-/;
+async function lazyFetch(c,id){const k=c+'/'+id;if(GH.lz[k]||!SB)return;GH.lz[k]=1;try{const {data}=await SB.from('docs').select('data').eq('col',c).eq('id',id).maybeSingle();if(data&&data.data){(GH.data[c]=GH.data[c]||{})[id]=data.data;GH.ls.filter(l=>l.id===id&&l.c===c).forEach(emit)}}catch(e){GH.lz[k]=0}}
 function sbRealtime(){if(SBCH||!SB)return;
   SBCH=SB.channel('docs-sync').on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
     const r=p.eventType==='DELETE'?p.old:p.new;if(!r||!r.col)return;
     const d=GH.data;d[r.col]=d[r.col]||{};
     if(p.eventType==='DELETE')delete d[r.col][r.id];else d[r.col][r.id]=r.data;
-    clearTimeout(GH.emT);GH.emT=setTimeout(()=>{GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()},200)}).subscribe()}
+    clearTimeout(GH.emT);GH.emT=setTimeout(()=>{GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()},200)}).subscribe(st=>{if(st==='SUBSCRIBED'){if(SBSEEN)load();SBSEEN=true;SBOK=true}else SBOK=false})}
 const apiUrl=()=>`https://api.github.com/repos/${GH.cfg.owner}/${GH.cfg.repo}/contents/${GH.cfg.path}`;
 const hdr=(raw)=>({Authorization:'Bearer '+GH.cfg.token,Accept:raw?'application/vnd.github.raw+json':'application/vnd.github+json'});
 function b64enc(str){const b=new TextEncoder().encode(str);let s='';b.forEach(x=>s+=String.fromCharCode(x));return btoa(s)}
 async function sbRead(){const out={works:{},grids:{},meta:{}};
-  for(let from=0;;from+=1000){const {data,error}=await SB.from('docs').select('col,id,data').range(from,from+999);
+  for(let from=0;;from+=1000){const {data,error}=await SB.from('docs').select('col,id,data').not('id','like','ph-%').not('id','like','pimg-%').range(from,from+999);
     if(error)throw new Error('Supabase: '+error.message);
     data.forEach(r=>{(out[r.col]=out[r.col]||{})[r.id]=r.data});if(data.length<1000)break}
   return out}
@@ -2411,7 +2414,7 @@ function applyOp(d,op){const [col,id]=op.path.split('/');d[col]=d[col]||{};
   else if(op.t==='update'){if(d[col][id])d[col][id]=merge(d[col][id],op.data)}
   else if(op.t==='delete')delete d[col][id]}
 function emit(l){const d=GH.data;
-  if(l.id){const x=(d[l.c]||{})[l.id];l.cb({exists:!!x,data:()=>x})}
+  if(l.id){const x=(d[l.c]||{})[l.id];if(!x&&SB&&isSb()&&HEAVY.test(l.id))lazyFetch(l.c,l.id);l.cb({exists:!!x,data:()=>x})}
   else l.cb({docs:Object.entries(d[l.c]||{}).map(([id,x])=>({id,data:()=>x}))})}
 const emitAll=()=>GH.ls.forEach(emit);
 function stat(t){const e=$('#ghstat');if(e)e.textContent=t}
@@ -2444,7 +2447,7 @@ const dbAdapter={
   collection:c=>({onSnapshot(cb){const l={c,cb};GH.ls.push(l);emit(l);return()=>{GH.ls=GH.ls.filter(x=>x!==l)}}}),
   doc:p=>{const [c,id]=p.split('/');return{onSnapshot(cb){const l={c,id,cb};GH.ls.push(l);emit(l);return()=>{GH.ls=GH.ls.filter(x=>x!==l)}},
     set:d=>queueOp({t:'set',path:p,data:d}),update:d=>queueOp({t:'update',path:p,data:d}),delete:()=>queueOp({t:'delete',path:p})}}};
-async function poll(){if(GH.busy||GH.ops.length||document.hidden)return;
+async function poll(){if(GH.busy||GH.ops.length||document.hidden)return;if(isSb()&&SB&&SBOK)return;
   try{const d=await ghRead();if(JSON.stringify(d)!==JSON.stringify(GH.data)){GH.data=d;emitAll()}}catch(e){}}
 async function importSeed(){
   if(!(isSb()&&ghReady()))return toast('เข้าสู่ระบบ Supabase ก่อน');
@@ -2498,7 +2501,7 @@ function connDialog(){const c=GH.cfg;
 const ghDialog=connDialog;
 async function load(){
   S.canWrite=ghReady();S.loadErr='';
-  try{GH.data=await ghRead();GH.data.works=GH.data.works||{};GH.data.grids=GH.data.grids||{};GH.data.meta=GH.data.meta||{};GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()}catch(e){S.loadErr=e.message}
+  try{GH.lz={};GH.data=await ghRead();GH.data.works=GH.data.works||{};GH.data.grids=GH.data.grids||{};GH.data.meta=GH.data.meta||{};GH.ops.forEach(o=>applyOp(GH.data,o));emitAll()}catch(e){S.loadErr=e.message}
   updBtn();stat('');render()}
 async function boot(){
   ghLoadCfg();sbInit();
