@@ -471,7 +471,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 <script>
 (function(){
 'use strict';
-const S={works:{},grids:{},meta:{levels:{'0':'ฐานราก'},buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},clients:{},pcf:false,view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,pv:null,_pp:null,planhide:{},sched:{},sb:'ALL',sw:'ALL',sst:'ALL',sm:'list',planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
+const S={works:{},grids:{},meta:{levels:{'0':'ฐานราก'},buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},clients:{},pcf:false,view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,pv:null,_pp:null,planhide:{},sched:{},sb:'ALL',sw:'ALL',sst:'ALL',sm:'work',planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
 const MS=[['done','เสร็จ'],['cm','CM CLOSE'],['qc2','QC2 CLOSE']];
 const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)'};
 const mL=(w,k)=>((w.msl&&w.msl[k])||MS.find(x=>x[0]===k)[1]);
@@ -743,15 +743,15 @@ const schedList=()=>Object.entries(S.sched||{}).filter(([,v])=>v&&v.b&&v.w&&!isN
 const schedZone=it=>`${it.z?esc(it.z)+' · ':''}ตึก ${esc(it.b)} · ${it.f?'ชั้น '+esc(it.f):'ทุกชั้น'} · ${it.r?'ห้อง '+esc(it.r):'ทุกห้อง/จุด'}`;
 function schedSave(id,it){const d=S.db.doc('meta/sched');S.sched[id]=it;const p=S._schedEx?d.update({[id]:it}):d.set({[id]:it});S._schedEx=true;render();return p}
 function schedDel(id){delete S.sched[id];S.db.doc('meta/sched').update({[id]:null});render()}
-function schedForm(id){
+function schedForm(id,pre){
   if(!(S.canWrite&&S.db))return toast('ต้องมีสิทธิ์แก้ไข');
-  const cur=id?S.sched[id]:null,bs=S.meta.buildings,ws=worksSorted(),t0=todayS();
+  const cur=id?S.sched[id]:null,bs=S.meta.buildings,ws=worksSorted(),t0=todayS();pre=pre||{};
   modal(`<h2>${cur?'แก้ไขแผน':'เพิ่มแผนงาน'}</h2>
    <div class="field"><label for="sc_z">ชื่อโซน / ทีมงาน (ไม่บังคับ)</label><input id="sc_z" type="text" value="${esc(cur?cur.z||'':'')}" placeholder="เช่น โซน A / ทีมช่างกระเบื้อง 1"></div>
-   <div class="field"><label>ตึก</label><div class="chips">${bs.map(b=>`<label class="chk"><input type="${cur?'radio':'checkbox'}" name="sc_b" class="sc_b" value="${esc(b)}" ${cur?(cur.b===b?'checked':''):(S.sb==='ALL'||S.sb===b?'checked':'')}> ตึก ${esc(b)}</label>`).join('')}</div></div>
+   <div class="field"><label>ตึก</label><div class="chips">${bs.map(b=>`<label class="chk"><input type="${cur?'radio':'checkbox'}" name="sc_b" class="sc_b" value="${esc(b)}" ${cur?(cur.b===b?'checked':''):(pre.b?(pre.b===b?'checked':''):(S.sb==='ALL'||S.sb===b?'checked':''))}> ตึก ${esc(b)}</label>`).join('')}</div></div>
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="sc_f">ชั้น (ว่าง = ทุกชั้น · 2 หรือ 2-7 หรือ 1,3,5)</label><input id="sc_f" type="text" value="${esc(cur?cur.f||'':'')}"></div>
     <div class="field" style="flex:1;min-width:130px"><label for="sc_r">ห้อง/จุด (ว่าง = ทั้งหมด · 01-08 หรือ 01,02)</label><input id="sc_r" type="text" value="${esc(cur?cur.r||'':'')}"></div></div>
-   <div class="field"><label for="sc_w">งาน</label><select id="sc_w">${ws.map(w=>`<option value="${w.id}" ${cur&&cur.w===w.id?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>
+   <div class="field"><label for="sc_w">งาน</label><select id="sc_w">${ws.map(w=>`<option value="${w.id}" ${(cur?cur.w:pre.w)===w.id?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="sc_s">วันเริ่มตามแผน</label><input id="sc_s" type="date" value="${esc(cur?cur.s:t0)}"></div>
     <div class="field" style="flex:1;min-width:130px"><label for="sc_e">กำหนดเสร็จตามแผน</label><input id="sc_e" type="date" value="${esc(cur?cur.e:'')}"></div></div>
    <div class="field"><label for="sc_n">หมายเหตุ</label><input id="sc_n" type="text" value="${esc(cur?cur.n||'':'')}"></div>
@@ -779,7 +779,12 @@ function vSched(){
    <div class="row" style="margin-top:12px"><div class="chips">${bs.map(b=>`<button class="chip" data-a="sb" data-b="${esc(b)}" aria-pressed="${S.sb===b}">${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</button>`).join('')}</div>
     <div class="chips"><button class="chip" data-a="sw" data-w="ALL" aria-pressed="${S.sw==='ALL'}">ทุกงาน</button>${ws.map(w=>`<button class="chip" data-a="sw" data-w="${w.id}" aria-pressed="${S.sw===w.id}">${esc(w.name)}</button>`).join('')}</div></div>
    <div class="sgrid">${[['ALL','ทั้งหมด',all.filter(x=>(S.sb==='ALL'||x.b===S.sb)&&(S.sw==='ALL'||x.w===S.sw)).length,'var(--ink)'],['late','เกินกำหนด',cnt('late'),'#d64545'],['behind','ช้ากว่าแผน',cnt('behind'),'#e07b39'],['soon','ใกล้ครบกำหนด',cnt('soon'),'#e3a82b'],['ok','ตามแผน',cnt('ok'),'#2f7fb8'],['wait','ยังไม่เริ่ม',cnt('wait'),'#8a949a'],['done','เสร็จแล้ว',cnt('done'),'#25936a']].map(([k,l,n,c])=>`<button class="scard" data-a="sst" data-k="${k}" aria-pressed="${S.sst===k}"><b style="color:${c}">${n}</b><span>${l}</span></button>`).join('')}</div>
-   <div class="row noexp" style="margin-top:10px"><div class="chips"><button class="chip" data-a="sm" data-k="list" aria-pressed="${S.sm==='list'}">ตาราง</button><button class="chip" data-a="sm" data-k="gantt" aria-pressed="${S.sm==='gantt'}">ไทม์ไลน์</button></div></div>`;
+   <div class="row noexp" style="margin-top:10px"><div class="chips"><button class="chip" data-a="sm" data-k="work" aria-pressed="${S.sm==='work'}">แยกตามงาน</button><button class="chip" data-a="sm" data-k="list" aria-pressed="${S.sm==='list'}">ตาราง</button><button class="chip" data-a="sm" data-k="gantt" aria-pressed="${S.sm==='gantt'}">ไทม์ไลน์</button></div></div>`;
+  if(S.sm==='work'){const bl=S.sb==='ALL'?S.meta.buildings:[S.sb],wl=S.sw==='ALL'?ws:ws.filter(w=>w.id===S.sw),cw=S.canWrite&&S.db;
+    h+=`<section class="sec">${wl.map(w=>{const rows=bl.map(b=>{const ps=all.filter(x=>x.w===w.id&&x.b===b).sort((a,c)=>dnum(a.s)-dnum(c.s)),pr=schedProg({w:w.id,b,f:'',r:''});
+      return `<div class="srow" style="align-items:flex-start"><div style="min-width:80px"><b>ตึก ${esc(b)}</b><div class="sub">จริง ${pr==null?'-':fmt(pr)}</div></div><div style="flex:1">${ps.length?ps.map(x=>`<div class="sub" style="margin:2px 0"><button class="chip" data-a="schededit" data-id="${x.id}" ${cw?'':'disabled'} style="border-color:${x.st.c};color:${x.st.c}">${esc(x.st.l)}</button> ${schedZone(x).replace(/ตึก [^ ]+ · /,'')} · ${fd(x.s)} – ${fd(x.e)}${x.pr!=null?' · '+fmt(x.pr):''}</div>`).join(''):'<div class="sub">ยังไม่มีแผน</div>'}</div>${cw?`<button class="btn noexp" data-a="schedadd" data-w="${w.id}" data-b="${esc(b)}">+ แผน</button>`:''}</div>`}).join('');
+      const n=all.filter(x=>x.w===w.id&&bl.includes(x.b)).length;
+      return `<div class="card schedc"><h3>${esc(w.name)} <span class="sub">· ${n} แผน</span></h3>${rows}</div>`}).join('')}</section>`;return h}
   if(!all.length)return h+`<div class="card empty" style="margin-top:16px">ยังไม่มีแผนงาน ${S.canWrite&&S.db?'กด “+ เพิ่มแผน” เพื่อกำหนดวันเสร็จของแต่ละโซน เช่น ตึก E ชั้น 1-3 งานกระเบื้อง เสร็จ 15 พ.ย.':''}</div>`;
   if(!L.length)return h+`<div class="card empty" style="margin-top:16px">ไม่มีรายการตามตัวกรองนี้</div>`;
   if(S.sm==='gantt'){
@@ -2317,7 +2322,7 @@ document.addEventListener('click',async e=>{
   else if(a==='pdraw'){S._pp=null;S._drag=false;S.pd=S.pd===true?false:true;render()}
   else if(a==='ppoly'){S._pp=null;S._drag=false;S.pd=S.pd==='poly'?false:'poly';render()}
   else if(a==='pfin')polyFinish();
-  else if(a==='schedadd')schedForm();
+  else if(a==='schedadd')schedForm(null,{w:d.w,b:d.b});
   else if(a==='schededit')schedForm(d.id);
   else if(a==='sb'){S.sb=d.b;render()}
   else if(a==='sw'){S.sw=d.w;render()}
