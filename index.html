@@ -360,6 +360,21 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 .gr0,.gtr{height:44px}.gr0{padding:0 10px;display:flex;flex-direction:column;justify-content:center;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--line);line-height:1.25}.gr0 .sub{font-size:11px;overflow:hidden;text-overflow:ellipsis}
 .gs{flex:1;overflow-x:auto;min-width:0}.gmh{display:flex;border-bottom:1px solid var(--line)}.gm{flex:none;text-align:center;border-right:1px solid var(--line);overflow:hidden}
 .gtr{position:relative;border-bottom:1px solid var(--line)}.gbar{position:absolute;top:10px;height:24px;border:1px solid;border-radius:6px;overflow:hidden;padding:0;cursor:pointer;min-width:6px}.gbar i{position:absolute;left:0;top:0;bottom:0;opacity:.85}.gbar span{position:relative;font-size:11px;font-weight:700;color:var(--ink);padding:0 5px;text-shadow:0 0 3px var(--surface)}
+.mspw{overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);max-height:calc(100vh - 230px)}.mi{min-width:max-content;position:relative}
+.mr{display:flex;height:28px;border-bottom:1px solid var(--line)}.mr.h{height:auto;display:block;position:sticky;top:0;z-index:4;background:var(--surface)}.mh{display:flex}
+.ml{flex:0 0 560px;display:flex;position:sticky;left:0;z-index:3;background:var(--surface);border-right:2px solid var(--line)}
+.ml>div{padding:0 6px;font-size:12px;line-height:27px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line);box-sizing:border-box}
+.ml .c0{flex:0 0 38px;color:var(--muted)}.ml .c1{flex:0 0 240px}.ml .c2{flex:0 0 60px;text-align:right}.ml .c3,.ml .c4{flex:0 0 82px}.ml .c5{flex:0 0 58px;text-align:right;border-right:0}
+.mr.sum .ml{box-shadow:inset 0 0 0 999px rgba(127,127,127,.12);font-weight:700}.mr.sum .mt{background-color:rgba(127,127,127,.06)}
+.mr.h .ml>div{font-weight:700;color:var(--muted);line-height:44px}.mr.h .ml{height:44px}
+.mt{position:relative;flex:none}.mh1,.mh2{display:flex;height:22px;font-size:11px;color:var(--muted);line-height:22px;border-bottom:1px solid var(--line)}
+.mh1 div,.mh2 div{flex:none;overflow:hidden;text-align:center;border-right:1px solid var(--line);box-sizing:border-box;white-space:nowrap}
+.mbar{position:absolute;top:5px;height:18px;border-radius:3px;border:1px solid;cursor:grab;overflow:hidden;touch-action:none;box-sizing:border-box}.mbar i{position:absolute;left:0;top:0;bottom:0;opacity:.9;pointer-events:none}
+.mbar b{position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize}.mbar b.l{left:0}.mbar b.r{right:0}
+.mlb{position:absolute;top:6px;font-size:11px;color:var(--muted);white-space:nowrap;pointer-events:none}
+.msum{position:absolute;top:8px;height:8px;background:var(--ink);border-radius:1px;pointer-events:none}.msum:before,.msum:after{content:"";position:absolute;top:6px;border:5px solid transparent;border-top:6px solid var(--ink);border-bottom:0}.msum:before{left:0}.msum:after{right:0}
+.mtd{position:absolute;top:0;bottom:0;width:2px;background:#d64545;opacity:.85;pointer-events:none;z-index:2}
+.expscope .mspw{overflow:visible;max-height:none}.expscope .ml,.expscope .mr.h{position:static}.expscope .mbar{cursor:default}
 .gtd{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:.9;pointer-events:none}
 @media(max-width:640px){.gl{flex-basis:130px}}
 .chk{display:flex;gap:6px;align-items:center;font-size:13px}
@@ -471,7 +486,7 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 <script>
 (function(){
 'use strict';
-const S={works:{},grids:{},meta:{levels:{'0':'ฐานราก'},buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},clients:{},pcf:false,view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,pv:null,_pp:null,planhide:{},sched:{},sb:'ALL',sw:'ALL',sst:'ALL',sm:'work',planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
+const S={works:{},grids:{},meta:{levels:{'0':'ฐานราก'},buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},clients:{},pcf:false,view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,pv:null,_pp:null,planhide:{},sched:{},sb:'ALL',sw:'ALL',sst:'ALL',sm:'msp',planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
 const MS=[['done','เสร็จ'],['cm','CM CLOSE'],['qc2','QC2 CLOSE']];
 const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)'};
 const mL=(w,k)=>((w.msl&&w.msl[k])||MS.find(x=>x[0]===k)[1]);
@@ -726,7 +741,7 @@ function schedRooms(t){const t0=String(t||'').trim();if(!t0)return null;const o=
 function schedFloors(t){const t0=String(t||'').trim();if(!t0)return null;const r=parseFloors(t0);return r?new Set(r):null}
 function schedHit(it,b,f,c){if(it.b!==b)return false;const fl=schedFloors(it.f),rm=schedRooms(it.r);return (!fl||fl.has(String(f)))&&(!rm||rm.has(c))}
 function schedProg(it){const w=S.works[it.w];if(!w)return null;const mi=msIdx(w,'done'),fl=schedFloors(it.f),rm=schedRooms(it.r);let num=0,den=0;
-  for(const g of gridsOf(it.w,it.b)){if(g.rowLabel&&fl)continue;
+  for(const g of gridsOf(it.w,it.b)){if(it.i&&g.item!==it.i)continue;if(g.rowLabel&&fl)continue;
     for(const [k,v] of Object.entries(g.cells||{})){if(!has(v))continue;const i=k.indexOf('-'),f=k.slice(0,i),c=k.slice(i+1);
       if(!g.rowLabel){if(fl&&!fl.has(f))continue}if(rm&&!rm.has(c))continue;den++;
       if(g.kind==='percent')num+=Math.max(0,Math.min(100,+v||0))/100;else if(mi!=null&&sIdx(w,v)>=mi)num++}}
@@ -740,6 +755,7 @@ function schedState(it,prog){const s=dnum(it.s),e=dnum(it.e),t=todayN();
   if(e-t<=3&&(prog==null||prog<1))return{k:'soon',l:'ใกล้ครบกำหนด',c:'#e3a82b'};
   return{k:'ok',l:'ตามแผน',c:'#2f7fb8'}}
 const schedList=()=>Object.entries(S.sched||{}).filter(([,v])=>v&&v.b&&v.w&&!isNaN(dnum(v.s))&&!isNaN(dnum(v.e))).map(([id,v])=>{const pr=schedProg(v);return{id,...v,pr,st:schedState(v,pr)}});
+const schedNm=it=>esc((S.works[it.w]||{}).name||'ไม่พบงาน')+(it.i?' · '+esc(it.i):'');
 const schedZone=it=>`${it.z?esc(it.z)+' · ':''}ตึก ${esc(it.b)} · ${it.f?'ชั้น '+esc(it.f):'ทุกชั้น'} · ${it.r?'ห้อง '+esc(it.r):'ทุกห้อง/จุด'}`;
 function schedSave(id,it){const d=S.db.doc('meta/sched');S.sched[id]=it;const p=S._schedEx?d.update({[id]:it}):d.set({[id]:it});S._schedEx=true;render();return p}
 function schedDel(id){delete S.sched[id];S.db.doc('meta/sched').update({[id]:null});render()}
@@ -752,10 +768,14 @@ function schedForm(id,pre){
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="sc_f">ชั้น (ว่าง = ทุกชั้น · 2 หรือ 2-7 หรือ 1,3,5)</label><input id="sc_f" type="text" value="${esc(cur?cur.f||'':'')}"></div>
     <div class="field" style="flex:1;min-width:130px"><label for="sc_r">ห้อง/จุด (ว่าง = ทั้งหมด · 01-08 หรือ 01,02)</label><input id="sc_r" type="text" value="${esc(cur?cur.r||'':'')}"></div></div>
    <div class="field"><label for="sc_w">งาน</label><select id="sc_w">${ws.map(w=>`<option value="${w.id}" ${(cur?cur.w:pre.w)===w.id?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>
+   <div class="field"><label for="sc_i">รายการงาน (item) ที่ใช้คิด % ความคืบหน้า</label><select id="sc_i"></select></div>
    <div class="row"><div class="field" style="flex:1;min-width:130px"><label for="sc_s">วันเริ่มตามแผน</label><input id="sc_s" type="date" value="${esc(cur?cur.s:t0)}"></div>
     <div class="field" style="flex:1;min-width:130px"><label for="sc_e">กำหนดเสร็จตามแผน</label><input id="sc_e" type="date" value="${esc(cur?cur.e:'')}"></div></div>
    <div class="field"><label for="sc_n">หมายเหตุ</label><input id="sc_n" type="text" value="${esc(cur?cur.n||'':'')}"></div>
    <div class="row"><button class="btn pri" data-ok>บันทึก</button>${cur?'<button class="btn danger" data-del>ลบ</button>':''}<button class="btn" data-x>ยกเลิก</button></div>`,el=>{
+   const fillI=()=>{const w=$('#sc_w').value,bb=(el.querySelector('.sc_b:checked')||{}).value,names=[...new Set(gridsOf(w,bb).map(g=>g.item))],sel=$('#sc_i'),keep=sel.dataset.k!==undefined?sel.value:(cur?cur.i||'':pre.i||'');
+     sel.innerHTML='<option value="">ทุกรายการของงานนี้</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');sel.value=names.includes(keep)?keep:'';sel.dataset.k=1};
+   fillI();$('#sc_w').onchange=fillI;el.querySelectorAll('.sc_b').forEach(x=>x.onchange=fillI);
    el.onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-x'))return closeM();
      if(b.hasAttribute('data-del')){closeM();return schedDel(id)}
      if(!b.hasAttribute('data-ok'))return;
@@ -763,12 +783,46 @@ function schedForm(id,pre){
      if(!bl.length)return toast('เลือกตึกอย่างน้อย 1 ตึก');if(!w)return toast('เลือกงาน');
      if(isNaN(dnum(s0))||isNaN(dnum(e0)))return toast('ระบุวันเริ่มและวันเสร็จ');if(dnum(e0)<dnum(s0))return toast('กำหนดเสร็จต้องไม่ก่อนวันเริ่ม');
      if(f&&!parseFloors(f))return toast('รูปแบบชั้นไม่ถูกต้อง เช่น 2 หรือ 2-7');
-     const base={z:$('#sc_z').value.trim(),f,r,w,s:s0,e:e0,n:$('#sc_n').value.trim()};closeM();
+     const base={z:$('#sc_z').value.trim(),i:$('#sc_i').value,f,r,w,s:s0,e:e0,n:$('#sc_n').value.trim()};closeM();
      try{if(cur){await schedSave(id,{...base,b:bl[0]})}else{for(const x of bl)await schedSave('s'+uid(),{...base,b:x})}toast('บันทึกแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}})}
 function schedCard(list,title){if(!list.length)return '';
-  return `<div class="card schedc"><h3>${title}</h3>${list.map(it=>`<div class="srow"><div><b>${esc((S.works[it.w]||{}).name||'')}</b><div class="sub">${schedZone(it)}</div></div><div class="sr"><span class="sbadge" style="background:${it.st.c}">${it.st.l}</span><div class="sub">${fd(it.s)} – ${fd(it.e)}${it.pr!=null?' · '+fmt(it.pr):''}</div></div></div>`).join('')}</div>`}
+  return `<div class="card schedc"><h3>${title}</h3>${list.map(it=>`<div class="srow"><div><b>${schedNm(it)}</b><div class="sub">${schedZone(it)}</div></div><div class="sr"><span class="sbadge" style="background:${it.st.c}">${it.st.l}</span><div class="sub">${fd(it.s)} – ${fd(it.e)}${it.pr!=null?' · '+fmt(it.pr):''}</div></div></div>`).join('')}</div>`}
 function schedPanel(b,f){let l2;if(S.ps){l2=schedList().filter(x=>schedHit(x,b,f,S.ps)),l2.sort((a,c)=>dnum(a.e)-dnum(c.e));return schedCard(l2.slice(0,6),'แผนงานของห้องนี้')}
   l2=schedList().filter(x=>x.b===b&&(!schedFloors(x.f)||schedFloors(x.f).has(String(f)))&&x.st.k!=='done');l2.sort((a,c)=>dnum(a.e)-dnum(c.e));return schedCard(l2.slice(0,5),'แผนงานที่ต้องตามของชั้นนี้')}
+const dstr=n=>new Date(n*DAY).toISOString().slice(0,10);
+function vMsp(L,t){
+  const z=S.mz||'week',dw={day:26,week:11,month:4}[z];
+  const g=new Map();for(const x of L){if(!g.has(x.w))g.set(x.w,[]);g.get(x.w).push(x)}
+  const order=worksSorted().map(w=>w.id).filter(id=>g.has(id));
+  let mn=Math.min(...L.map(x=>dnum(x.s)),t)-3,mx=Math.max(...L.map(x=>dnum(x.e)),t)+7;
+  mn-=(new Date(mn*DAY).getUTCDay()+6)%7;mx+=6-((mx-mn)%7);const n=mx-mn+1,W=n*dw;
+  const sh=[];let mh1='',mh2='';
+  for(let d=mn;d<=mx;){const dt=new Date(d*DAY),me=Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth()+1,1)/DAY,end=Math.min(mx+1,me);
+    mh1+=`<div style="width:${(end-d)*dw}px">${dt.toLocaleDateString('th-TH',{month:'long',year:'numeric',timeZone:'UTC'})}</div>`;d=end}
+  if(z==='day')for(let d=mn;d<=mx;d++)mh2+=`<div style="width:${dw}px">${new Date(d*DAY).getUTCDate()}</div>`;
+  else for(let d=mn;d<=mx;d+=7)mh2+=`<div style="width:${7*dw}px">${dw>=8?new Date(d*DAY).getUTCDate():''}</div>`;
+  const bg=`background-image:${dw>=10?`repeating-linear-gradient(90deg,transparent 0,transparent ${5*dw}px,rgba(127,127,127,.13) ${5*dw}px,rgba(127,127,127,.13) ${7*dw}px),`:''}repeating-linear-gradient(90deg,var(--line) 0,var(--line) 1px,transparent 1px,transparent ${7*dw}px)`;
+  const td=`<div class="mtd" style="left:${(t-mn+.5)*dw}px"></div>`,cw=S.canWrite&&S.db;
+  let rows='',k=0;
+  for(const id of order){const ts=g.get(id).sort((a,c)=>dnum(a.s)-dnum(c.s)||dnum(a.e)-dnum(c.e)),s0=Math.min(...ts.map(x=>dnum(x.s))),e0=Math.max(...ts.map(x=>dnum(x.e)));
+    let nu=0,de=0;for(const x of ts)if(x.pr!=null){const du=dnum(x.e)-dnum(x.s)+1;nu+=x.pr*du;de+=du}const sp=de?nu/de:null;k++;
+    rows+=`<div class="mr sum"><div class="ml"><div class="c0">${k}</div><div class="c1" title="${esc((S.works[id]||{}).name||'')}">${esc((S.works[id]||{}).name||'')}</div><div class="c2">${e0-s0+1} วัน</div><div class="c3">${fd(dstr(s0))}</div><div class="c4">${fd(dstr(e0))}</div><div class="c5">${sp==null?'':fmt(sp)}</div></div>
+     <div class="mt" style="width:${W}px;${bg}"><div class="msum" style="left:${(s0-mn)*dw}px;width:${(e0-s0+1)*dw}px"></div>${sp==null?'':`<span class="mlb" style="left:${(e0-mn+1)*dw+14}px">${fmt(sp)}</span>`}${td}</div></div>`;
+    ts.forEach((x,j)=>{const a=dnum(x.s),b=dnum(x.e),nm=(x.i||(S.works[x.w]||{}).name||'')+' · ตึก '+x.b+(x.f?' ชั้น '+x.f:'')+(x.r?' ห้อง '+x.r:'')+(x.z?' ('+x.z+')':'');
+      rows+=`<div class="mr"><div class="ml"><div class="c0">${k}.${j+1}</div><div class="c1" data-a="schededit" data-id="${x.id}" style="cursor:pointer;padding-left:16px" title="${esc(nm)}">${esc(nm)}</div><div class="c2">${b-a+1} วัน</div><div class="c3">${fd(x.s)}</div><div class="c4">${fd(x.e)}</div><div class="c5">${x.pr==null?'':fmt(x.pr)}</div></div>
+       <div class="mt" data-dw="${dw}" style="width:${W}px;${bg}"><div class="mbar" data-id="${x.id}" data-s="${a}" data-e="${b}" data-mn="${mn}" style="left:${(a-mn)*dw}px;width:${(b-a+1)*dw}px;background:${x.st.c}33;border-color:${x.st.c}" title="${esc(nm)} · ${esc(fd(x.s))} – ${esc(fd(x.e))} · ${esc(x.st.l)}"><i style="width:${(x.pr||0)*100}%;background:${x.st.c}"></i>${cw?'<b class="l"></b><b class="r"></b>':''}</div><span class="mlb" style="left:${(b-mn+1)*dw+4}px">${x.pr==null?'':fmt(x.pr)}</span>${td}</div></div>`})}
+  return `<section class="sec"><div class="row noexp" style="margin-bottom:8px"><span class="sub">มาตราเวลา</span><div class="chips">${[['day','วัน'],['week','สัปดาห์'],['month','เดือน']].map(([v,l])=>`<button class="chip" data-a="mz" data-k="${v}" aria-pressed="${z===v}">${l}</button>`).join('')}</div></div>
+   <div class="mspw"><div class="mi"><div class="mr h"><div class="mh"><div class="ml"><div class="c0">#</div><div class="c1">ชื่องาน</div><div class="c2">ระยะเวลา</div><div class="c3">เริ่มต้น</div><div class="c4">เสร็จสิ้น</div><div class="c5">% เสร็จ</div></div><div class="mt" style="width:${W}px"><div class="mh1">${mh1}</div><div class="mh2">${mh2}</div></div></div></div>${rows}</div></div>
+   <div class="sub" style="margin-top:6px">แถบสีทึบบางส่วน = ความคืบหน้าจริง · เส้นแดง = วันนี้ · แถบดำ = ภาพรวมของงาน${cw?' · ลากแถบเพื่อเลื่อนวัน ลากขอบแถบเพื่อปรับระยะเวลา · กดชื่อเพื่อแก้ไข':''}</div></section>`}
+document.addEventListener('pointerdown',e=>{const bar=e.target.closest&&e.target.closest('.mbar');if(!bar||!(S.canWrite&&S.db))return;
+  const id=bar.dataset.id,it=S.sched[id];if(!it)return;const mt=bar.parentNode,dw=+mt.dataset.dw,s0=+bar.dataset.s,e0=+bar.dataset.e,mn=+bar.dataset.mn,x0=e.clientX,mode=e.target.tagName==='B'?e.target.className:'m';let dd=0,mv=false,ns=s0,ne=e0;
+  e.preventDefault();bar.setPointerCapture(e.pointerId);
+  const mvf=ev=>{if(Math.abs(ev.clientX-x0)>3)mv=true;if(!mv)return;dd=Math.round((ev.clientX-x0)/dw);ns=s0;ne=e0;if(mode==='m'){ns+=dd;ne+=dd}else if(mode==='l')ns=Math.min(s0+dd,e0);else ne=Math.max(e0+dd,s0);
+    bar.style.left=(ns-mn)*dw+'px';bar.style.width=(ne-ns+1)*dw+'px';bar.title=fd(dstr(ns))+' – '+fd(dstr(ne))};
+  const up=async()=>{bar.removeEventListener('pointermove',mvf);bar.removeEventListener('pointerup',up);bar.removeEventListener('pointercancel',up);
+    if(!mv)return schedForm(id);if(ns===s0&&ne===e0)return;
+    try{await schedSave(id,{...it,s:dstr(ns),e:dstr(ne)});toast('ปรับวันที่แล้ว')}catch(err){toast('บันทึกไม่สำเร็จ');render()}};
+  bar.addEventListener('pointermove',mvf);bar.addEventListener('pointerup',up);bar.addEventListener('pointercancel',up)});
 function vSched(){
   const all=schedList(),bs=['ALL',...S.meta.buildings],ws=worksSorted(),t=todayN();
   let L=all.filter(x=>(S.sb==='ALL'||x.b===S.sb)&&(S.sw==='ALL'||x.w===S.sw)&&(S.sst==='ALL'||x.st.k===S.sst||(S.sst==='risk'&&['late','behind'].includes(x.st.k))));
@@ -779,23 +833,26 @@ function vSched(){
    <div class="row" style="margin-top:12px"><div class="chips">${bs.map(b=>`<button class="chip" data-a="sb" data-b="${esc(b)}" aria-pressed="${S.sb===b}">${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</button>`).join('')}</div>
     <div class="chips"><button class="chip" data-a="sw" data-w="ALL" aria-pressed="${S.sw==='ALL'}">ทุกงาน</button>${ws.map(w=>`<button class="chip" data-a="sw" data-w="${w.id}" aria-pressed="${S.sw===w.id}">${esc(w.name)}</button>`).join('')}</div></div>
    <div class="sgrid">${[['ALL','ทั้งหมด',all.filter(x=>(S.sb==='ALL'||x.b===S.sb)&&(S.sw==='ALL'||x.w===S.sw)).length,'var(--ink)'],['late','เกินกำหนด',cnt('late'),'#d64545'],['behind','ช้ากว่าแผน',cnt('behind'),'#e07b39'],['soon','ใกล้ครบกำหนด',cnt('soon'),'#e3a82b'],['ok','ตามแผน',cnt('ok'),'#2f7fb8'],['wait','ยังไม่เริ่ม',cnt('wait'),'#8a949a'],['done','เสร็จแล้ว',cnt('done'),'#25936a']].map(([k,l,n,c])=>`<button class="scard" data-a="sst" data-k="${k}" aria-pressed="${S.sst===k}"><b style="color:${c}">${n}</b><span>${l}</span></button>`).join('')}</div>
-   <div class="row noexp" style="margin-top:10px"><div class="chips"><button class="chip" data-a="sm" data-k="work" aria-pressed="${S.sm==='work'}">แยกตามงาน</button><button class="chip" data-a="sm" data-k="list" aria-pressed="${S.sm==='list'}">ตาราง</button><button class="chip" data-a="sm" data-k="gantt" aria-pressed="${S.sm==='gantt'}">ไทม์ไลน์</button></div></div>`;
+   <div class="row noexp" style="margin-top:10px"><div class="chips"><button class="chip" data-a="sm" data-k="msp" aria-pressed="${S.sm==='msp'}">แบบ MS Project</button><button class="chip" data-a="sm" data-k="work" aria-pressed="${S.sm==='work'}">ทำแผนแยกตามงาน</button><button class="chip" data-a="sm" data-k="list" aria-pressed="${S.sm==='list'}">ตาราง</button><button class="chip" data-a="sm" data-k="gantt" aria-pressed="${S.sm==='gantt'}">ไทม์ไลน์</button></div></div>`;
+  if(S.sm==='msp'&&L.length)return h+vMsp(L,t);
   if(S.sm==='work'){const bl=S.sb==='ALL'?S.meta.buildings:[S.sb],wl=S.sw==='ALL'?ws:ws.filter(w=>w.id===S.sw),cw=S.canWrite&&S.db;
-    h+=`<section class="sec">${wl.map(w=>{const rows=bl.map(b=>{const ps=all.filter(x=>x.w===w.id&&x.b===b).sort((a,c)=>dnum(a.s)-dnum(c.s)),pr=schedProg({w:w.id,b,f:'',r:''});
-      return `<div class="srow" style="align-items:flex-start"><div style="min-width:80px"><b>ตึก ${esc(b)}</b><div class="sub">จริง ${pr==null?'-':fmt(pr)}</div></div><div style="flex:1">${ps.length?ps.map(x=>`<div class="sub" style="margin:2px 0"><button class="chip" data-a="schededit" data-id="${x.id}" ${cw?'':'disabled'} style="border-color:${x.st.c};color:${x.st.c}">${esc(x.st.l)}</button> ${schedZone(x).replace(/ตึก [^ ]+ · /,'')} · ${fd(x.s)} – ${fd(x.e)}${x.pr!=null?' · '+fmt(x.pr):''}</div>`).join(''):'<div class="sub">ยังไม่มีแผน</div>'}</div>${cw?`<button class="btn noexp" data-a="schedadd" data-w="${w.id}" data-b="${esc(b)}">+ แผน</button>`:''}</div>`}).join('');
+    const plRow=(w,b,i)=>{const ps=all.filter(x=>x.w===w.id&&x.b===b&&(x.i||'')===(i||'')).sort((a,c)=>dnum(a.s)-dnum(c.s)),pr=schedProg({w:w.id,b,i,f:'',r:''});
+      return `<div class="srow" style="align-items:flex-start"><div style="min-width:150px;flex:0 1 260px"><b>${i?esc(i):'ภาพรวมทุกรายการ'}</b><div class="sub">จริง ${pr==null?'-':fmt(pr)}</div></div><div style="flex:1">${ps.length?ps.map(x=>`<div class="sub" style="margin:2px 0"><button class="chip" data-a="schededit" data-id="${x.id}" ${cw?'':'disabled'} style="border-color:${x.st.c};color:${x.st.c}">${esc(x.st.l)}</button> ${schedZone(x).replace(/ตึก [^ ]+ · /,'')} · ${fd(x.s)} – ${fd(x.e)}${x.pr!=null?' · '+fmt(x.pr):''}</div>`).join(''):'<div class="sub">ยังไม่มีแผน</div>'}</div>${cw?`<button class="btn noexp" data-a="schedadd" data-w="${w.id}" data-b="${esc(b)}" data-i="${esc(i||'')}">+ แผน</button>`:''}</div>`};
+    h+=`<section class="sec">${wl.map(w=>{const blocks=bl.map(b=>{const names=[...new Set(gridsOf(w.id,b).map(g=>g.item))];if(!names.length)return '';
+      return `<div style="margin-top:10px"><div style="font-weight:700;color:var(--ink)">ตึก ${esc(b)} <span class="sub">· จริงรวม ${fmt(schedProg({w:w.id,b,f:'',r:''}))}</span></div>${names.map(n=>plRow(w,b,n)).join('')}</div>`}).join('');
       const n=all.filter(x=>x.w===w.id&&bl.includes(x.b)).length;
-      return `<div class="card schedc"><h3>${esc(w.name)} <span class="sub">· ${n} แผน</span></h3>${rows}</div>`}).join('')}</section>`;return h}
+      return `<div class="card schedc"><h3>${esc(w.name)} <span class="sub">· ${n} แผน</span></h3>${blocks||'<div class="sub">ไม่มีรายการงานในตึกที่เลือก</div>'}</div>`}).join('')}</section>`;return h}
   if(!all.length)return h+`<div class="card empty" style="margin-top:16px">ยังไม่มีแผนงาน ${S.canWrite&&S.db?'กด “+ เพิ่มแผน” เพื่อกำหนดวันเสร็จของแต่ละโซน เช่น ตึก E ชั้น 1-3 งานกระเบื้อง เสร็จ 15 พ.ย.':''}</div>`;
   if(!L.length)return h+`<div class="card empty" style="margin-top:16px">ไม่มีรายการตามตัวกรองนี้</div>`;
   if(S.sm==='gantt'){
     const mn=Math.min(...L.map(x=>dnum(x.s)),t)-2,mx=Math.max(...L.map(x=>dnum(x.e)),t)+3,dw=Math.max(10,Math.min(26,Math.floor(900/(mx-mn)))),W=(mx-mn+1)*dw;
     let mh='';for(let d=mn;d<=mx;){const dt=new Date(d*DAY),me=Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth()+1,1)/DAY,end=Math.min(mx+1,me);
       mh+=`<div class="gm" style="width:${(end-d)*dw}px">${dt.toLocaleDateString('th-TH',{month:'short',year:'2-digit',timeZone:'UTC'})}</div>`;d=end}
-    h+=`<section class="sec"><div class="card gantt"><div class="gl"><div class="gh0">โซน / งาน</div>${L.map(x=>`<div class="gr0" title="${esc(x.z||'')}"><b>${esc((S.works[x.w]||{}).name||'')}</b><span class="sub">${schedZone(x)}</span></div>`).join('')}</div>
+    h+=`<section class="sec"><div class="card gantt"><div class="gl"><div class="gh0">โซน / งาน</div>${L.map(x=>`<div class="gr0" title="${esc(x.z||'')}"><b>${schedNm(x)}</b><span class="sub">${schedZone(x)}</span></div>`).join('')}</div>
      <div class="gs"><div style="width:${W}px;position:relative"><div class="gmh">${mh}</div>
      ${L.map(x=>{const l=(dnum(x.s)-mn)*dw,w=(dnum(x.e)-dnum(x.s)+1)*dw,pr=x.pr==null?0:x.pr;return `<div class="gtr"><button class="gbar" data-a="schededit" data-id="${x.id}" style="left:${l}px;width:${w}px;background:${x.st.c}33;border-color:${x.st.c}" title="${esc(fd(x.s))} – ${esc(fd(x.e))} · ${esc(x.st.l)}"><i style="width:${pr*100}%;background:${x.st.c}"></i><span>${x.pr==null?'':fmt(x.pr)}</span></button></div>`}).join('')}
      <div class="gtd" style="left:${(t-mn+.5)*dw}px"></div></div></div></div><div class="sub" style="margin-top:6px">แถบสี = ช่วงเวลาตามแผน · ส่วนที่เติม = ความคืบหน้าจริง · เส้นแนวตั้ง = วันนี้ · กดแถบเพื่อแก้ไข</div></section>`}
-  else h+=`<section class="sec"><div class="tw"><table><thead><tr><th>โซน</th><th>งาน</th><th>เริ่ม</th><th>กำหนดเสร็จ</th><th>ความคืบหน้าจริง</th><th>สถานะ</th>${S.canWrite?'<th class="noexp"></th>':''}</tr></thead><tbody>${L.map(x=>{const dl=Math.round(dnum(x.e)-t);return `<tr><td>${schedZone(x)}${x.n?`<div class="sub">${esc(x.n)}</div>`:''}</td><td>${esc((S.works[x.w]||{}).name||'ไม่พบงาน')}</td><td>${fd(x.s)}</td><td>${fd(x.e)}<div class="sub">${x.st.k==='done'?'':dl>=0?'อีก '+dl+' วัน':'เกิน '+(-dl)+' วัน'}</div></td><td><div class="m" style="grid-template-columns:1fr 52px"><div class="bar"><i style="width:${x.pr==null?0:x.pr*100}%;background:${x.st.c}"></i></div><span class="v ${x.pr==null?'na':''}">${fmt(x.pr)}</span></div></td><td><span class="sbadge" style="background:${x.st.c}">${x.st.l}</span></td>${S.canWrite?`<td class="noexp"><button class="btn sm" data-a="schededit" data-id="${x.id}">แก้ไข</button></td>`:''}</tr>`}).join('')}</tbody></table></div></section>`;
+  else h+=`<section class="sec"><div class="tw"><table><thead><tr><th>โซน</th><th>งาน</th><th>เริ่ม</th><th>กำหนดเสร็จ</th><th>ความคืบหน้าจริง</th><th>สถานะ</th>${S.canWrite?'<th class="noexp"></th>':''}</tr></thead><tbody>${L.map(x=>{const dl=Math.round(dnum(x.e)-t);return `<tr><td>${schedZone(x)}${x.n?`<div class="sub">${esc(x.n)}</div>`:''}</td><td>${schedNm(x)}</td><td>${fd(x.s)}</td><td>${fd(x.e)}<div class="sub">${x.st.k==='done'?'':dl>=0?'อีก '+dl+' วัน':'เกิน '+(-dl)+' วัน'}</div></td><td><div class="m" style="grid-template-columns:1fr 52px"><div class="bar"><i style="width:${x.pr==null?0:x.pr*100}%;background:${x.st.c}"></i></div><span class="v ${x.pr==null?'na':''}">${fmt(x.pr)}</span></div></td><td><span class="sbadge" style="background:${x.st.c}">${x.st.l}</span></td>${S.canWrite?`<td class="noexp"><button class="btn sm" data-a="schededit" data-id="${x.id}">แก้ไข</button></td>`:''}</tr>`}).join('')}</tbody></table></div></section>`;
   return h}
 function vPlan(){
   const bs=planBs();if(!bs.length)return `<div class="card empty">ยังไม่มีแปลน ${S.canWrite&&S.db?'<br><button class="btn pri" data-a="padd" style="margin-top:10px">+ เพิ่มแปลน</button>':''}</div>`;
@@ -2259,7 +2316,7 @@ function buildClone(t,title){
   const DIMRGB='rgb('+hex3(dim()).join(', ')+')';
   c.querySelectorAll('[style]').forEach(e=>{if(e.style.backgroundColor===DIMRGB){e.style.backgroundColor='#c4c9c4';e.style.color='#14212a'}});
   scope.append(hd,c);document.body.appendChild(scope);
-  const wide=Math.max(0,...[...scope.querySelectorAll('.g')].map(g=>g.scrollWidth));
+  const wide=Math.max(0,...[...scope.querySelectorAll('.g,.mi')].map(g=>g.scrollWidth));
   scope.style.width=Math.max(t.g?640:1100,wide+80)+'px';
   return scope}
 async function runExport(t,title,o){
@@ -2270,7 +2327,7 @@ async function runExport(t,title,o){
   try{
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     const sr=scope.getBoundingClientRect();
-    const units=[...scope.querySelectorAll('tr,.hero,.wc,.heat,.ring,section.item,.sec>.card,.exphead')].map(e=>{const r=e.getBoundingClientRect();return [r.top-sr.top,r.bottom-sr.top]});
+    const units=[...scope.querySelectorAll('tr,.mr,.hero,.wc,.heat,.ring,section.item,.sec>.card,.exphead')].map(e=>{const r=e.getBoundingClientRect();return [r.top-sr.top,r.bottom-sr.top]});
     scope.querySelectorAll('h2,.sec>.head').forEach(e=>{const r=e.getBoundingClientRect();units.push([r.top-sr.top,r.bottom-sr.top+90])});
     const cssW=scope.offsetWidth,cssH=scope.offsetHeight,sc=Math.max(.5,Math.min(2,14000/cssW,14000/cssH));
     const cv=await html2canvas(scope,{scale:sc,backgroundColor:'#edf0ed',useCORS:true,logging:false});
@@ -2322,12 +2379,13 @@ document.addEventListener('click',async e=>{
   else if(a==='pdraw'){S._pp=null;S._drag=false;S.pd=S.pd===true?false:true;render()}
   else if(a==='ppoly'){S._pp=null;S._drag=false;S.pd=S.pd==='poly'?false:'poly';render()}
   else if(a==='pfin')polyFinish();
-  else if(a==='schedadd')schedForm(null,{w:d.w,b:d.b});
+  else if(a==='schedadd')schedForm(null,{w:d.w,b:d.b,i:d.i});
   else if(a==='schededit')schedForm(d.id);
   else if(a==='sb'){S.sb=d.b;render()}
   else if(a==='sw'){S.sw=d.w;render()}
   else if(a==='sst'){S.sst=S.sst===d.k?'ALL':d.k;render()}
   else if(a==='sm'){S.sm=d.k;render()}
+  else if(a==='mz'){S.mz=d.k;render()}
   else if(a==='pundo'){if(S._pp&&S._pp.length){S._pp.pop();if(!S._pp.length)S._drag=false;polyPreview()}}
   else if(a==='pvdel')polyDelVertex();
   else if(a==='pxf')planXform(d.x);
