@@ -492,9 +492,11 @@ input[type=color]{width:38px;height:34px;border:1px solid var(--line);border-rad
 'use strict';
 const S={works:{},grids:{},meta:{levels:{'0':'ฐานราก'},buildings:['D','E','F','G'],name:'Modeva Progress',sub:'ติดตามงานก่อสร้างรายตึก · ตึก D–G'},plancustom:{},pimg:{},clients:{},pcf:false,view:'overview',bld:'ALL',obld:'ALL',hm:'done',fm:'done',qw:null,qb:'ALL',pb:null,pf:null,pw:'ALL',pm:'done',ps:null,pp:false,pe:false,pes:null,pd:false,pv:null,_pp:null,planhide:{},sched:{},sb:'ALL',sw:'ALL',sst:'ALL',sm:'msp',planov:{},brush:null,canWrite:true,ready:false,db:null,dl:null};
 const MS=[['done','เสร็จ'],['cm','CM CLOSE'],['qc2','QC2 CLOSE']];
-const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)'};
-const mL=(w,k)=>((w.msl&&w.msl[k])||MS.find(x=>x[0]===k)[1]);
-const wMS=w=>{const u=MS.filter(([k])=>msIdx(w,k)!=null).map(([k])=>[k,mL(w,k)]);return u.length?u:MS.map(([k])=>[k,mL(w,k)])};
+const MSA=[['done','เสร็จ'],['cm','CM CLOSE'],['qc1','QC1 CLOSE'],['qc2','QC2 CLOSE'],['qc3','QC3 CLOSE']];
+const MSU=()=>MSA.filter(([k])=>k==='done'||k==='cm'||k==='qc2'||worksSorted().some(w=>msIdx(w,k)!=null));
+const MSCOL={done:'var(--done)',cm:'var(--cm)',qc2:'var(--qc2)',qc1:'#e07b39',qc3:'#c04fd6'};
+const mL=(w,k)=>((w.msl&&w.msl[k])||MSA.find(x=>x[0]===k)[1]);
+const wMS=w=>{const u=MSA.filter(([k])=>msIdx(w,k)!=null).map(([k])=>[k,mL(w,k)]);return u.length?u:MS.map(([k])=>[k,mL(w,k)])};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=(s,r=document)=>r.querySelector(s);
 const has=v=>v!=null&&v!=='-';
@@ -565,7 +567,7 @@ function tally(w,grids){const n=(w.statuses||[]).length;const c=new Array(n).fil
   for(const g of grids)for(const v of Object.values(g.cells||{})){if(!has(v))continue;
     if(g.kind==='percent'){pt++;pd+=Math.max(0,Math.min(100,+v||0))/100}else{c[sIdx(w,v)]++;t++}}
   return {c,t,pt,pd,n:t+pt}}
-function pcts(w,tl){const o={};for(const [k] of MS){const m=msIdx(w,k);const den=k==='done'?tl.n:tl.t;o[k]=(m==null||!den)?null:(tl.c.slice(m).reduce((a,b)=>a+b,0)+(k==='done'?tl.pd:0))/den}return o}
+function pcts(w,tl){const o={};for(const [k] of MSA){const m=msIdx(w,k);const den=k==='done'?tl.n:tl.t;o[k]=(m==null||!den)?null:(tl.c.slice(m).reduce((a,b)=>a+b,0)+(k==='done'?tl.pd:0))/den}return o}
 const fmt=p=>p==null?'–':(p*100>=99.95||p===0?Math.round(p*100):(p*100).toFixed(1))+'%';
 function pbar(p,col){return `<div class="pc"><div class="bar"><i style="width:${p==null?0:p*100}%;background:${col}"></i></div><span class="${p==null?'na':''}">${fmt(p)}</span></div>`}
 function ring(p,col,label,sub){const r=52,C=2*Math.PI*r,v=p==null?0:Math.max(0,Math.min(1,p));
@@ -574,10 +576,10 @@ function stackBar(w,tl){const pv=tl.pt?`<div class="legend"><span>รายก�
  <div class="legend">${(w.statuses||[]).map((s,i)=>`<span><span class="sw" style="background:${sc(s.color)}"></span>${esc(s.name)} <b>${tl.c[i]}</b></span>`).join('')}</div>`+pv}
 
 /* ---------- aggregate ---------- */
-function overall(b){const agg={done:[0,0],cm:[0,0],qc2:[0,0]};let units=0;
+function overall(b){const agg={done:[0,0],cm:[0,0],qc2:[0,0],qc1:[0,0],qc3:[0,0]};let units=0;
   for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs);units+=tl.n;
-    for(const [k] of MS){const m=msIdx(w,k);if(m==null)continue;agg[k][0]+=tl.c.slice(m).reduce((a,x)=>a+x,0)+(k==='done'?tl.pd:0);agg[k][1]+=(k==='done'?tl.n:tl.t)}}
-  const o={units};for(const [k] of MS)o[k]=agg[k][1]?agg[k][0]/agg[k][1]:null;o.n=agg;return o}
+    for(const [k] of MSA){const m=msIdx(w,k);if(m==null)continue;agg[k][0]+=tl.c.slice(m).reduce((a,x)=>a+x,0)+(k==='done'?tl.pd:0);agg[k][1]+=(k==='done'?tl.n:tl.t)}}
+  const o={units};for(const [k] of MSA)o[k]=agg[k][1]?agg[k][0]/agg[k][1]:null;o.n=agg;return o}
 
 /* ---------- views ---------- */
 function bldChips(cur,attr){return `<div class="chips">${['ALL',...S.meta.buildings].map(b=>`<button class="chip" data-a="${attr}" data-b="${b}" aria-pressed="${cur===b}">${b==='ALL'?'ทุกตึก':'ตึก '+esc(b)}</button>`).join('')}${S.canWrite?'<button class="chip noexp" data-a="addb" aria-label="เพิ่มตึก">+ ตึก</button><button class="chip noexp" data-a="mgb" aria-label="จัดการอาคาร">✎ จัดการอาคาร</button>':''}</div>`}
@@ -628,7 +630,7 @@ function floorKeys(gs){const fs=new Set(),ls=[];gs.forEach(g=>{if(g.rowLabel){if
 function gridsAtRow(gs,r){return gs.filter(g=>typeof r==='number'?(!g.rowLabel&&(g.floors||[]).includes(r)):g.rowLabel===r).map(g=>typeof r==='number'?floorSub(g,r):{kind:g.kind,cells:g.cells})}
 const fname=f=>(S.meta.levels&&S.meta.levels[String(f)])||'ชั้น '+f;
 const rowName=r=>typeof r==='number'?esc(fname(r)):esc(r);
-const fmChips=(w,m0)=>`<div class="chips">${(w?wMS(w):MS).map(([k,l])=>`<button class="chip" data-a="fm" data-k="${k}" aria-pressed="${(m0||S.fm)===k}">${esc(l)}</button>`).join('')}</div>`;
+const fmChips=(w,m0)=>`<div class="chips">${(w?wMS(w):MSU()).map(([k,l])=>`<button class="chip" data-a="fm" data-k="${k}" aria-pressed="${(m0||S.fm)===k}">${esc(l)}</button>`).join('')}</div>`;
 function floorTable(w,gs){const um=wMS(w),m=um.some(x=>x[0]===S.fm)?S.fm:um[0][0],rows=floorKeys(gs);if(!rows.length)return '';
   const names=[...new Set(gs.map(g=>g.item))];
   const cell=tl=>`<td>${tl.n?pbar(pcts(w,tl)[m],MSCOL[m]):'<span class="na">–</span>'}</td>`;
@@ -678,7 +680,7 @@ function qroomSheet(w,r){qcApply(w);const ci=qpIdx(w),q=QCS[r.st];
    ${r.items.map(x=>{const s=w.statuses[x.i]||{color:'#ccc'};return `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span>${esc(x.n)}</span><span class="chip" style="background:${sc(s.color)};color:${fg(sc(s.color))};border-color:${sc(s.color)};white-space:nowrap">${esc(x.s)}</span></div>`}).join('')}
    <button class="btn" data-x>ปิด</button>`,el=>{el.onclick=e=>{if(e.target.closest('[data-x]'))closeM()}})}
 function vQC2(){
-  const ws=qcWorks(),pc=()=>`<div class="row noexp" style="margin-top:10px"><span class="sub">แสดงเป็นผ่านเมื่อถึงขั้น</span><div class="chips">${(()=>{const W=worksSorted(),cmN=new Set(W.map(x=>msIdx(x,'cm')!=null?mL(x,'cm'):null).filter(Boolean)),w0=W.find(x=>msIdx(x,'cm')!=null),seen=new Set(),o=[];if(w0)o.push(['cm',mL(w0,'cm')]);for(const x of W)(x.statuses||[]).forEach((st,i)=>{if(i<1||cmN.has(st.name)||seen.has(st.name))return;seen.add(st.name);o.push([st.name,st.name])});return o.map(([k,l])=>`<button class="chip" data-a="qp" data-k="${esc(k)}" aria-pressed="${S.qp===k}">${esc(l)}</button>`).join('')})()}</div></div>`;
+  const ws=qcWorks(),pc=()=>`<div class="row noexp" style="margin-top:10px"><span class="sub">แสดงเป็นผ่านเมื่อถึงขั้น</span><select id="qp_sel" style="width:auto;min-width:220px" aria-label="สถานะที่นับว่าผ่าน">${(()=>{const W=worksSorted(),cmN=new Set(W.map(x=>msIdx(x,'cm')!=null?mL(x,'cm'):null).filter(Boolean)),w0=W.find(x=>msIdx(x,'cm')!=null),seen=new Set(),o=[];if(w0)o.push(['cm',mL(w0,'cm')]);for(const x of W)(x.statuses||[]).forEach((st,i)=>{if(i<1||cmN.has(st.name)||seen.has(st.name))return;seen.add(st.name);o.push([st.name,st.name])});return o.map(([k,l])=>`<option value="${esc(k)}" ${S.qp===k?'selected':''}>${esc(l)}</option>`).join('')})()}</select></div>`;
   if(!ws.length)return `<div class="card empty">ยังไม่มีงานที่ตั้งขั้นนี้ไว้ ตั้งค่าได้ที่ “ตั้งค่างาน” ของแต่ละงาน</div>`+pc();
   const w=ws.find(x=>x.id===S.qw)||ws[0];S.qw=w.id;qcApply(w);const b=S.qb,all=[...qcRooms(w,b).values()],n=qcCount(all);
   let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">QC2 ผ่านหรือยังไม่ผ่าน</h1><div class="sub">ห้องจะผ่านเมื่อทุกรายการของ${esc(w.name)}ในห้องนั้นถึง ${esc(QL)} ขึ้นไป</div></div>
@@ -906,7 +908,7 @@ function vPlan(){
    <div class="row" style="margin-top:12px"><div class="chips">${bs.map(x=>`<button class="chip" data-a="pb" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}${S.canWrite?'<button class="chip noexp" data-a="addb">+ ตึก</button>':''}</div>
     <div class="chips">${fl.map(x=>`<button class="chip" data-a="pf" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}</div></div>
    <div class="row" style="margin-top:8px"><div class="chips"><button class="chip" data-a="pw" data-w="ALL" aria-pressed="${wid==='ALL'}">รวมทุกงาน</button>${ws.map(w=>`<button class="chip" data-a="pw" data-w="${w.id}" aria-pressed="${wid===w.id}">${esc(w.name)}</button>`).join('')}</div>
-    <div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="pm" data-k="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div><div class="chips"><button class="chip" data-a="pcf" aria-pressed="${S.pcf}">★ เฉพาะห้องลูกค้า (${ncu})</button></div></div>`;
+    <div class="chips">${MSU().map(([k,l])=>`<button class="chip" data-a="pm" data-k="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div><div class="chips"><button class="chip" data-a="pcf" aria-pressed="${S.pcf}">★ เฉพาะห้องลูกค้า (${ncu})</button></div></div>`;
   if(P.loading)return h+'<div class="card empty" style="margin-top:14px">กำลังโหลดแปลน…</div>';
   let sv=`<svg class="plansvg${S.ps&&!S.pe?' zoomed':''}${S.pe?' editing':''}" style="aspect-ratio:${P.w}/${P.h}" viewBox="0 0 ${P.w} ${P.h}" role="img" aria-label="แปลนตึก ${esc(b)} ชั้น ${esc(f)}"><image href="${P.img}" x="0" y="0" width="${P.w}" height="${P.h}"/>`;
   const cs=Object.keys(RM).sort();
@@ -943,12 +945,12 @@ function custDialog(c){if(!c)return toast('เลือกห้องก่อ�
 function itemRows(x){const s=(x.w.statuses||[])[sIdx(x.w,x.v)]||{color:'#999',name:x.v};
   return `<div class="row ir"><span>${esc(x.g.item)}</span><span class="chip" style="background:${sc(s.color)};color:${fg(sc(s.color))};border-color:${sc(s.color)};white-space:nowrap">${esc(s.name)}</span></div>`}
 function planCallout(b,f,c,wid,m){
-  const ws=worksSorted().filter(w=>wid==='ALL'||w.id===wid),tot=roomPct(b,f,c,wid,m),mlabel=(MS.find(x=>x[0]===m)||[])[1]||'',all=planItems(b,f,c);
+  const ws=worksSorted().filter(w=>wid==='ALL'||w.id===wid),tot=roomPct(b,f,c,wid,m),mlabel=(MSA.find(x=>x[0]===m)||[])[1]||'',all=planItems(b,f,c);
   const rows=ws.map(w=>{const its=all.filter(x=>x.w.id===w.id),p=roomPct(b,f,c,w.id,m);if(!its.length)return '';
     return `<div class="wrow"><div class="m" style="grid-template-columns:100px 1fr 56px"><b>${esc(w.name)}</b><div class="bar"><i style="width:${p==null?0:p*100}%;background:${MSCOL[m]}"></i></div><span class="v ${p==null?'na':''}">${fmt(p)}</span></div>${its.map(itemRows).join('')}</div>`}).join('')||'<div class="sub">ไม่มีรายการในห้องนี้</div>';
   return `<div class="card callout" data-ck="${esc(b+f+c+wid+m)}${isCust(b,f,c)?'c':''}"><div class="row" style="margin-bottom:6px">${isCust(b,f,c)?`<span class="custtag">★ ห้องลูกค้า${custName(b,f,c)?' · '+esc(custName(b,f,c)):''}</span>`:''}${S.canWrite&&S.db?`<button class="btn sm" data-a="pcust">${isCust(b,f,c)?'แก้ไข/ยกเลิกห้องลูกค้า':'★ ระบุเป็นห้องลูกค้า'}</button>`:''}</div><div class="row" style="justify-content:space-between"><h2>ห้อง ${esc(b)}${esc(f)}${esc(c)} · ${wid==='ALL'?'รวมทุกงาน':esc((S.works[wid]||{}).name||'')}</h2><div><span class="sub">${mlabel}</span> <span class="big cop" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div>${rows}</div>`}
 function planOverview(b,f,RM,wid,m){
-  const ws=worksSorted().filter(w=>wid==='ALL'||w.id===wid),tot=planSummary(b,f,RM,wid,m),mlabel=(MS.find(x=>x[0]===m)||[])[1]||'';
+  const ws=worksSorted().filter(w=>wid==='ALL'||w.id===wid),tot=planSummary(b,f,RM,wid,m),mlabel=(MSA.find(x=>x[0]===m)||[])[1]||'';
   const n=Object.keys(RM).length;
   const rows=ws.map(w=>{const p=planSummary(b,f,RM,w.id,m);return `<div class="m" style="grid-template-columns:100px 1fr 56px"><b>${esc(w.name)}</b><div class="bar"><i style="width:${p==null?0:p*100}%;background:${MSCOL[m]}"></i></div><span class="v ${p==null?'na':''}">${fmt(p)}</span></div>`}).join('');
   return `<div class="card callout" data-ck="ov${esc(b+f+wid+m)}"><div class="row" style="justify-content:space-between"><h2>ภาพรวมชั้น ${esc(f)} · ตึก ${esc(b)}</h2><div><span class="sub">${mlabel}</span> <span class="big cop" data-v="${tot==null?'':tot}">${fmt(tot)}</span></div></div><div class="sub">${n} ห้อง${Object.keys(RM).filter(c=>isCust(b,f,c)).length?` · ★ ห้องลูกค้า ${Object.keys(RM).filter(c=>isCust(b,f,c)).length} ห้อง (${fmt(planSummary(b,f,RM,wid,m,true))})`:''} · กดห้องบนแปลน หรือกด “ทัวร์” เพื่อดูรายละเอียดทีละห้องว่ามีงานอะไรและ % เท่าไหร่</div>${rows}</div>`}
@@ -1227,7 +1229,7 @@ function planRoomSheet(c){
   const b=S.pb,f=S.pf,items=planItems(b,+f,c),m=S.pm;
   modal(`<h2>ห้อง ${esc(b)}${esc(f)}${esc(c)}</h2><div class="sub">ตึก ${esc(b)} · ชั้น ${esc(f)}</div>
    ${items.length?items.map(x=>{const s=(x.w.statuses||[])[sIdx(x.w,x.v)]||{color:'#999',name:x.v};return `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span><span class="sub">${esc(x.w.name)}</span><br>${esc(x.g.item)}</span><span class="chip" style="background:${sc(s.color)};color:${fg(sc(s.color))};border-color:${sc(s.color)};white-space:nowrap">${esc(s.name)}</span></div>`}).join(''):'<div class="sub">ไม่มีรายการในห้องนี้</div>'}
-   ${MS.map(([k,l])=>{const p=roomPct(b,+f,c,'ALL',k);return p==null?'':`<div class="m"><span>${l}</span><div class="bar"><i style="width:${p*100}%;background:${MSCOL[k]}"></i></div><span class="v">${fmt(p)}</span></div>`}).join('')}
+   ${MSA.map(([k,l])=>{const p=roomPct(b,+f,c,'ALL',k);return p==null?'':`<div class="m"><span>${l}</span><div class="bar"><i style="width:${p*100}%;background:${MSCOL[k]}"></i></div><span class="v">${fmt(p)}</span></div>`}).join('')}
    <button class="btn" data-x>ปิด</button>`,el=>{el.onclick=e=>{if(e.target.closest('[data-x]'))closeM()}})}
 function vOverview(){
   const ws=worksSorted(),b=S.obld,o=overall(b);
@@ -1248,7 +1250,7 @@ function vOverview(){
   h+=`</div></section>`;
   // heatmap
   const hm=S.hm,cols=S.meta.buildings;
-  h+=`<section class="sec"><div class="head"><h2>ความคืบหน้ารายตึก</h2><div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="hm" data-k="${k}" aria-pressed="${hm===k}">${l}</button>`).join('')}</div></div>
+  h+=`<section class="sec"><div class="head"><h2>ความคืบหน้ารายตึก</h2><div class="chips">${MSU().map(([k,l])=>`<button class="chip" data-a="hm" data-k="${k}" aria-pressed="${hm===k}">${l}</button>`).join('')}</div></div>
   <div class="card"><div class="heat" style="grid-template-columns:minmax(80px,1.4fr) repeat(${cols.length},minmax(0,1fr))"><span></span>${cols.map(c=>`<span class="hh">ตึก ${esc(c)}</span>`).join('')}`;
   for(const w of ws){h+=`<span class="hl">${esc(w.name)}</span>`;
     for(const c of cols){const tl=tally(w,gridsOf(w.id,c)),p=pcts(w,tl)[hm];
@@ -1263,10 +1265,10 @@ function vOverview(){
 function tableRows(b,only){const out=[];
   for(const w of worksSorted()){const gs=gridsOf(w.id,b),tl=tally(w,gs),p=pcts(w,tl);
     const cell=(k,pp)=>`<td>${pbar(pp[k],MSCOL[k])}</td>`;
-    out.push({w:w.name,item:'',t:tl.n,p,html:`<tr class="wk"><td>${esc(w.name)}</td><td>${tl.n.toLocaleString('th-TH')}</td>${(only&&only.id===w.id?wMS(w):MS).map(([k])=>cell(k,p)).join('')}</tr>`});
+    out.push({w:w.name,item:'',t:tl.n,p,html:`<tr class="wk"><td>${esc(w.name)}</td><td>${tl.n.toLocaleString('th-TH')}</td>${(only&&only.id===w.id?wMS(w):MSU()).map(([k])=>cell(k,p)).join('')}</tr>`});
     const names=[...new Set(gs.map(g=>g.item))];
     for(const n of names){const ig=gs.filter(g=>g.item===n),it=tally(w,ig),ip=pcts(w,it);
-      out.push({w:w.name,item:n,t:it.n,p:ip,html:`<tr class="it"><td>${esc(n)}</td><td>${it.n.toLocaleString('th-TH')}</td>${(only&&only.id===w.id?wMS(w):MS).map(([k])=>cell(k,ip)).join('')}</tr>`})}}
+      out.push({w:w.name,item:n,t:it.n,p:ip,html:`<tr class="it"><td>${esc(n)}</td><td>${it.n.toLocaleString('th-TH')}</td>${(only&&only.id===w.id?wMS(w):MSU()).map(([k])=>cell(k,ip)).join('')}</tr>`})}}
   return out}
 
 function vWork(w){
@@ -1522,7 +1524,7 @@ function rptAct(a,d){
   if(a==='rpnext'){rpGo(1);return true}
   if(a==='rpfs'){try{const o=document.getElementById('rpres');if(document.fullscreenElement)document.exitFullscreen();else o.requestFullscreen()}catch(e){}return true}
   return false}
-document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rws'){S.rws=+t.value;S.ra=null;try{localStorage.setItem('mp_rws',String(S.rws))}catch(err){}render()}});
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='qp_sel'){S.qp=t.value;try{localStorage.setItem('mp_qp',t.value)}catch(err){}render();return}if(t&&t.id==='rws'){S.rws=+t.value;S.ra=null;try{localStorage.setItem('mp_rws',String(S.rws))}catch(err){}render()}});
 
 /* ---------- ส่งออก PDF / PowerPoint (สไลด์ 16:9) ---------- */
 /* merged: replaces the earlier image-based rpExpForm/rpExport export (native editable slides) */
@@ -2000,7 +2002,7 @@ function apOneSheet(b,f,m,ui){
       return `<div class="aomini" style="left:${(i%cols)*(cw+10)}px;top:${((i/cols)|0)*(ch+10)}px;width:${cw}px;height:${ch}px"><div class="aomh"><b>ชั้น ${esc(x)}</b><span style="color:${mc}">${fmt(t)}</span></div>${fig.data?`<div style="position:relative;margin:2px auto 0;width:${fig.w*96}px;height:${fig.h*96}px"><img src="${fig.data}" style="display:block;width:100%;height:100%">${st0.sh?aoMiniSvg(items,x,b,fig.w*96,zpoly,col):''}</div>`:''}</div>`}).join('')+'</div>'}
   /* right panel */
   const RMf=all?null:roomsOf(b,f);
-  const wk=worksSorted().map(w=>{if(all){const tl=tally(w,gridsOf(w.id,b));return tl.n?{w,v:pcts(w,tl)}:null}const v={};let any=false;for(const [k] of MS){v[k]=planSummary(b,+f,RMf,w.id,k,false);if(v[k]!=null)any=true}return any?{w,v}:null}).filter(Boolean);
+  const wk=worksSorted().map(w=>{if(all){const tl=tally(w,gridsOf(w.id,b));return tl.n?{w,v:pcts(w,tl)}:null}const v={};let any=false;for(const [k] of MSA){v[k]=planSummary(b,+f,RMf,w.id,k,false);if(v[k]!=null)any=true}return any?{w,v}:null}).filter(Boolean);
   let right=`<div class="aopn" style="left:924px;top:100px;width:452px;height:${780}px"><div class="aoh2">${all?'ภาพรวมตึก '+esc(b):'ตึก '+esc(b)+' ชั้น '+esc(f)}<span style="color:${mc}">${fmt(tot)}</span></div><div class="aosub">${esc(mn)}</div>
    <table class="aot2"><colgroup><col style="width:46%"><col><col><col></colgroup><thead><tr><th style="text-align:left">ความคืบหน้าแต่ละงาน</th><th>เสร็จ</th><th>CM</th><th>QC2</th></tr></thead><tbody>${wk.slice(0,9).map(o=>`<tr><td style="text-align:left">${esc(o.w.name)}</td>${MS.map(([k],i)=>`<td style="color:${Object.values(MCOL)[i]};font-weight:${k===m?800:600}">${fmt(o.v[k])}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="4" class="aosub">ยังไม่มีข้อมูล</td></tr>'}</tbody></table>
    <table class="aot2" style="margin-top:12px"><colgroup><col style="width:22px"><col><col style="width:70px"><col style="width:70px"><col style="width:32px"><col style="width:80px"></colgroup><thead><tr><th></th><th style="text-align:left">แผนงาน (โซน / งาน)</th><th>START</th><th>FINISH</th><th>DAY</th><th>PROGRESS</th></tr></thead><tbody>
@@ -2020,7 +2022,7 @@ function vApOne(){
   return `<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">Action Plan · หน้าเดียว</h1><div class="sub">ดึงแปลน ความคืบหน้า และแผนงานมารวมเป็นหน้าเดียว · ส่งออกเป็นรูปหรือ PDF</div></div><div class="row noexp"><button class="btn pri" data-a="apoexp">ส่งออก รูป / PDF</button></div></div>
    <div class="row noexp" style="margin-top:12px"><div class="chips">${bs.map(x=>`<button class="chip" data-a="apob" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}</div><div class="chips">${fl.map(x=>`<button class="chip" data-a="apof" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}<button class="chip" data-a="apof" data-f="ALL" aria-pressed="${f==='ALL'}">ทุกชั้น</button></div></div>
    <div class="row noexp" style="margin-top:8px"><span class="sub">ธีม:</span><div class="chips">${AST.map(([k,l])=>`<button class="chip" data-a="aost" data-k="${k}" aria-pressed="${S.ast===k}">${l}</button>`).join('')}</div></div>
-   <div class="row noexp" style="margin-top:8px"><div class="chips">${MS.map(([k,l])=>`<button class="chip" data-a="apom" data-k="${k}" aria-pressed="${m===k}">สี: ${l}</button>`).join('')}</div><span class="sub">แผนงานจาก:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">แท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มในหน้านำเสนอ</button></div></div>
+   <div class="row noexp" style="margin-top:8px"><div class="chips">${MSU().map(([k,l])=>`<button class="chip" data-a="apom" data-k="${k}" aria-pressed="${m===k}">สี: ${l}</button>`).join('')}</div><span class="sub">แผนงานจาก:</span><div class="chips"><button class="chip" data-a="rsrc" data-k="web" aria-pressed="${S.rsrc.web}">แท็บแผนงาน</button><button class="chip" data-a="rsrc" data-k="man" aria-pressed="${S.rsrc.man}">รายการที่เพิ่มในหน้านำเสนอ</button></div></div>
    <div class="row noexp" style="margin-top:8px">${(()=>{const dz=rptItems().filter(x=>x.b===b&&x.poly&&(f==='ALL'||String(x.f)===f)),cd=S.canWrite&&S.db;if(f==='ALL')return '<span class="sub">เลือกชั้นใดชั้นหนึ่งเพื่อวาดโซนบนแปลน</span>';if(!cd)return '';
      return (S.aod?`<button class="btn pri" data-a="aodfin">✓ จบรูป (${S.aod.length/2} จุด)</button><button class="btn" data-a="aodundo">↶ ลบจุดล่าสุด</button><button class="btn" data-a="aodcan">ยกเลิก</button><span class="sub">คลิกบนแปลนเพื่อวางมุมทีละจุด · คลิกจุดแรกหรือ Enter เพื่อปิดรูป · Backspace ลบจุด · Esc ยกเลิก</span>`:`<button class="btn pri" data-a="aodraw">✎ วาดโซนบนแปลน (คลิก)</button>`)+(!S.aod&&dz.length?'<button class="btn" data-a="aocopy">⎘ คัดลอกโซนไปชั้นอื่น</button>':'')+(!S.aod?dz.map(x=>`<button class="chip" data-a="aoz" data-k="${esc(x.id)}">✎ ${esc(x.z||x.t)}</button>`).join(''):'')+(!S.aod?`<button class="btn ${S.aoe?'pri':''}" data-a="aoedit">✥ จัดกรอบข้อมูล</button>`:'')+(S.aoe&&!S.aod?`<span class="sub">เส้นลาก:</span><div class="chips">${[['str','ตรง'],['ort','หักฉาก'],['ang','หัก 45°']].map(([k,l])=>`<button class="chip" data-a="aols" data-k="${k}" aria-pressed="${(S.aols||'str')===k}">${l}</button>`).join('')}</div><button class="btn" data-a="aolr">รีเซ็ตตำแหน่ง</button><span class="sub">ลากกรอบหรือจุดแดงเพื่อย้าย · ปุ่ม “เส้น:” ใต้กรอบ = เปลี่ยนแบบเส้นของกรอบนั้น</span>`:'')})()}
      <button class="btn" data-a="aostyle">🎨 สไตล์โซน (สี / เส้นประ / ความทึบ)</button><span class="sub">แสดง:</span><div class="chips"><button class="chip" data-a="apoo" data-k="full" aria-pressed="${!S.aoo}">หน้าเต็ม</button><button class="chip" data-a="apoo" data-k="plan" aria-pressed="${!!S.aoo}">เฉพาะแปลน</button></div></div>
@@ -2283,7 +2285,7 @@ function gridMenu(g,w){
 
 const PRESETS={
  six:{label:'6 ขั้น: ยังไม่เสร็จ → เสร็จแล้ว → CM OPEN/CLOSE → QC2 OPEN/CLOSE',st:[['ยังไม่เสร็จ','#c4c9c4','·'],['เสร็จแล้ว','#e3a82b','✓'],['CM OPEN','#e07b39','C○'],['CM CLOSE','#2f7fb8','C●'],['QC2 OPEN','#8a6fc4','Q○'],['QC2 CLOSE','#25936a','Q●']],ms:{done:1,cm:3,qc2:5}},
- qc1:{label:'งานฝ้า: ยังไม่ส่ง QC1 → QC1 OPEN → QC1 CLOSE',st:[['ยังไม่ส่ง QC1','#c4c9c4','·'],['QC1 OPEN','#e07b39','Q1○'],['QC1 CLOSE','#25936a','Q1●']],ms:{done:2},msl:{done:'QC1 CLOSE'}},
+ qc1:{label:'งานฝ้า: ยังไม่ส่ง QC1 → QC1 OPEN → QC1 CLOSE',st:[['ยังไม่ส่ง QC1','#c4c9c4','·'],['QC1 OPEN','#e07b39','Q1○'],['QC1 CLOSE','#25936a','Q1●']],ms:{done:2,qc1:2},msl:{done:'QC1 CLOSE'}},
  simple:{label:'ง่าย: ยังไม่เสร็จ → เสร็จแล้ว',st:[['ยังไม่เสร็จ','#c4c9c4','·'],['เสร็จแล้ว','#25936a','✓']],ms:{done:1}}};
 function addWorkForm(){
   modal(`<h2>เพิ่มงานใหม่</h2><div class="field"><label for="aw_n">ชื่องาน</label><input id="aw_n" type="text" placeholder="เช่น งานทาสี"></div>
@@ -2302,7 +2304,7 @@ function workSettings(w0){
   function draw(){
    modal(`<h2>ตั้งค่างาน</h2><div class="field"><label for="ws_n">ชื่องาน</label><input id="ws_n" type="text" value="${esc(w.name)}"></div>
    <div class="field"><label>สถานะ เรียงจากเริ่มต้นไปจนเสร็จสมบูรณ์</label>${w.statuses.map((s,i)=>`<div class="srow"><input type="color" data-i="${i}" data-f="color" value="${/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#999999'}" aria-label="สี"><input type="text" data-i="${i}" data-f="name" value="${esc(s.name)}" aria-label="ชื่อสถานะ"><button class="btn sm" data-up="${i}" ${i?'':'disabled'} aria-label="เลื่อนขึ้น">↑</button><button class="btn sm" data-dn="${i}" ${i<w.statuses.length-1?'':'disabled'} aria-label="เลื่อนลง">↓</button><button class="btn sm danger" data-rm="${i}" ${used.has(old.find(o=>o.id===s.id)?.name)||w.statuses.length<2?'disabled title="มีช่องที่ใช้สถานะนี้อยู่"':''} aria-label="ลบ">ลบ</button></div>`).join('')}<button class="btn sm" data-add style="align-self:flex-start">+ เพิ่มสถานะ</button></div>
-   <div class="field"><label>เกณฑ์สำหรับตารางสรุป (นับ “ถึงขั้นนี้ขึ้นไป”)</label>${MS.map(([k,l])=>`<div class="row" style="flex-wrap:nowrap"><span style="width:92px;flex:none">% ${l}</span><input type="text" data-msl="${k}" value="${esc((w.msl&&w.msl[k])||'')}" placeholder="ชื่อที่แสดง: ${esc(l)}" aria-label="ชื่อที่แสดงของขั้น ${esc(l)}" style="width:150px;flex:none"><select data-ms="${k}"><option value="">ไม่ใช้</option>${w.statuses.map(s=>`<option value="${s.id}" ${w.milestones&&w.milestones[k]===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>`).join('')}</div>
+   <div class="field"><label>เกณฑ์สำหรับตารางสรุป (นับ “ถึงขั้นนี้ขึ้นไป”)</label>${MSA.map(([k,l])=>`<div class="row" style="flex-wrap:nowrap"><span style="width:92px;flex:none">% ${l}</span><input type="text" data-msl="${k}" value="${esc((w.msl&&w.msl[k])||'')}" placeholder="ชื่อที่แสดง: ${esc(l)}" aria-label="ชื่อที่แสดงของขั้น ${esc(l)}" style="width:150px;flex:none"><select data-ms="${k}"><option value="">ไม่ใช้</option>${w.statuses.map(s=>`<option value="${s.id}" ${w.milestones&&w.milestones[k]===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>`).join('')}</div>
    <div class="field"><button class="btn" data-ceil>ใช้ชุดงานฝ้า: ยังไม่ส่ง QC1 → QC1 OPEN → QC1 CLOSE (จบที่ QC1 CLOSE)</button><div class="sub">เปลี่ยนชื่อสถานะ QC1 PASS เป็น QC1 CLOSE (ข้อมูลเดิมเปลี่ยนตามให้) แล้วนับ % เสร็จเมื่อถึง QC1 CLOSE (แสดงชื่อ QC1 CLOSE) · กดบันทึกเพื่อใช้จริง</div></div>
    <div class="row"><button class="btn pri" data-save>บันทึก</button><button class="btn" data-x>ยกเลิก</button><button class="btn danger" data-del style="margin-left:auto">ลบงานนี้</button></div>`,el=>{
     const sync=()=>{w.name=$('#ws_n').value;el.querySelectorAll('[data-f]').forEach(i=>{w.statuses[+i.dataset.i][i.dataset.f]=i.value});el.querySelectorAll('[data-ms]').forEach(s=>{w.milestones=w.milestones||{};w.milestones[s.dataset.ms]=s.value||null});el.querySelectorAll('[data-msl]').forEach(i=>{w.msl=w.msl||{};w.msl[i.dataset.msl]=i.value.trim()})};
@@ -2311,7 +2313,7 @@ function workSettings(w0){
      if('ceil' in b.dataset){sync();const fd=n=>w.statuses.find(x=>x.name===n);let c=fd('QC1 CLOSE')||fd('QC1 PASS'),o=fd('QC1 OPEN');const nid=()=>{let n=0;while(w.statuses.some(x=>x.id==='s'+n))n++;return 's'+n};
        if(!o){o={id:nid(),name:'QC1 OPEN',color:'#e07b39',short:'Q1○'};w.statuses.push(o)}
        if(!c){c={id:nid(),name:'QC1 CLOSE',color:'#25936a',short:'Q1●'};w.statuses.push(c)}else{c.name='QC1 CLOSE';c.short='Q1●';c.color='#25936a'}
-       w.statuses=[...w.statuses.filter(x=>x!==o&&x!==c),o,c];w.milestones={done:c.id,cm:null,qc2:null};w.msl={done:'QC1 CLOSE',cm:'',qc2:''};return draw()}
+       w.statuses=[...w.statuses.filter(x=>x!==o&&x!==c),o,c];w.milestones={done:c.id,cm:null,qc1:c.id,qc2:null,qc3:null};w.msl={done:'QC1 CLOSE',cm:'',qc1:'',qc2:'',qc3:''};return draw()}
      if('up' in b.dataset){sync();const i=+b.dataset.up;[w.statuses[i-1],w.statuses[i]]=[w.statuses[i],w.statuses[i-1]];return draw()}
      if('dn' in b.dataset){sync();const i=+b.dataset.dn;[w.statuses[i+1],w.statuses[i]]=[w.statuses[i],w.statuses[i+1]];return draw()}
      if('rm' in b.dataset){sync();const s=w.statuses.splice(+b.dataset.rm,1)[0];for(const k in w.milestones)if(w.milestones[k]===s.id)w.milestones[k]=null;return draw()}
@@ -2324,7 +2326,7 @@ function workSettings(w0){
        closeM();
        try{
         if(Object.keys(ren).length)for(const g of gridsOf(w.id)){const c={...(g.cells||{})};let ch=false;for(const k in c)if(ren[c[k]]){c[k]=ren[c[k]];ch=true}if(ch)await S.db.doc('grids/'+g.id).update({cells:c})}
-        await S.db.doc('works/'+w.id).update({name:w.name.trim(),statuses:w.statuses,milestones:{done:w.milestones?.done||null,cm:w.milestones?.cm||null,qc2:w.milestones?.qc2||null},msl:{done:(w.msl&&w.msl.done)||'',cm:(w.msl&&w.msl.cm)||'',qc2:(w.msl&&w.msl.qc2)||''}});toast('บันทึกแล้ว')}catch(e){console.error(e)}}}})}
+        await S.db.doc('works/'+w.id).update({name:w.name.trim(),statuses:w.statuses,milestones:Object.fromEntries(MSA.map(([k])=>[k,w.milestones?.[k]||null])),msl:Object.fromEntries(MSA.map(([k])=>[k,(w.msl&&w.msl[k])||'']))});toast('บันทึกแล้ว')}catch(e){console.error(e)}}}})}
   draw()}
 
 function csv(){const rows=[['งาน','รายการ','จุดตรวจ','% เสร็จ','% CM CLOSE','% QC2 CLOSE']];
