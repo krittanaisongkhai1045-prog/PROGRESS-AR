@@ -678,9 +678,152 @@ function qroomSheet(w,r){qcApply(w);const ci=qpIdx(w),q=QCS[r.st];
    <div class="chip" style="align-self:flex-start;background:${q[0]};color:${fg(q[0])};border-color:${q[0]};font-weight:600">${q[2]}</div>
    ${r.miss.length?`<div class="sub">ยังไม่ผ่าน ${QL}: ${r.miss.map(x=>esc(x.n)).join(', ')}</div>`:`<div class="sub">ทุกรายการผ่าน ${QL} แล้ว</div>`}
    ${r.items.map(x=>{const s=w.statuses[x.i]||{color:'#ccc'};return `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span>${esc(x.n)}</span><span class="chip" style="background:${sc(s.color)};color:${fg(sc(s.color))};border-color:${sc(s.color)};white-space:nowrap">${esc(x.s)}</span></div>`}).join('')}
-   <button class="btn" data-x>ปิด</button>`,el=>{el.onclick=e=>{if(e.target.closest('[data-x]'))closeM()}})}
+   <button class="btn" data-hs>แผนส่งห้อง / Defect</button><button class="btn" data-x>ปิด</button>`,el=>{el.onclick=e=>{if(e.target.closest('[data-hs]')){closeM();return hSheet(r.b+'|'+r.k)}if(e.target.closest('[data-x]'))closeM()}})}
+const qpBar=()=>`<div class="row noexp" style="margin-top:10px"><span class="sub">แสดงเป็นผ่านเมื่อถึงขั้น</span><select id="qp_sel" style="width:auto;min-width:220px" aria-label="สถานะที่นับว่าผ่าน">${(()=>{const W=worksSorted(),cmN=new Set(W.map(x=>msIdx(x,'cm')!=null?mL(x,'cm'):null).filter(Boolean)),w0=W.find(x=>msIdx(x,'cm')!=null),seen=new Set(),o=[];if(w0)o.push(['cm',mL(w0,'cm')]);for(const x of W)(x.statuses||[]).forEach((st,i)=>{if(i<1||cmN.has(st.name)||seen.has(st.name))return;seen.add(st.name);o.push([st.name,st.name])});return o.map(([k,l])=>`<option value="${esc(k)}" ${S.qp===k?'selected':''}>${esc(l)}</option>`).join('')})()}</select></div>`;
+/* ---------- ส่งห้อง: แผนรายสัปดาห์ / ผ่าน-ไม่ผ่าน / Defect ---------- */
+S.hand=S.hand||{};S.dfx=S.dfx||{};
+const wkMon=n=>n-((new Date(n*DAY).getUTCDay()+6)%7);
+const wkLbl=s=>{const a=dnum(s),f=n=>new Date(n*DAY).toLocaleDateString('th-TH',{day:'numeric',month:'short',timeZone:'UTC'});return f(a)+' – '+f(a+6)};
+const dKey=r=>r.b+'|'+r.k,hKey=r=>r.b+'|'+r.k+'|'+S.qp,hGet=r=>S.hand[hKey(r)]||(S.qp==='cm'?S.hand[dKey(r)]:null),rl=r=>String(r.c).length<=2?String(r.f)+String(r.c):String(r.c);
+function kvSaveMany(doc,store,flag,obj){if(!(S.db&&S.canWrite))return Promise.reject(new Error('ro'));const d=S.db.doc('meta/'+doc);
+  for(const [k,v] of Object.entries(obj)){if(v==null)delete store[k];else store[k]=v}
+  const hasNull=Object.values(obj).some(v=>v==null),p=(S[flag]||hasNull)?d.update(obj):d.set(obj);S[flag]=true;render();return p}
+function handChain(r){const e=hGet(r);if(!e||!e.w)return null;
+  const res={};(e.r||[]).forEach(s=>{const i=s.indexOf(':');res[s.slice(0,i)]=s.slice(i+1)});
+  const now=wkMon(todayN()),live=r.st!=='no',hist=[];let wk=wkMon(dnum(e.w));
+  for(let i=0;i<60;i++){const ws=dstr(wk),rs=res[ws];let o,auto=false;
+    if(rs==='pass'||rs==='fail')o=rs;else if(wk<now){o=live?'pass':'fail';auto=true}else o=live?'pass':'wait';
+    hist.push({w:ws,o,auto,n:i+1});if(o!=='fail')break;wk+=7}
+  return {plan:e.w,hist,cur:hist[hist.length-1],fails:hist.filter(x=>x.o==='fail').length}}
+const dfOpen=k=>(S.dfx[k]||[]).filter(x=>!x.s).length;
+const HC={pass:()=>'var(--qc2)',fail:()=>'var(--warn)',wait:()=>'var(--surface2)'};
+const hChip=(r,o,n,extra)=>{const k=dKey(r),dn=dfOpen(k),bg=HC[o](),col=o==='wait'?'var(--ink)':'#fff';
+  return `<button class="chip" data-a="hroom" data-k="${esc(k)}" title="${esc(extra||'')}" style="background:${bg};color:${col};border-color:${bg};font-weight:600">${esc(r.c)}${n>1?' ↻'+n:''}${o==='pass'?' ✓':o==='fail'?' ✗':''}${dn?' ⚠'+dn:''}</button>`};
+function hRoom(w,key){const i=key.indexOf('|'),b=key.slice(0,i),k=key.slice(i+1),r=qcRooms(w,b).get(key);if(r)return r;const j=k.indexOf('-');return {b,f:+k.slice(0,j),c:k.slice(j+1),k,items:[],miss:[],st:'no'}}
+function vHand(){
+  const ws=qcWorks();if(!ws.length)return `<div class="card empty">ยังไม่มีงานที่ตั้งขั้นผ่านไว้ ตั้งค่าได้ที่ “ตั้งค่างาน” ของแต่ละงาน</div>`;
+  const w=ws.find(x=>x.id===S.qw)||ws[0];S.qw=w.id;qcApply(w);
+  const bl=S.meta.buildings,b=bl.includes(S.hb)?S.hb:(bl.find(x=>qcRooms(w,x).size)||bl[0]);S.hb=b;
+  const rooms=[...qcRooms(w,b).values()].sort((x,y)=>x.f-y.f||String(x.c).localeCompare(String(y.c),undefined,{numeric:true})),cw=S.canWrite&&S.db,hm=S.hmode||'xl';
+  const ch=new Map(rooms.map(r=>[r,handChain(r)])),planned=rooms.filter(r=>ch.get(r));
+  const cnt={pass:0,wait:0,fail:0};planned.forEach(r=>{const c=ch.get(r);if(c.cur.o==='pass')cnt.pass++;else cnt.wait++;if(c.fails)cnt.fail++});
+  const dOpen=rooms.reduce((a,r)=>a+dfOpen(dKey(r)),0);
+  let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">ส่งห้อง · แผนรายสัปดาห์</h1><div class="sub">ห้องผ่านเมื่อทุกรายการของ${esc(w.name)}ถึง ${esc(QL)} ขึ้นไป · ถ้าสัปดาห์ที่นัดส่งแล้วไม่ผ่าน ระบบจะย้ายไปส่งใหม่สัปดาห์ถัดไป</div></div>
+   <div class="row noexp">${cw?'<button class="btn pri" data-a="hplan">+ กำหนดแผนส่งห้อง</button><button class="btn" data-a="hdef">+ เพิ่ม Defect</button>':''}<button class="btn sm" data-a="exp">ส่งออก PDF / ภาพ</button></div></div>
+   <div class="row" style="margin-top:12px">${ws.length>1?`<div class="chips">${ws.map(x=>`<button class="chip" data-a="qw" data-w="${x.id}" aria-pressed="${x.id===w.id}">${esc(x.name)}</button>`).join('')}</div>`:''}<div class="chips">${bl.map(x=>`<button class="chip" data-a="hb" data-b="${esc(x)}" aria-pressed="${x===b}">ตึก ${esc(x)}</button>`).join('')}</div></div>${qpBar()}
+   <div class="row" style="margin-top:10px"><div class="chips">${[['xl','ตาราง PLAN / ACTUAL'],['week','ตามสัปดาห์'],['room','ตารางห้อง'],['defect','รายการ Defect']].map(([k,l])=>`<button class="chip" data-a="hmo" data-k="${k}" aria-pressed="${hm===k}">${l}</button>`).join('')}</div></div>
+   <section class="sec"><div class="qs">
+    <div class="card"><span class="lb">ห้องทั้งหมด</span><span class="big">${rooms.length}</span></div>
+    <div class="card"><span class="lb">มีแผนส่งแล้ว</span><span class="big" style="color:var(--cm)">${planned.length}</span></div>
+    <div class="card"><span class="lb">ผ่านแล้ว</span><span class="big" style="color:var(--qc2)">${cnt.pass}</span></div>
+    <div class="card"><span class="lb">รอส่ง / ต้องส่งซ้ำ</span><span class="big" style="color:var(--done)">${cnt.wait}</span></div>
+    <div class="card"><span class="lb">เคยไม่ผ่าน (ส่งซ้ำ)</span><span class="big" style="color:var(--warn)">${cnt.fail}</span></div>
+    <div class="card"><span class="lb">Defect ที่ยังเปิด</span><span class="big" style="color:var(--warn)">${dOpen}</span></div></div></section>`;
+  if(!rooms.length)return h+`<div class="card empty" style="margin-top:16px">ยังไม่มีข้อมูลห้องของ${esc(w.name)}ในตึกนี้</div>`;
+  if(hm==='xl')return h+hXl(w,b);
+  if(hm==='week'){
+    if(!planned.length)return h+`<div class="card empty" style="margin-top:16px">ยังไม่มีแผนส่งห้อง ${cw?'กด “+ กำหนดแผนส่งห้อง” เพื่อเลือกห้องและสัปดาห์ที่จะส่ง':''}</div>`;
+    const wm=new Map();wm.set(dstr(wkMon(todayN())),[]);
+    for(const r of planned)for(const x of ch.get(r).hist){if(!wm.has(x.w))wm.set(x.w,[]);wm.get(x.w).push({r,...x})}
+    const now=dstr(wkMon(todayN()));
+    h+=[...wm.keys()].sort().map(wk=>{const es=wm.get(wk),c={pass:0,fail:0,wait:0};es.forEach(e=>c[e.o]++);
+      const fl=[...new Set(es.map(e=>e.r.f))].sort((a,b)=>a-b);
+      return `<section class="card item sec" style="margin-top:14px"><div class="hd"><h3>สัปดาห์ ${esc(wkLbl(wk))}</h3>${wk===now?'<span class="chip" aria-pressed="true">สัปดาห์นี้</span>':''}<span class="sub">นัดส่ง ${es.length} · ผ่าน ${c.pass} · ไม่ผ่าน ${c.fail} · รอ ${c.wait}</span></div>
+       ${es.length?fl.map(f=>`<div class="row" style="flex-wrap:nowrap;align-items:flex-start"><b style="min-width:56px;padding-top:4px">ชั้น ${f}</b><div class="chips">${es.filter(e=>e.r.f===f).sort((a,b)=>String(a.r.c).localeCompare(String(b.r.c),undefined,{numeric:true})).map(e=>hChip(e.r,e.o,e.n,e.o==='fail'?'ไม่ผ่านสัปดาห์นี้ → ส่งใหม่สัปดาห์ '+wkLbl(dstr(dnum(wk)+7)):e.o==='pass'?'ผ่าน':'รอผล')).join('')}</div></div>`).join(''):'<div class="sub">ยังไม่มีห้องนัดส่งสัปดาห์นี้</div>'}</section>`}).join('');
+    h+=`<div class="glg" style="margin-top:12px"><span class="k"><i style="background:var(--qc2);color:#fff">✓</i>ผ่าน</span><span class="k"><i style="background:var(--warn);color:#fff">✗</i>ไม่ผ่าน → ส่งใหม่สัปดาห์ถัดไป</span><span class="k"><i style="background:var(--surface2)">·</i>รอผล</span><span class="k">↻n = ส่งครั้งที่ n</span><span class="k">⚠n = Defect ที่ยังเปิด</span></div>`;
+    return h}
+  if(hm==='room'){
+    h+=`<section class="sec"><div class="tw"><table><thead><tr><th>ชั้น</th><th>ห้อง</th><th>สถานะ QC</th><th>แผนส่งเดิม</th><th>สัปดาห์ส่งล่าสุด</th><th>ผลสัปดาห์นั้น</th><th>ส่งซ้ำ</th><th>Defect เปิด/ทั้งหมด</th></tr></thead><tbody>${rooms.map(r=>{const c=ch.get(r),q=QCS[r.st],k=dKey(r),df=S.dfx[k]||[];
+      const oc=c?{pass:['ผ่าน','var(--qc2)'],fail:['ไม่ผ่าน','var(--warn)'],wait:['รอผล','var(--muted)']}[c.cur.o]:null;
+      return `<tr data-a="hroom" data-k="${esc(k)}" style="cursor:pointer"><td>${r.f}</td><td>${esc(r.c)}</td><td><span class="sw" style="background:${q[0]}"></span>${esc(q[2])}</td><td>${c?esc(wkLbl(dstr(wkMon(dnum(c.plan))))):'-'}</td><td>${c?esc(wkLbl(c.cur.w)):'-'}</td><td>${oc?`<b style="color:${oc[1]}">${oc[0]}</b>`:'-'}</td><td>${c?c.fails:'-'}</td><td>${df.length?`<b style="color:${dfOpen(k)?'var(--warn)':'var(--qc2)'}">${dfOpen(k)}</b> / ${df.length}`:'-'}</td></tr>`}).join('')}</tbody></table></div></section>`;
+    return h}
+  const keys=Object.keys(S.dfx).filter(k=>k.startsWith(b+'|')&&(S.dfx[k]||[]).length).sort((x,y)=>{const a=x.slice(b.length+1).split('-'),c=y.slice(b.length+1).split('-');return (+a[0]-+c[0])||a.slice(1).join('-').localeCompare(c.slice(1).join('-'),undefined,{numeric:true})});
+  h+=keys.length?`<section class="sec"><div class="tw"><table><thead><tr><th>ห้อง</th><th>รายการ Defect</th><th>เปิดอยู่</th></tr></thead><tbody>${keys.map(k=>{const t=k.slice(b.length+1),j=t.indexOf('-'),df=S.dfx[k];
+      return `<tr data-a="hroom" data-k="${esc(k)}" style="cursor:pointer"><td>ชั้น ${esc(t.slice(0,j))} · ${esc(t.slice(j+1))}</td><td style="text-align:left;white-space:normal">${df.map(x=>`<div style="${x.s?'text-decoration:line-through;color:var(--muted)':''}">${x.s?'✓':'○'} ${esc(x.t)}</div>`).join('')}</td><td><b style="color:${dfOpen(k)?'var(--warn)':'var(--qc2)'}">${dfOpen(k)}</b>/${df.length}</td></tr>`}).join('')}</tbody></table></div></section>`:`<div class="card empty" style="margin-top:16px">ยังไม่มี Defect ในตึกนี้ ${cw?'กด “+ เพิ่ม Defect” หรือเปิดห้องแล้วเพิ่มรายการ':''}</div>`;
+  return h}
+function hSheet(key){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0};qcApply(w);const r=hRoom(w,key),c=handChain(r),k=dKey(r),hk=hKey(r),df=S.dfx[k]||[],cw=S.canWrite&&S.db,q=QCS[r.st];
+  const e=hGet(r),oc={pass:['ผ่าน','var(--qc2)'],fail:['ไม่ผ่าน → ส่งใหม่สัปดาห์ถัดไป','var(--warn)'],wait:['รอผล','var(--muted)']};
+  modal(`<h2>ตึก ${esc(r.b)} · ชั้น ${r.f} · ห้อง ${esc(r.c)}</h2>
+   <div class="chip" style="align-self:flex-start;background:${q[0]};color:${fg(q[0])};border-color:${q[0]};font-weight:600">${esc(q[2])}</div>
+   ${r.miss.length?`<div class="sub">ยังไม่ผ่าน ${esc(QL)}: ${r.miss.map(x=>esc(x.n)).join(', ')}</div>`:''}
+   <div class="field"><label for="hs_d">แผนส่งห้อง ขั้น ${esc(QL)} (สัปดาห์ที่ต้องส่ง)</label><div class="row"><input id="hs_d" type="date" ${cw?'':'disabled'} value="${e&&e.w?esc(e.w):''}" style="width:auto"><button class="btn" data-hsave ${cw?'':'disabled'}>ตั้งแผน</button>${e?`<button class="btn danger" data-hclear ${cw?'':'disabled'}>ล้างแผน</button>`:''}</div><div class="sub">ระบบปัดเป็นวันจันทร์ของสัปดาห์นั้น</div></div>
+   ${c?`<div><b>ประวัติการส่ง</b>${c.hist.map(x=>`<div class="row" style="justify-content:space-between;flex-wrap:nowrap;border-top:1px solid var(--line);padding:6px 0"><span>ครั้งที่ ${x.n} · ${esc(wkLbl(x.w))}</span><b style="color:${oc[x.o][1]}">${oc[x.o][0]}${x.auto?' (อัตโนมัติ)':''}</b></div>`).join('')}
+    ${cw?`<div class="row" style="margin-top:6px"><span class="sub">บันทึกผลสัปดาห์ ${esc(wkLbl(c.cur.w))}:</span><button class="btn sm" data-hres="pass">✓ ผ่าน</button><button class="btn sm danger" data-hres="fail">✗ ไม่ผ่าน → ส่งใหม่</button>${(e.r||[]).some(s=>s.startsWith(c.cur.w+':'))?'<button class="btn sm" data-hres="">ล้างผลที่บันทึก</button>':''}</div>`:''}</div>`:'<div class="sub">ยังไม่ได้กำหนดแผนส่งห้องนี้</div>'}
+   <div><b>รายการ Defect</b> <span class="sub">เปิดอยู่ ${dfOpen(k)} / ${df.length}</span>
+    ${df.map(x=>`<div class="row" style="flex-wrap:nowrap;border-top:1px solid var(--line);padding:5px 0"><label class="chk" style="flex:1"><input type="checkbox" data-hd="${esc(x.i)}" ${x.s?'checked':''} ${cw?'':'disabled'}><span style="${x.s?'text-decoration:line-through;color:var(--muted)':''}">${esc(x.t)}</span></label>${cw?`<button class="btn sm danger" data-hx="${esc(x.i)}">ลบ</button>`:''}</div>`).join('')||'<div class="sub">ไม่มี Defect</div>'}
+    ${cw?'<div class="row" style="margin-top:8px"><input id="hs_t" type="text" maxlength="120" placeholder="เช่น กระเบื้องร้าว ผนังห้องน้ำ" style="flex:1"><button class="btn" data-hadd>+ เพิ่ม</button></div>':''}</div>
+   <button class="btn" data-x>ปิด</button>`,el=>{
+    const again=()=>{closeM();hSheet(key)},tx=$('#hs_t'),sv=async(fn)=>{try{await fn();again()}catch(err){toast('บันทึกไม่สำเร็จ')}};
+    const addD=()=>{const t=(tx&&tx.value||'').trim();if(!t)return;sv(()=>kvSaveMany('dfx',S.dfx,'_exdfx',{[k]:[...df,{i:uid(),t,s:0,d:todayS()}]}))};
+    if(tx)tx.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();addD()}};
+    el.onchange=ev=>{const cb=ev.target.closest('[data-hd]');if(cb)sv(()=>kvSaveMany('dfx',S.dfx,'_exdfx',{[k]:df.map(x=>x.i===cb.dataset.hd?{...x,s:cb.checked?1:0,d:todayS()}:x)}))};
+    el.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;
+      if(b.hasAttribute('data-x'))return closeM();
+      if(b.hasAttribute('data-hadd'))return addD();
+      if(b.dataset.hx)return sv(()=>{const n=df.filter(x=>x.i!==b.dataset.hx);return kvSaveMany('dfx',S.dfx,'_exdfx',{[k]:n.length?n:null})});
+      if(b.hasAttribute('data-hsave')){const v=dnum($('#hs_d').value);if(isNaN(v))return toast('เลือกวันที่ก่อน');return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:{w:dstr(wkMon(v)),r:(e&&e.r)||[]}}))}
+      if(b.hasAttribute('data-hclear'))return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:null}));
+      if('hres' in b.dataset){const wk=c.cur.w,rs=((e&&e.r)||[]).filter(s=>!s.startsWith(wk+':'));if(b.dataset.hres)rs.push(wk+':'+b.dataset.hres);return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:{w:e.w,r:rs}}))}}})}
+const stOpts=()=>{const W=worksSorted(),cmN=new Set(W.map(x=>msIdx(x,'cm')!=null?mL(x,'cm'):null).filter(Boolean)),w0=W.find(x=>msIdx(x,'cm')!=null),seen=new Set(),o=[];if(w0)o.push(['cm',mL(w0,'cm')]);for(const x of W)(x.statuses||[]).forEach((st,i)=>{if(i<1||cmN.has(st.name)||seen.has(st.name))return;seen.add(st.name);o.push([st.name,st.name])});return o};
+function hPlan(){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0};qcApply(w);const b=S.hb,rooms=[...qcRooms(w,b).values()];if(!rooms.length)return toast('ไม่มีห้อง');
+  const cols=[];gridsOf(w.id,b).forEach(g=>{if(g.kind==='percent'||g.rowLabel)return;(g.cols||[]).forEach(c=>{if(!qcSkip(c)&&!cols.includes(c))cols.push(c)})});
+  const floors=[...new Set(rooms.map(r=>r.f))].sort((a,c)=>c-a),map=new Map(rooms.map(r=>[r.f+'-'+r.c,r])),sel=new Set();
+  const cell=(f,c)=>{const r=map.get(f+'-'+c);if(!r)return '<span class="c none"></span>';const e=hGet(r);return `<button class="c" data-c="${esc(f+'-'+c)}" title="${e?'แผนเดิม '+esc(wkLbl(dstr(wkMon(dnum(e.w))))):'ยังไม่มีแผน'}" style="background:${e?'var(--cm)':'var(--surface2)'};color:${e?'#fff':'var(--ink)'}">${e?'●':'·'}</button>`};
+  modal(`<h2>กำหนดแผนส่งห้อง · ตึก ${esc(b)} · ขั้น ${esc(QL)}</h2><div class="field"><label for="hp_s">ขั้นที่จะส่ง</label><select id="hp_s">${stOpts().map(([k,l])=>`<option value="${esc(k)}" ${S.qp===k?'selected':''}>${esc(l)}</option>`).join('')}</select></div><div class="sub">กดห้องเพื่อเลือก (กดชื่อชั้นเพื่อเลือกทั้งชั้น) แล้วเลือกสัปดาห์ที่จะส่ง · ● = มีแผนอยู่แล้ว</div>
+   <div class="field"><label for="hp_d">สัปดาห์ที่ส่ง (เลือกวันใดก็ได้ในสัปดาห์นั้น)</label><input id="hp_d" type="date" value="${dstr(wkMon(todayN())+7)}" style="width:auto"></div>
+   <div class="gw"><div class="g" id="hp_g" style="grid-template-columns:50px repeat(${cols.length},32px)"><span></span>${cols.map(c=>`<span class="gh">${esc(c)}</span>`).join('')}${floors.map(f=>`<button class="gf" data-f="${f}">ชั้น ${f}</button>${cols.map(c=>cell(f,c)).join('')}`).join('')}</div></div>
+   <div class="row"><button class="btn sm" data-all="new">เลือกห้องที่ยังไม่มีแผน</button><button class="btn sm" data-all="none">ล้างที่เลือก</button><span class="sub" id="hp_n">เลือก 0 ห้อง</span></div>
+   <div class="row"><button class="btn pri" data-ok>ตั้งแผนให้ห้องที่เลือก</button><button class="btn danger" data-clr>ล้างแผนห้องที่เลือก</button><button class="btn" data-x>ปิด</button></div>`,el=>{
+    $('#hp_s').onchange=()=>{S.qp=$('#hp_s').value;try{localStorage.setItem('mp_qp',S.qp)}catch(e){}qcApply({id:S.qw,...S.works[S.qw]});closeM();render();hPlan()};
+    const paint=()=>{el.querySelectorAll('[data-c]').forEach(x=>{const on=sel.has(x.dataset.c);x.style.outline=on?'3px solid var(--accent)':'none';x.style.outlineOffset='-3px'});$('#hp_n').textContent='เลือก '+sel.size+' ห้อง'};
+    el.onclick=async ev=>{const b2=ev.target.closest('button');if(!b2)return;
+      if(b2.hasAttribute('data-x'))return closeM();
+      if(b2.dataset.c){sel.has(b2.dataset.c)?sel.delete(b2.dataset.c):sel.add(b2.dataset.c);return paint()}
+      if(b2.dataset.f){const ks=[...map.keys()].filter(k=>k.startsWith(b2.dataset.f+'-')),all=ks.every(k=>sel.has(k));ks.forEach(k=>all?sel.delete(k):sel.add(k));return paint()}
+      if(b2.dataset.all==='none'){sel.clear();return paint()}
+      if(b2.dataset.all==='new'){for(const [k,r] of map)if(!hGet(r))sel.add(k);return paint()}
+      if(!sel.size)return toast('ยังไม่ได้เลือกห้อง');
+      if(b2.hasAttribute('data-ok')){const v=dnum($('#hp_d').value);if(isNaN(v))return toast('เลือกวันที่ก่อน');const wk=dstr(wkMon(v)),o={};for(const k of sel){const r=map.get(k),e=hGet(r);o[hKey(r)]={w:wk,r:(e&&e.r)||[]}}
+        closeM();try{await kvSaveMany('hand',S.hand,'_exhand',o);toast(`ตั้งแผน ${sel.size} ห้อง สัปดาห์ ${wkLbl(wk)}`)}catch(err){toast('บันทึกไม่สำเร็จ')}}
+      else if(b2.hasAttribute('data-clr')){const o={};for(const k of sel){const r=map.get(k);if(S.hand[hKey(r)])o[hKey(r)]=null}
+        if(!Object.keys(o).length)return toast('ห้องที่เลือกไม่มีแผน');closeM();try{await kvSaveMany('hand',S.hand,'_exhand',o);toast('ล้างแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}}})}
+function hDefAdd(){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0};qcApply(w);const b=S.hb,rooms=[...qcRooms(w,b).values()].sort((x,y)=>x.f-y.f||String(x.c).localeCompare(String(y.c),undefined,{numeric:true}));
+  modal(`<h2>เพิ่ม Defect · ตึก ${esc(b)}</h2><div class="field"><label for="hd_r">ห้อง</label><select id="hd_r">${rooms.map(r=>`<option value="${esc(dKey(r))}">ชั้น ${r.f} · ห้อง ${esc(r.c)}</option>`).join('')}</select></div>
+   <div class="field"><label for="hd_t">รายการ Defect</label><input id="hd_t" type="text" maxlength="120" placeholder="เช่น กระเบื้องร้าว ผนังห้องน้ำ"></div>
+   <div class="row"><button class="btn pri" data-ok>เพิ่ม</button><button class="btn" data-x>ยกเลิก</button></div>`,el=>{$('#hd_t').focus();
+    const go=async()=>{const k=$('#hd_r').value,t=$('#hd_t').value.trim();if(!t)return;closeM();try{await kvSaveMany('dfx',S.dfx,'_exdfx',{[k]:[...(S.dfx[k]||[]),{i:uid(),t,s:0,d:todayS()}]});toast('เพิ่ม Defect แล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}};
+    $('#hd_t').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();go()}};
+    el.onclick=ev=>{const b2=ev.target.closest('button');if(!b2)return;if(b2.hasAttribute('data-x'))closeM();else if(b2.hasAttribute('data-ok'))go()}})}
+const hstGet=()=>{if(!S._hst){try{S._hst=JSON.parse(localStorage.getItem('mp_hst')||'null')}catch(e){}}return S._hst};
+function stageData(w,b,key){const old=S.qp;S.qp=key;qcApply(w);
+  const rooms=[...qcRooms(w,b).values()].sort((x,y)=>x.f-y.f||String(x.c).localeCompare(String(y.c),undefined,{numeric:true})),ch=new Map(rooms.map(r=>[r,handChain(r)]));
+  S.qp=old;qcApply(w);return {rooms,ch}}
+function hXl(w,b){
+  const cmN=msIdx(w,'cm')!=null?mL(w,'cm'):null,all=(w.statuses||[]).map((st,i)=>i<1?null:{k:st.name===cmN?'cm':st.name,n:st.name,c:sc(st.color)}).filter(Boolean);
+  let sel=hstGet();if(!sel||!sel.length)sel=all.filter(x=>x.k==='cm'||/OPEN|CLOSE|PASS|QC/i.test(x.n)).map(x=>x.k).slice(0,5);
+  const stg=all.filter(x=>sel.includes(x.k)).reverse(),now=wkMon(todayN());
+  const chips=`<div class="row noexp" style="margin-top:10px"><span class="sub">แถวที่แสดง</span><div class="chips">${all.slice().reverse().map(x=>`<button class="chip" data-a="hst" data-k="${esc(x.k)}" aria-pressed="${sel.includes(x.k)}">${esc(x.n)}</button>`).join('')}</div></div>`;
+  if(!stg.length)return chips+'<div class="card empty" style="margin-top:12px">เลือกขั้นที่จะแสดงอย่างน้อย 1 ขั้น</div>';
+  const data=stg.map(x=>({x,...stageData(w,b,x.k)}));
+  let mn=now,mx=now;for(const d of data)for(const r of d.rooms){const c=d.ch.get(r);if(!c)continue;mn=Math.min(mn,wkMon(dnum(c.plan)));for(const t of c.hist)mx=Math.max(mx,dnum(t.w))}
+  const weeks=[];for(let t=mn;t<=Math.min(mx,mn+7*40);t+=7)weeks.push(dstr(t));
+  const f1=s=>new Date(dnum(s)*DAY).toLocaleDateString('th-TH',{day:'numeric',month:'short',timeZone:'UTC'});
+  const srt=l=>l.sort((a,c)=>a.r.f-c.r.f||String(a.r.c).localeCompare(String(c.r.c),undefined,{numeric:true}));
+  const cell=(list,st)=>`<td style="text-align:left;vertical-align:top;white-space:normal;min-width:92px;max-width:210px;font-size:12px;line-height:1.4">${srt(list).map(e=>`<span data-a="hroom" data-k="${esc(dKey(e.r))}" data-s="${esc(st)}" style="cursor:pointer;display:inline-block;margin:0 6px 1px 0;font-weight:700;${e.bad?'color:var(--warn)':''}" title="${e.bad?'ไม่ผ่านสัปดาห์นี้ → ส่งใหม่':'ชั้น '+e.r.f}">${esc(rl(e.r))}${e.bad?'✗':''}${dfOpen(dKey(e.r))?`<sup style="color:var(--warn)">⚠${dfOpen(dKey(e.r))}</sup>`:''}</span>`).join('')}</td>`;
+  let rows='';
+  for(const d of data){const pl=new Map(),ac=new Map();let pn=0,an=0;
+    for(const r of d.rooms){const c=d.ch.get(r);if(!c)continue;const pw=dstr(wkMon(dnum(c.plan)));if(!pl.has(pw))pl.set(pw,[]);pl.get(pw).push({r,bad:c.hist[0].o==='fail'});pn++;
+      if(c.cur.o==='pass'){if(!ac.has(c.cur.w))ac.set(c.cur.w,[]);ac.get(c.cur.w).push({r});an++}}
+    rows+=`<tr style="border-top:3px solid var(--line)"><td rowspan="2" style="background:${d.x.c};color:${fg(d.x.c)};font-weight:700;text-align:center;min-width:96px;vertical-align:middle">${esc(d.x.n)}</td><td style="font-weight:700;text-align:left">PLAN</td>${weeks.map(wk=>cell(pl.get(wk)||[],d.x.k))}<td style="white-space:nowrap"><b>${pn}</b> <span class="sub">unit</span></td></tr>
+     <tr><td style="font-weight:700;color:var(--qc2);text-align:left">ACTUAL</td>${weeks.map(wk=>cell(ac.get(wk)||[],d.x.k))}<td style="white-space:nowrap"><b>${an}</b> <span class="sub">unit</span></td></tr>`}
+  const dm=new Map();for(const d of data)for(const r of d.rooms){const c=d.ch.get(r);if(!c)continue;const df=S.dfx[dKey(r)]||[],o=df.filter(x=>!x.s);if(!c.fails&&!o.length)continue;const e=dm.get(dKey(r))||{r,st:[],df,fails:0};if(c.fails){e.st.push(d.x.n+' ×'+c.fails);e.fails+=c.fails}dm.set(dKey(r),e)}
+  const dl=[...dm.values()].sort((a,c)=>a.r.f-c.r.f||String(a.r.c).localeCompare(String(c.r.c),undefined,{numeric:true})),dTot=dl.reduce((a,e)=>a+e.df.filter(x=>!x.s).length,0);
+  const dsec=`<section class="sec"><div class="head"><h2>Defect / ห้องที่ไม่ผ่าน</h2><span class="sub">${dl.length} ห้อง · Defect เปิดอยู่ ${dTot} รายการ</span></div>${dl.length?`<div class="tw"><table><thead><tr><th>ชั้น</th><th>ห้อง</th><th>ไม่ผ่านที่ขั้น (ครั้ง)</th><th>จำนวน Defect</th><th style="text-align:left">รายการ Defect</th></tr></thead><tbody>${dl.map(e=>{const o=e.df.filter(x=>!x.s);return `<tr data-a="hroom" data-k="${esc(dKey(e.r))}" style="cursor:pointer"><td>${e.r.f}</td><td>${esc(rl(e.r))}</td><td>${esc(e.st.join(', ')||'-')}</td><td><b style="color:${o.length?'var(--warn)':'var(--qc2)'}">${o.length}</b>/${e.df.length}</td><td style="text-align:left;white-space:normal">${e.df.map(x=>`<div style="${x.s?'text-decoration:line-through;color:var(--muted)':''}">${x.s?'✓':'○'} ${esc(x.t)}</div>`).join('')||'<span class="sub">ยังไม่ได้ระบุ Defect (กดแถวเพื่อเพิ่ม)</span>'}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="card empty">ไม่มีห้องที่ไม่ผ่านหรือมี Defect</div>'}</section>`;
+  return `<section class="sec">${chips}<div class="sub" style="margin:8px 0">PLAN = ห้องที่นัดส่งในสัปดาห์นั้น (แดง ✗ = สัปดาห์นั้นไม่ผ่านและย้ายไปส่งใหม่) · ACTUAL = ห้องที่ผ่านขั้นนั้นแล้ว ตามสัปดาห์ที่ผ่าน · กดเลขห้องเพื่อตั้งแผน/ผล/Defect</div>
+   ${weeks.length?`<div class="tw"><table style="min-width:${230+weeks.length*100}px"><thead><tr><th colspan="2" style="text-align:left">BUILDING ${esc(b)}</th>${weeks.map(wk=>`<th style="text-align:center;${wk===dstr(now)?'color:var(--accent)':''}">${esc(f1(wk))}<div class="sub" style="font-weight:400">${wk===dstr(now)?'สัปดาห์นี้':'–'+esc(f1(dstr(dnum(wk)+6)))}</div></th>`).join('')}<th>รวม</th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="card empty">ยังไม่มีแผนส่งห้อง กด “+ กำหนดแผนส่งห้อง” แล้วเลือกขั้นที่จะส่ง</div>'}</section>${dsec}`}
+
 function vQC2(){
-  const ws=qcWorks(),pc=()=>`<div class="row noexp" style="margin-top:10px"><span class="sub">แสดงเป็นผ่านเมื่อถึงขั้น</span><select id="qp_sel" style="width:auto;min-width:220px" aria-label="สถานะที่นับว่าผ่าน">${(()=>{const W=worksSorted(),cmN=new Set(W.map(x=>msIdx(x,'cm')!=null?mL(x,'cm'):null).filter(Boolean)),w0=W.find(x=>msIdx(x,'cm')!=null),seen=new Set(),o=[];if(w0)o.push(['cm',mL(w0,'cm')]);for(const x of W)(x.statuses||[]).forEach((st,i)=>{if(i<1||cmN.has(st.name)||seen.has(st.name))return;seen.add(st.name);o.push([st.name,st.name])});return o.map(([k,l])=>`<option value="${esc(k)}" ${S.qp===k?'selected':''}>${esc(l)}</option>`).join('')})()}</select></div>`;
+  const ws=qcWorks(),pc=qpBar;
   if(!ws.length)return `<div class="card empty">ยังไม่มีงานที่ตั้งขั้นนี้ไว้ ตั้งค่าได้ที่ “ตั้งค่างาน” ของแต่ละงาน</div>`+pc();
   const w=ws.find(x=>x.id===S.qw)||ws[0];S.qw=w.id;qcApply(w);const b=S.qb,all=[...qcRooms(w,b).values()],n=qcCount(all);
   let h=`<div class="row" style="justify-content:space-between"><div><h1 style="font-size:22px;font-weight:700">QC2 ผ่านหรือยังไม่ผ่าน</h1><div class="sub">ห้องจะผ่านเมื่อทุกรายการของ${esc(w.name)}ในห้องนั้นถึง ${esc(QL)} ขึ้นไป</div></div>
@@ -708,8 +851,11 @@ function planOf(b,f){const c=(S.plancustom||{})[b+'-'+f];if(!c){return ((PLANS[b
 function planBs(){const o=new Set(Object.keys(PLANS).filter(k=>S.meta.buildings.includes(k)));for(const x of S.meta.buildings)o.add(x);for(const k of Object.keys(S.plancustom||{}))o.add(k.split('-')[0]);return [...o].sort()}
 function planFl(b){const o=new Set(Object.keys(PLANS[b]||{}).filter(f=>!(S.planhide||{})[b+'-'+f]));for(const k of Object.keys(S.plancustom||{})){const i=k.indexOf('-');if(k.slice(0,i)===b)o.add(k.slice(i+1))}return [...o].sort((x,y)=>x-y)}
 const pimgReq={};
-function pimgLoad(id,n){if(S.pimg[id]||pimgReq[id])return;pimgReq[id]=1;const parts=new Array(n).fill(null);let got=0;
-  for(let k=0;k<n;k++){let first=true;S.db.doc('meta/pimg-'+id+'-'+k).onSnapshot(s=>{if(!s.exists||parts[k]!=null)return;parts[k]=s.data().d;got++;if(got===n){S.pimg[id]=parts.join('');render()}},()=>{})}}
+function pimgLoad(id,n){if(S.pimg[id]||pimgReq[id])return;pimgReq[id]=1;S._pl=S._pl||{};const st=S._pl[id]={got:0,n};const parts=new Array(n).fill(null);let got=0;
+  for(let k=0;k<n;k++){S.db.doc('meta/pimg-'+id+'-'+k).onSnapshot(s=>{if(!s.exists||parts[k]!=null)return;parts[k]=s.data().d;got++;st.got=got;if(got===n)S.pimg[id]=parts.join('');render()},()=>{})}}
+function pimgRetry(id){delete pimgReq[id];try{if(typeof GH!=='undefined'&&GH.lz)for(const k of Object.keys(GH.lz))if(k.indexOf('meta/pimg-'+id+'-')===0)delete GH.lz[k]}catch(e){}
+  const c=Object.values(S.plancustom||{}).find(x=>x.img===id);if(c&&S.db)pimgLoad(id,c.n);toast('กำลังโหลดแปลนใหม่…')}
+const plLoadCard=c=>{const st=(S._pl||{})[c&&c.img];return `<div class="card empty" style="margin-top:14px">กำลังโหลดแปลน… ${st?`ได้ ${st.got}/${st.n} ส่วน`:''}<div class="sub" style="margin:6px 0 10px">ถ้าค้างนาน กด “ลองใหม่” หรือรีเฟรชหน้า (Ctrl+F5)</div><button class="btn" data-a="plretry" data-id="${esc(c?c.img:'')}">ลองใหม่</button></div>`}
 const roomsOf=(b,f)=>{const o={},base=planOf(b,f).rooms,ov=(S.planov||{})[b+'-'+f]||{};for(const c of Object.keys(base))o[c]=base[c];for(const c of Object.keys(ov)){const a=ov[c];if(Array.isArray(a)&&a.length>=6){const p=[];for(let i=0;i+1<a.length;i+=2)p.push([a[i],a[i+1]]);o[c]=p}}return o};
 const centroid=p=>[p.reduce((a,q)=>a+q[0],0)/p.length,p.reduce((a,q)=>a+q[1],0)/p.length];
 function planItems(b,f,c){const out=[];
@@ -909,7 +1055,7 @@ function vPlan(){
     <div class="chips">${fl.map(x=>`<button class="chip" data-a="pf" data-f="${esc(x)}" aria-pressed="${x===f}">ชั้น ${esc(x)}</button>`).join('')}</div></div>
    <div class="row" style="margin-top:8px"><div class="chips"><button class="chip" data-a="pw" data-w="ALL" aria-pressed="${wid==='ALL'}">รวมทุกงาน</button>${ws.map(w=>`<button class="chip" data-a="pw" data-w="${w.id}" aria-pressed="${wid===w.id}">${esc(w.name)}</button>`).join('')}</div>
     <div class="chips">${MSU().map(([k,l])=>`<button class="chip" data-a="pm" data-k="${k}" aria-pressed="${m===k}">${l}</button>`).join('')}</div><div class="chips"><button class="chip" data-a="pcf" aria-pressed="${S.pcf}">★ เฉพาะห้องลูกค้า (${ncu})</button></div></div>`;
-  if(P.loading)return h+'<div class="card empty" style="margin-top:14px">กำลังโหลดแปลน…</div>';
+  if(P.loading)return h+plLoadCard(P.custom);
   let sv=`<svg class="plansvg${S.ps&&!S.pe?' zoomed':''}${S.pe?' editing':''}" style="aspect-ratio:${P.w}/${P.h}" viewBox="0 0 ${P.w} ${P.h}" role="img" aria-label="แปลนตึก ${esc(b)} ชั้น ${esc(f)}"><image href="${P.img}" x="0" y="0" width="${P.w}" height="${P.h}"/>`;
   const cs=Object.keys(RM).sort();
   const PC={};cs.forEach(c=>PC[c]=roomPct(b,+f,c,wid,m));const LB=S.pe?{}:planLabels(RM,cs,PC,b,f,S.ps);
@@ -2125,11 +2271,12 @@ async function apOneExport(kind,size,po){const so=S.aoo;if(po!=null)S.aoo=po;
     toast('ส่งออกแล้ว')}
   catch(err){if(!err||err.code!=='declined'){toast('ส่งออกไม่สำเร็จ');console.error(err)}}finally{S.aoo=so;if(host)host.remove()}}
 /* ---------- render ---------- */
-const TD={overview:'ภาพรวม',plan:'แปลน',sched:'แผนงาน',report:'นำเสนอ',ap:'Action Plan',qc2:'QC2'},tn=v=>esc((S.meta.tabs&&S.meta.tabs[v])||TD[v]);
+const TD={overview:'ภาพรวม',plan:'แปลน',sched:'แผนงาน',report:'นำเสนอ',ap:'Action Plan',qc2:'QC2',hand:'ส่งห้อง'},tn=v=>esc((S.meta.tabs&&S.meta.tabs[v])||TD[v]);
 function renderTabs(){const t=$('#tabs');
-  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">${tn('overview')}</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">${tn('plan')}</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">${tn('sched')}</button><button class="tab" role="tab" data-a="go" data-v="report" aria-selected="${S.view==='report'}">${tn('report')}</button><button class="tab" role="tab" data-a="go" data-v="ap" aria-selected="${S.view==='ap'}">${tn('ap')}</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">${tn('qc2')}</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
+  t.innerHTML=`<button class="tab" role="tab" data-a="go" data-v="overview" aria-selected="${S.view==='overview'}">${tn('overview')}</button>`+(Object.keys(PLANS).length?`<button class="tab" role="tab" data-a="go" data-v="plan" aria-selected="${S.view==='plan'}">${tn('plan')}</button>`:'')+`<button class="tab" role="tab" data-a="go" data-v="sched" aria-selected="${S.view==='sched'}">${tn('sched')}</button><button class="tab" role="tab" data-a="go" data-v="report" aria-selected="${S.view==='report'}">${tn('report')}</button><button class="tab" role="tab" data-a="go" data-v="ap" aria-selected="${S.view==='ap'}">${tn('ap')}</button>`+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="qc2" aria-selected="${S.view==='qc2'}">${tn('qc2')}</button>`:'')+(qcWorks().length?`<button class="tab" role="tab" data-a="go" data-v="hand" aria-selected="${S.view==='hand'}">${tn('hand')}</button>`:'')+worksSorted().map(w=>`<button class="tab" role="tab" data-a="go" data-v="${w.id}" aria-selected="${S.view===w.id}">${esc(w.name)}</button>`).join('')+(S.canWrite?`<button class="tab add" data-a="addwork">+ เพิ่มงาน</button>`:'')}
 let raf=0;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
-function doRender(){
+function doRender(){try{doRender0()}catch(e){console.error(e);const a=$('#app');if(a)a.insertAdjacentHTML('afterbegin',`<div class="banner" style="margin:12px">แสดงหน้านี้ไม่สำเร็จ: ${esc(String(e&&e.message||e))} <button class="btn" onclick="location.reload()">รีโหลด</button></div>`)}}
+function doRender0(){
   if(S._drag){S._pend=true;return}
   const app=$('#app');if(!S.ready)return;applyBrand();
   const sc={};app.querySelectorAll('[data-gw]').forEach(e=>sc[e.dataset.gw]=e.scrollLeft);
@@ -2143,6 +2290,7 @@ function doRender(){
   else if(S.view==='report')h+=vReport();
   else if(S.view==='ap')h+=vAP2();
   else if(S.view==='qc2')h+=vQC2();
+  else if(S.view==='hand')h+=vHand();
   else if(S.view!=='overview'&&w)h+=vWork({id:S.view,...w});else{S.view='overview';h+=vOverview()}
   const key=S.view+'|'+S.pb+'|'+S.pf+'|'+S.pw+'|'+S.pm+'|'+S.bld+'|'+S.obld+'|'+S.qw+'|'+S.qb;const ent=key!==S._k;S._k=key;
   app.classList.remove('enter');app.innerHTML=h;
@@ -2338,7 +2486,7 @@ const EXP={fmt:'pdf',orient:'landscape',size:'A4'};
 try{Object.assign(EXP,JSON.parse(localStorage.getItem('mp_exp')||'{}'))}catch(e){}
 function exportDialog(t,title){
   modal(`<h2>ส่งออก “${esc(title)}”</h2>
-   <div class="field"><label for="x_f">รูปแบบไฟล์</label><select id="x_f"><option value="pdf">PDF</option><option value="png">ภาพ PNG</option></select></div>
+   <div class="field"><label for="x_f">รูปแบบไฟล์</label><select id="x_f"><option value="pdf">PDF</option><option value="png">ภาพ PNG</option><option value="jpg">ภาพ JPG</option></select></div>
    <div class="field" data-pdf><label for="x_o">การวางหน้า</label><select id="x_o"><option value="landscape">แนวนอน</option><option value="portrait">แนวตั้ง</option></select></div>
    <div class="field" data-pdf><label for="x_s">ขนาดกระดาษ</label><select id="x_s"><option value="A4">A4</option><option value="A3">A3</option></select></div>
    <div class="sub" data-pdf>ถ้าเนื้อหายาวกว่า 1 หน้า จะแบ่งเป็นหลายหน้าอัตโนมัติ</div>
@@ -2362,7 +2510,7 @@ function buildClone(t,title){
   const DIMRGB='rgb('+hex3(dim()).join(', ')+')';
   c.querySelectorAll('[style]').forEach(e=>{if(e.style.backgroundColor===DIMRGB){e.style.backgroundColor='#c4c9c4';e.style.color='#14212a'}});
   scope.append(hd,c);document.body.appendChild(scope);
-  const wide=Math.max(0,...[...scope.querySelectorAll('.g,.mi')].map(g=>g.scrollWidth));
+  const wide=Math.max(0,...[...scope.querySelectorAll('.g,.mi,.tw table')].map(g=>g.scrollWidth));
   scope.style.width=Math.max(t.g?640:1100,wide+80)+'px';
   return scope}
 async function runExport(t,title,o){
@@ -2378,9 +2526,9 @@ async function runExport(t,title,o){
     const cssW=scope.offsetWidth,cssH=scope.offsetHeight,sc=Math.max(.5,Math.min(2,14000/cssW,14000/cssH));
     const cv=await html2canvas(scope,{scale:sc,backgroundColor:'#edf0ed',useCORS:true,logging:false});
     const day=new Date().toISOString().slice(0,10),slug=title.replace(/[^\w฀-๿-]+/g,'_');
-    if(o.fmt==='png'){
-      const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
-      await S.dl.save({filename:`modeva-${slug}-${day}.png`,data:blob})
+    if(o.fmt==='png'||o.fmt==='jpg'){const jp=o.fmt==='jpg';
+      const blob=await new Promise(r=>cv.toBlob(r,jp?'image/jpeg':'image/png',.92));
+      await S.dl.save({filename:`modeva-${slug}-${day}.${jp?'jpg':'png'}`,data:blob})
     }else{
       const pdf=new window.jspdf.jsPDF({orientation:o.orient,unit:'mm',format:o.size.toLowerCase()});
       const W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),m=8,aw=W-2*m,ah=H-2*m;
@@ -2432,6 +2580,7 @@ document.addEventListener('click',async e=>{
   else if(a==='sst'){S.sst=S.sst===d.k?'ALL':d.k;render()}
   else if(a==='sm'){S.sm=d.k;render()}
   else if(a==='mz'){S.mz=d.k;render()}
+  else if(a==='plretry'){pimgRetry(d.id)}
   else if(a==='mrh'){S.mrh=+d.k;mspSave();render()}
   else if(a==='mrz'){S.mw={};mspSave();render()}
   else if(a==='mcol'){S.mc=S.mc||{};S.mc[d.id]=!S.mc[d.id];mspSave();render()}
@@ -2455,6 +2604,12 @@ document.addEventListener('click',async e=>{
   else if(a==='prestore'){S.planhide={};planSave();render();toast('กู้แปลนที่ติดมากับระบบแล้ว')}
   else if(a==='pplace'){S.pes=d.c;S.pd=true;render()}
   else if(a==='qb'){S.qb=d.b;render()}
+  else if(a==='hb'){S.hb=d.b;render()}
+  else if(a==='hmo'){S.hmode=d.k;render()}
+  else if(a==='hroom'){if(d.s){S.qp=d.s;qcApply({id:S.qw,...S.works[S.qw]})}hSheet(d.k)}
+  else if(a==='hst'){let l=hstGet()||[];l=l.includes(d.k)?l.filter(x=>x!==d.k):[...l,d.k];S._hst=l;try{localStorage.setItem('mp_hst',JSON.stringify(l))}catch(e){}render()}
+  else if(a==='hplan'){hPlan()}
+  else if(a==='hdef'){hDefAdd()}
   else if(a==='qw'){S.qw=d.w;render()}
   else if(a==='qp'){S.qp=d.k;try{localStorage.setItem('mp_qp',d.k)}catch(e){}render()}
   else if(a==='qroom'){const w=S.works[S.qw];if(w){const r=qcRooms({id:S.qw,...w},d.b).get(d.b+'|'+d.k);if(r)qroomSheet({id:S.qw,...w},r)}}
@@ -2471,7 +2626,7 @@ document.addEventListener('click',async e=>{
   else if(a==='colset'&&W&&S.canWrite){const g=S.grids[d.g];pickFor(g,`ห้อง ${d.c} ทุกชั้น`,`${g.item} · ตึก ${g.building}`,W,v=>{const p={};for(const f of g.floors){const k=f+'-'+d.c;if(has(g.cells[k]))p[k]=v}patchCells(d.g,p)})}
   else if(a==='addb')addBuilding();
   else if(a==='gh')ghDialog();else if(a==='mgb')manageBuildings();else if(a==='levels')levelsDialog();
-  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='sched'?'แผนงาน':S.view==='report'?rptTitle():S.view==='plan'?`แปลนตึก ${S.pb} ชั้น ${S.pf}`:S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
+  else if(a==='exp'){if(d.g){const g=S.grids[d.g];exportDialog({g:d.g},`${g.item} ตึก ${g.building}`)}else exportDialog({},S.view==='overview'?'ภาพรวมโครงการ':S.view==='sched'?'แผนงาน':S.view==='report'?rptTitle():S.view==='plan'?`แปลนตึก ${S.pb} ชั้น ${S.pf}`:S.view==='qc2'?'QC2 ผ่าน-ยังไม่ผ่าน':S.view==='hand'?'แผนส่งห้อง':`${W.name} ${S.bld==='ALL'?'ทุกตึก':'ตึก '+S.bld}`)}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
@@ -2625,6 +2780,8 @@ async function boot(){
   S.db.collection('works').onSnapshot(s=>{S.works={};s.docs.forEach(d=>S.works[d.id]=JSON.parse(JSON.stringify(d.data())));render()},onErr);
   S.db.collection('grids').onSnapshot(s=>{const old=S.grids;S.grids={};s.docs.forEach(d=>{const q=queue[d.id];S.grids[d.id]=(q&&(q.run||Object.keys(q.p).length)&&old[d.id])?old[d.id]:JSON.parse(JSON.stringify(d.data()))});render()},onErr);
   S.db.doc('meta/sched').onSnapshot(s=>{S._schedEx=s.exists;const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.sched={};for(const [k,v] of Object.entries(d))if(v&&typeof v==='object')S.sched[k]=v;render()},onErr);
+  S.db.doc('meta/hand').onSnapshot(s=>{S._exhand=s.exists;S.hand={};if(s.exists){for(const [k,v] of Object.entries(s.data()))if(v&&typeof v==='object')S.hand[k]=JSON.parse(JSON.stringify(v))}render()},onErr);
+  S.db.doc('meta/dfx').onSnapshot(s=>{S._exdfx=s.exists;S.dfx={};if(s.exists){for(const [k,v] of Object.entries(s.data()))if(Array.isArray(v))S.dfx[k]=JSON.parse(JSON.stringify(v))}render()},onErr);
   S.db.doc('meta/rpt').onSnapshot(s=>{S._rptEx=s.exists;const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.rpt={};for(const [k,v] of Object.entries(d))if(v!=null)S.rpt[k]=v;render()},onErr);
   S.db.doc('meta/clients').onSnapshot(s=>{S.clients=(s.exists&&JSON.parse(JSON.stringify(s.data())).r)||{};render()},onErr);
   S.db.doc('meta/plans').onSnapshot(s=>{if(!S._drag){const d=s.exists?JSON.parse(JSON.stringify(s.data())):{};S.planov=d.ov||{};S.plancustom=d.cp||{};S.planhide=d.hide||{};render()}},onErr);
