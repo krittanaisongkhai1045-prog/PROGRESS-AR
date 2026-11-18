@@ -693,7 +693,7 @@ function handChain(r){const e=hGet(r);if(!e||!e.w)return null;
   const now=wkMon(todayN()),live=r.st!=='no',hist=[];let wk=wkMon(dnum(e.w));
   for(let i=0;i<60;i++){const ws=dstr(wk),rs=res[ws];let o,auto=false;
     if(rs==='pass'||rs==='fail')o=rs;else if(wk<now){o=live?'pass':'fail';auto=true}else o=live?'pass':'wait';
-    hist.push({w:ws,o,auto,n:i+1});if(o!=='fail')break;wk+=7}
+    hist.push({w:ws,d:dstr(dnum(e.w)+7*i),o,auto,n:i+1});if(o!=='fail')break;wk+=7}
   return {plan:e.w,hist,cur:hist[hist.length-1],fails:hist.filter(x=>x.o==='fail').length}}
 const dfOpen=k=>(S.dfx[k]||[]).filter(x=>!x.s).length;
 const HC={pass:()=>'var(--qc2)',fail:()=>'var(--warn)',wait:()=>'var(--surface2)'};
@@ -746,7 +746,7 @@ function hSheet(key){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0
   modal(`<h2>ตึก ${esc(r.b)} · ชั้น ${r.f} · ห้อง ${esc(r.c)}</h2>
    <div class="chip" style="align-self:flex-start;background:${q[0]};color:${fg(q[0])};border-color:${q[0]};font-weight:600">${esc(q[2])}</div>
    ${r.miss.length?`<div class="sub">ยังไม่ผ่าน ${esc(QL)}: ${r.miss.map(x=>esc(x.n)).join(', ')}</div>`:''}
-   <div class="field"><label for="hs_d">แผนส่งห้อง ขั้น ${esc(QL)} (สัปดาห์ที่ต้องส่ง)</label><div class="row"><input id="hs_d" type="date" ${cw?'':'disabled'} value="${e&&e.w?esc(e.w):''}" style="width:auto"><button class="btn" data-hsave ${cw?'':'disabled'}>ตั้งแผน</button>${e?`<button class="btn danger" data-hclear ${cw?'':'disabled'}>ล้างแผน</button>`:''}</div><div class="sub">ระบบปัดเป็นวันจันทร์ของสัปดาห์นั้น</div></div>
+   <div class="field"><label for="hs_d">แผนส่งห้อง ขั้น ${esc(QL)} (วันที่ต้องส่ง)</label><div class="row"><input id="hs_d" type="date" ${cw?'':'disabled'} value="${e&&e.w?esc(e.w):''}" style="width:auto"><button class="btn" data-hsave ${cw?'':'disabled'}>ตั้งแผน</button>${e?`<button class="btn danger" data-hclear ${cw?'':'disabled'}>ล้างแผน</button>`:''}</div><div class="sub">ระบุวันที่นัดส่งจริง ระบบจัดเข้าสัปดาห์ให้เอง</div></div>
    ${c?`<div><b>ประวัติการส่ง</b>${c.hist.map(x=>`<div class="row" style="justify-content:space-between;flex-wrap:nowrap;border-top:1px solid var(--line);padding:6px 0"><span>ครั้งที่ ${x.n} · ${esc(wkLbl(x.w))}</span><b style="color:${oc[x.o][1]}">${oc[x.o][0]}${x.auto?' (อัตโนมัติ)':''}</b></div>`).join('')}
     ${cw?`<div class="row" style="margin-top:6px"><span class="sub">บันทึกผลสัปดาห์ ${esc(wkLbl(c.cur.w))}:</span><button class="btn sm" data-hres="pass">✓ ผ่าน</button><button class="btn sm danger" data-hres="fail">✗ ไม่ผ่าน → ส่งใหม่</button>${(e.r||[]).some(s=>s.startsWith(c.cur.w+':'))?'<button class="btn sm" data-hres="">ล้างผลที่บันทึก</button>':''}</div>`:''}</div>`:'<div class="sub">ยังไม่ได้กำหนดแผนส่งห้องนี้</div>'}
    <div><b>รายการ Defect</b> <span class="sub">เปิดอยู่ ${dfOpen(k)} / ${df.length}</span>
@@ -761,7 +761,7 @@ function hSheet(key){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0
       if(b.hasAttribute('data-x'))return closeM();
       if(b.hasAttribute('data-hadd'))return addD();
       if(b.dataset.hx)return sv(()=>{const n=df.filter(x=>x.i!==b.dataset.hx);return kvSaveMany('dfx',S.dfx,'_exdfx',{[k]:n.length?n:null})});
-      if(b.hasAttribute('data-hsave')){const v=dnum($('#hs_d').value);if(isNaN(v))return toast('เลือกวันที่ก่อน');return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:{w:dstr(wkMon(v)),r:(e&&e.r)||[]}}))}
+      if(b.hasAttribute('data-hsave')){const v=dnum($('#hs_d').value);if(isNaN(v))return toast('เลือกวันที่ก่อน');return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:{w:dstr(v),r:(e&&e.r)||[]}}))}
       if(b.hasAttribute('data-hclear'))return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:null}));
       if('hres' in b.dataset){const wk=c.cur.w,rs=((e&&e.r)||[]).filter(s=>!s.startsWith(wk+':'));if(b.dataset.hres)rs.push(wk+':'+b.dataset.hres);return sv(()=>kvSaveMany('hand',S.hand,'_exhand',{[hk]:{w:e.w,r:rs}}))}}})}
 const stOpts=()=>{const W=worksSorted(),cmN=new Set(W.map(x=>msIdx(x,'cm')!=null?mL(x,'cm'):null).filter(Boolean)),w0=W.find(x=>msIdx(x,'cm')!=null),seen=new Set(),o=[];if(w0)o.push(['cm',mL(w0,'cm')]);for(const x of W)(x.statuses||[]).forEach((st,i)=>{if(i<1||cmN.has(st.name)||seen.has(st.name))return;seen.add(st.name);o.push([st.name,st.name])});return o};
@@ -770,7 +770,7 @@ function hPlan(){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0};qc
   const floors=[...new Set(rooms.map(r=>r.f))].sort((a,c)=>c-a),map=new Map(rooms.map(r=>[r.f+'-'+r.c,r])),sel=new Set();
   const cell=(f,c)=>{const r=map.get(f+'-'+c);if(!r)return '<span class="c none"></span>';const e=hGet(r);return `<button class="c" data-c="${esc(f+'-'+c)}" title="${e?'แผนเดิม '+esc(wkLbl(dstr(wkMon(dnum(e.w))))):'ยังไม่มีแผน'}" style="background:${e?'var(--cm)':'var(--surface2)'};color:${e?'#fff':'var(--ink)'}">${e?'●':'·'}</button>`};
   modal(`<h2>กำหนดแผนส่งห้อง · ตึก ${esc(b)} · ขั้น ${esc(QL)}</h2><div class="field"><label for="hp_s">ขั้นที่จะส่ง</label><select id="hp_s">${stOpts().map(([k,l])=>`<option value="${esc(k)}" ${S.qp===k?'selected':''}>${esc(l)}</option>`).join('')}</select></div><div class="sub">กดห้องเพื่อเลือก (กดชื่อชั้นเพื่อเลือกทั้งชั้น) แล้วเลือกสัปดาห์ที่จะส่ง · ● = มีแผนอยู่แล้ว</div>
-   <div class="field"><label for="hp_d">สัปดาห์ที่ส่ง (เลือกวันใดก็ได้ในสัปดาห์นั้น)</label><input id="hp_d" type="date" value="${dstr(wkMon(todayN())+7)}" style="width:auto"></div>
+   <div class="field"><label for="hp_d">วันที่นัดส่ง</label><input id="hp_d" type="date" value="${dstr(todayN()+1)}" style="width:auto"></div>
    <div class="gw"><div class="g" id="hp_g" style="grid-template-columns:50px repeat(${cols.length},32px)"><span></span>${cols.map(c=>`<span class="gh">${esc(c)}</span>`).join('')}${floors.map(f=>`<button class="gf" data-f="${f}">ชั้น ${f}</button>${cols.map(c=>cell(f,c)).join('')}`).join('')}</div></div>
    <div class="row"><button class="btn sm" data-all="new">เลือกห้องที่ยังไม่มีแผน</button><button class="btn sm" data-all="none">ล้างที่เลือก</button><span class="sub" id="hp_n">เลือก 0 ห้อง</span></div>
    <div class="row"><button class="btn pri" data-ok>ตั้งแผนให้ห้องที่เลือก</button><button class="btn danger" data-clr>ล้างแผนห้องที่เลือก</button><button class="btn" data-x>ปิด</button></div>`,el=>{
@@ -783,8 +783,8 @@ function hPlan(){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0};qc
       if(b2.dataset.all==='none'){sel.clear();return paint()}
       if(b2.dataset.all==='new'){for(const [k,r] of map)if(!hGet(r))sel.add(k);return paint()}
       if(!sel.size)return toast('ยังไม่ได้เลือกห้อง');
-      if(b2.hasAttribute('data-ok')){const v=dnum($('#hp_d').value);if(isNaN(v))return toast('เลือกวันที่ก่อน');const wk=dstr(wkMon(v)),o={};for(const k of sel){const r=map.get(k),e=hGet(r);o[hKey(r)]={w:wk,r:(e&&e.r)||[]}}
-        closeM();try{await kvSaveMany('hand',S.hand,'_exhand',o);toast(`ตั้งแผน ${sel.size} ห้อง สัปดาห์ ${wkLbl(wk)}`)}catch(err){toast('บันทึกไม่สำเร็จ')}}
+      if(b2.hasAttribute('data-ok')){const v=dnum($('#hp_d').value);if(isNaN(v))return toast('เลือกวันที่ก่อน');const wk=dstr(v),o={};for(const k of sel){const r=map.get(k),e=hGet(r);o[hKey(r)]={w:wk,r:(e&&e.r)||[]}}
+        closeM();try{await kvSaveMany('hand',S.hand,'_exhand',o);toast(`ตั้งแผน ${sel.size} ห้อง วันที่ ${wk}`)}catch(err){toast('บันทึกไม่สำเร็จ')}}
       else if(b2.hasAttribute('data-clr')){const o={};for(const k of sel){const r=map.get(k);if(S.hand[hKey(r)])o[hKey(r)]=null}
         if(!Object.keys(o).length)return toast('ห้องที่เลือกไม่มีแผน');closeM();try{await kvSaveMany('hand',S.hand,'_exhand',o);toast('ล้างแผนแล้ว')}catch(err){toast('บันทึกไม่สำเร็จ')}}}})}
 function hDefAdd(){const w0=S.works[S.qw];if(!w0)return;const w={id:S.qw,...w0};qcApply(w);const b=S.hb,rooms=[...qcRooms(w,b).values()].sort((x,y)=>x.f-y.f||String(x.c).localeCompare(String(y.c),undefined,{numeric:true}));
@@ -809,18 +809,18 @@ function hXl(w,b){
   const weeks=[];for(let t=mn;t<=Math.min(mx,mn+7*40);t+=7)weeks.push(dstr(t));
   const f1=s=>new Date(dnum(s)*DAY).toLocaleDateString('th-TH',{day:'numeric',month:'short',timeZone:'UTC'});
   const srt=l=>l.sort((a,c)=>a.r.f-c.r.f||String(a.r.c).localeCompare(String(c.r.c),undefined,{numeric:true}));
-  const cell=(list,st)=>`<td style="text-align:left;vertical-align:top;white-space:normal;min-width:92px;max-width:210px;font-size:12px;line-height:1.4">${srt(list).map(e=>`<span data-a="hroom" data-k="${esc(dKey(e.r))}" data-s="${esc(st)}" style="cursor:pointer;display:inline-block;margin:0 6px 1px 0;font-weight:700;${e.bad?'color:var(--warn)':''}" title="${e.bad?'ไม่ผ่านสัปดาห์นี้ → ส่งใหม่':'ชั้น '+e.r.f}">${esc(rl(e.r))}${e.bad?'✗':''}${dfOpen(dKey(e.r))?`<sup style="color:var(--warn)">⚠${dfOpen(dKey(e.r))}</sup>`:''}</span>`).join('')}</td>`;
+  const cell=(list,st)=>`<td style="text-align:left;vertical-align:top;white-space:normal;min-width:92px;max-width:210px;font-size:12px;line-height:1.4">${[...new Set(list.map(e=>e.d))].sort().map(dd=>`<div><span class="sub" style="font-size:11px">${esc(f1(dd))}</span> `+srt(list.filter(e=>e.d===dd)).map(e=>`<span data-a="hroom" data-k="${esc(dKey(e.r))}" data-s="${esc(st)}" style="cursor:pointer;display:inline-block;margin:0 6px 1px 0;font-weight:700;${e.bad?'color:var(--warn)':''}" title="${e.bad?'ไม่ผ่านสัปดาห์นี้ → ส่งใหม่':'ชั้น '+e.r.f}">${esc(rl(e.r))}${e.bad?'✗':''}${dfOpen(dKey(e.r))?`<sup style="color:var(--warn)">⚠${dfOpen(dKey(e.r))}</sup>`:''}</span>`).join('')+'</div>').join('')}</td>`;
   let rows='';
   for(const d of data){const pl=new Map(),ac=new Map();let pn=0,an=0;
-    for(const r of d.rooms){const c=d.ch.get(r);if(!c)continue;const pw=dstr(wkMon(dnum(c.plan)));if(!pl.has(pw))pl.set(pw,[]);pl.get(pw).push({r,bad:c.hist[0].o==='fail'});pn++;
-      if(c.cur.o==='pass'){if(!ac.has(c.cur.w))ac.set(c.cur.w,[]);ac.get(c.cur.w).push({r});an++}}
+    for(const r of d.rooms){const c=d.ch.get(r);if(!c)continue;const pw=dstr(wkMon(dnum(c.plan)));if(!pl.has(pw))pl.set(pw,[]);pl.get(pw).push({r,bad:c.hist[0].o==='fail',d:c.plan});pn++;
+      if(c.cur.o==='pass'){if(!ac.has(c.cur.w))ac.set(c.cur.w,[]);ac.get(c.cur.w).push({r,d:c.cur.d});an++}}
     rows+=`<tr style="border-top:3px solid var(--line)"><td rowspan="2" style="background:${d.x.c};color:${fg(d.x.c)};font-weight:700;text-align:center;min-width:96px;vertical-align:middle">${esc(d.x.n)}</td><td style="font-weight:700;text-align:left">PLAN</td>${weeks.map(wk=>cell(pl.get(wk)||[],d.x.k))}<td style="white-space:nowrap"><b>${pn}</b> <span class="sub">unit</span></td></tr>
      <tr><td style="font-weight:700;color:var(--qc2);text-align:left">ACTUAL</td>${weeks.map(wk=>cell(ac.get(wk)||[],d.x.k))}<td style="white-space:nowrap"><b>${an}</b> <span class="sub">unit</span></td></tr>`}
   const dm=new Map();for(const d of data)for(const r of d.rooms){const c=d.ch.get(r);if(!c)continue;const df=S.dfx[dKey(r)]||[],o=df.filter(x=>!x.s);if(!c.fails&&!o.length)continue;const e=dm.get(dKey(r))||{r,st:[],df,fails:0};if(c.fails){e.st.push(d.x.n+' ×'+c.fails);e.fails+=c.fails}dm.set(dKey(r),e)}
   const dl=[...dm.values()].sort((a,c)=>a.r.f-c.r.f||String(a.r.c).localeCompare(String(c.r.c),undefined,{numeric:true})),dTot=dl.reduce((a,e)=>a+e.df.filter(x=>!x.s).length,0);
   const dsec=`<section class="sec"><div class="head"><h2>Defect / ห้องที่ไม่ผ่าน</h2><span class="sub">${dl.length} ห้อง · Defect เปิดอยู่ ${dTot} รายการ</span></div>${dl.length?`<div class="tw"><table><thead><tr><th>ชั้น</th><th>ห้อง</th><th>ไม่ผ่านที่ขั้น (ครั้ง)</th><th>จำนวน Defect</th><th style="text-align:left">รายการ Defect</th></tr></thead><tbody>${dl.map(e=>{const o=e.df.filter(x=>!x.s);return `<tr data-a="hroom" data-k="${esc(dKey(e.r))}" style="cursor:pointer"><td>${e.r.f}</td><td>${esc(rl(e.r))}</td><td>${esc(e.st.join(', ')||'-')}</td><td><b style="color:${o.length?'var(--warn)':'var(--qc2)'}">${o.length}</b>/${e.df.length}</td><td style="text-align:left;white-space:normal">${e.df.map(x=>`<div style="${x.s?'text-decoration:line-through;color:var(--muted)':''}">${x.s?'✓':'○'} ${esc(x.t)}</div>`).join('')||'<span class="sub">ยังไม่ได้ระบุ Defect (กดแถวเพื่อเพิ่ม)</span>'}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="card empty">ไม่มีห้องที่ไม่ผ่านหรือมี Defect</div>'}</section>`;
   return `<section class="sec">${chips}<div class="sub" style="margin:8px 0">PLAN = ห้องที่นัดส่งในสัปดาห์นั้น (แดง ✗ = สัปดาห์นั้นไม่ผ่านและย้ายไปส่งใหม่) · ACTUAL = ห้องที่ผ่านขั้นนั้นแล้ว ตามสัปดาห์ที่ผ่าน · กดเลขห้องเพื่อตั้งแผน/ผล/Defect</div>
-   ${weeks.length?`<div class="tw"><table style="min-width:${230+weeks.length*100}px"><thead><tr><th colspan="2" style="text-align:left">BUILDING ${esc(b)}</th>${weeks.map(wk=>`<th style="text-align:center;${wk===dstr(now)?'color:var(--accent)':''}">${esc(f1(wk))}<div class="sub" style="font-weight:400">${wk===dstr(now)?'สัปดาห์นี้':'–'+esc(f1(dstr(dnum(wk)+6)))}</div></th>`).join('')}<th>รวม</th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="card empty">ยังไม่มีแผนส่งห้อง กด “+ กำหนดแผนส่งห้อง” แล้วเลือกขั้นที่จะส่ง</div>'}</section>${dsec}`}
+   ${weeks.length?`<div class="tw"><table style="min-width:${230+weeks.length*100}px"><thead><tr><th colspan="2" style="text-align:left">BUILDING ${esc(b)}</th>${weeks.map(wk=>`<th style="text-align:center;${wk===dstr(now)?'color:var(--accent)':''}">${esc(f1(wk))} – ${esc(f1(dstr(dnum(wk)+6)))}<div class="sub" style="font-weight:400">${wk===dstr(now)?'สัปดาห์นี้':'&nbsp;'}</div></th>`).join('')}<th>รวม</th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="card empty">ยังไม่มีแผนส่งห้อง กด “+ กำหนดแผนส่งห้อง” แล้วเลือกขั้นที่จะส่ง</div>'}</section>${dsec}`}
 
 function vQC2(){
   const ws=qcWorks(),pc=qpBar;
